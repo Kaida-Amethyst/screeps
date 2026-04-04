@@ -1,13 +1,100 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "username/screeps"
 
+import {
+  "mizchi/js/core",
+}
+
 // Values
+pub const CARRY_PART : String = "carry"
+
+pub const ERR_NOT_IN_RANGE : Int = -9
+
+pub const MOVE_PART : String = "move"
+
+pub const OK_CODE : Int = 0
+
+pub const RESOURCE_ENERGY : String = "energy"
+
+pub const WORK_PART : String = "work"
+
+pub fn active_sources() -> Array[Source]
+
+pub fn creeps() -> Array[Creep]
+
+pub fn flags() -> Array[Flag]
+
+pub fn get_ticks() -> Int
+
+pub fn my_creeps() -> Array[Creep]
+
+pub fn my_spawns() -> Array[StructureSpawn]
+
+pub fn run_harvest_bot() -> Unit
+
+pub fn sources() -> Array[Source]
+
+pub fn spawns() -> Array[StructureSpawn]
 
 // Errors
 
 // Types and methods
+pub enum ActionResult {
+  Success
+  NotInRange
+  Error(Int)
+}
+
+#external
+pub type Creep
+pub fn Creep::as_any(Self) -> @core.Any
+pub fn Creep::harvest_raw(Self, Source) -> Int
+pub fn Creep::harvest_result(Self, Source) -> ActionResult
+pub fn[T : GameObjectLike] Creep::move_to(Self, T) -> Unit
+pub fn Creep::move_to_raw(Self, GameObject) -> Int
+pub fn[T : GameObjectLike] Creep::move_to_result(Self, T) -> ActionResult
+pub fn Creep::my(Self) -> Bool
+pub fn Creep::store(Self) -> Store
+pub fn[T : GameObjectLike] Creep::transfer_energy_result(Self, T) -> ActionResult
+pub fn Creep::transfer_raw(Self, GameObject, String) -> Int
+pub fn[T : GameObjectLike] Creep::transfer_resource_result(Self, T, String) -> ActionResult
+pub impl GameObjectLike for Creep
+
+#external
+pub type Flag
+pub fn Flag::as_any(Self) -> @core.Any
+pub impl GameObjectLike for Flag
+
+#external
+pub type GameObject
+pub fn GameObject::as_any(Self) -> @core.Any
+pub impl GameObjectLike for GameObject
+
+#external
+pub type Source
+pub fn Source::as_any(Self) -> @core.Any
+pub fn Source::energy(Self) -> Int
+pub impl GameObjectLike for Source
+
+#external
+pub type Store
+pub fn Store::as_any(Self) -> @core.Any
+pub fn Store::free_energy(Self) -> Int
+pub fn Store::used_energy(Self) -> Int
+
+#external
+pub type StructureSpawn
+pub fn StructureSpawn::as_any(Self) -> @core.Any
+pub fn StructureSpawn::is_spawning(Self) -> Bool
+pub fn StructureSpawn::my(Self) -> Bool
+pub fn StructureSpawn::spawn_creep(Self, Array[String]) -> @core.Any
+pub fn StructureSpawn::store(Self) -> Store
+pub impl GameObjectLike for StructureSpawn
 
 // Type aliases
 
 // Traits
+pub(open) trait GameObjectLike {
+  as_game_object(Self) -> GameObject
+}
 

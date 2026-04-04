@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/screeps/cmd/main"
+package "username/screeps/main"
 
 // Values
 pub fn main_loop() -> Unit

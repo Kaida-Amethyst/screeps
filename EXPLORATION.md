@@ -126,7 +126,7 @@ Moon 版本：`0.1.20260330 (c527f57 2026-03-30)`
    - `my_spawns() -> Array[StructureSpawn]`
    - `harvest_loop() -> Unit`
 
-3. `cmd/main`
+3. `main`
 
    作为最终导出入口：
 
@@ -215,6 +215,150 @@ Moon 版本：`0.1.20260330 (c527f57 2026-03-30)`
 
 - `raw.mbt`：extern 声明
 - `api.mbt`：20 到 30 行左右的游戏逻辑
-- `cmd/main`：保留为最终导出桥接层
+- `main/`：保留为最终导出桥接层
 
 做到这一步，就足够把整条工具链在直播前验证通了。
+
+## 当前项目结构调整（2026-04-04）
+
+这一轮调整后，项目结构改为：
+
+- `raw.mbt`
+  只保留当前 tutorial 和 harvest bot 立刻需要的最小原始绑定。
+- `api.mbt`
+  在 raw 之上提供更接近 MoonBit 使用方式的封装。
+- `main/`
+  作为最终导出入口，不再使用原来的 `cmd/main` 结构。
+- `EXPLORATION.md`
+  持续追加探索记录、坑点和阶段性结论。
+
+后续策略改为：
+
+1. 不提前做完整 binding。
+2. 一边过 tutorial，一边按需扩展 `raw.mbt`。
+3. 尽量把直播真正要展示的逻辑放在 `api.mbt` 这一层。
+
+## tutorial 实测补充（2026-04-04）
+
+### 1. Loop and import
+
+这一关已经本地验证通过。
+
+有两个实践结论：
+
+1. 生成的 `main.js` 可以直接拷贝成 Screeps Arena tutorial 目录下的 `main.mjs` 使用。
+2. 不一定要手写 `console.log`，直接使用 MoonBit 的 `println("Current tick: \\{get_ticks()}")` 也可以在游戏里正常运行。
+
+这说明：
+
+- MoonBit 生成出来的 JS 模块形式，已经满足 Screeps Arena tutorial 对入口文件的要求。
+- 第一关直播时可以把重点放在 `#module("game/utils")` 和 `loop` 导出上，不必纠结输出方式一定要和教程原文逐字一致。
+
+### 2. Simple move
+
+这一关目前采用的分层约定是：
+
+1. `raw.mbt`
+
+   只新增这关第一次出现的原始概念：
+
+   - `Flag` external type
+   - `flag_ctor()`
+   - `flags() -> Array[Flag]`
+
+   同时把原始 JS API 明确标成 `*_raw` 风格，例如：
+
+   - `Creep::move_to_raw(self, target : GameObject) -> Int`
+   - `Creep::harvest_raw(self, target : Source) -> Int`
+
+   这样 raw 层只表达“JS 实际返回什么”，不负责美化接口。
+
+2. `api.mbt`
+
+   不再放 `first_creep()`、`first_flag()` 这种 tutorial 特定 helper，
+   而是放更可复用的语义层：
+
+   - `GameObjectLike` trait
+   - `ActionResult`
+   - `Creep::move_to(target) -> Unit`
+   - `Creep::move_to_result(target) -> ActionResult`
+
+   这样带来的好处是：
+
+   - 主流程里不再出现 `as_any()`
+   - 主流程里不再直接处理裸 `Int` 错误码
+   - `Flag`、`Source`、`StructureSpawn` 都可以自然传给 `move_to`
+   - 更适合后面用模式匹配写 bot 决策
+
+3. `main/`
+
+   只保留当前 tutorial 的实际演示逻辑，并直接使用数组模式匹配：
+
+   ```moonbit
+   pub fn main_loop() -> Unit {
+     guard @screeps.creeps() is [creep, ..] else { return }
+     guard @screeps.flags() is [flag, ..] else { return }
+     creep.move_to(flag)
+   }
+   ```
+
+这一层拆分比较适合后续继续推进 tutorial：
+
+- 新的 Screeps 原始对象和方法先放 `raw`
+- 更符合 MoonBit 直觉的 trait、enum、wrapper 放 `api`
+- 当前关卡特定的流程放 `main`
+
+### 3. 一个当前工具链坑：ES module 的 class 值导入
+
+在 Screeps Arena 里，`getObjectsByPrototype` 需要传入类似 `Creep`、`Flag` 这样的 class 值。
+
+直觉上最想写的是：
+
+```moonbit
+#module("game/prototypes")
+extern "js" fn creep_ctor() -> @core.Any = "Creep"
+```
+
+但当前 MoonBit JS 后端会把它生成为“调用 `Creep()`”，从而在运行时报错：
+
+```text
+TypeError: Class constructor Creep cannot be invoked without 'new'
+```
+
+把它改成：
+
+```moonbit
+#module("game/prototypes")
+extern "js" fn creep_ctor() -> @core.Any =
+  #| () => Creep
+```
+
+在当前工具链下也不可用，生成结果会出现错误的 import 语法。
+
+因此，当前项目里先采用一个稳定 workaround：
+
+1. 绑定 `getObjects()`
+2. 通过 `object.constructor.name` 过滤出 `Creep` / `Flag` / `Source` / `StructureSpawn`
+
+也就是：
+
+```moonbit
+#module("game/utils")
+extern "js" fn get_objects_ffi() -> Array[@core.Any] = "getObjects"
+
+extern "js" fn object_type_name(object : @core.Any) -> String =
+  #| (object) => object?.constructor?.name ?? ""
+```
+
+这条路的优点是：
+
+- 当前可稳定运行
+- 不再依赖 MoonBit 对“导入 class 值”的支持细节
+- 足够支撑 tutorial 和直播前期的 binding
+
+缺点是：
+
+- 语义上不如直接调用 `getObjectsByPrototype(Creep)` 那么干净
+- 依赖运行时 class name 稳定
+
+后续如果找到 MoonBit 更正式的 ES module class-value 导入方式，再回头把这层换回去。

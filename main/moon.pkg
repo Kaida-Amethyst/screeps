@@ -1,6 +1,6 @@
-// import {
-//   "username/screeps" @lib,
-// }
+import {
+  "username/screeps",
+}
 
 options(
   "is-main": true,
