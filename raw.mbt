@@ -32,6 +32,10 @@ pub type StructureContainer
 
 ///|
 #external
+pub type ConstructionSite
+
+///|
+#external
 pub type SpawnCreepResult
 
 ///|
@@ -62,6 +66,9 @@ pub fn StructureTower::as_any(self : StructureTower) -> @core.Any = "%identity"
 
 ///|
 pub fn StructureContainer::as_any(self : StructureContainer) -> @core.Any = "%identity"
+
+///|
+pub fn ConstructionSite::as_any(self : ConstructionSite) -> @core.Any = "%identity"
 
 ///|
 pub fn SpawnCreepResult::as_any(self : SpawnCreepResult) -> @core.Any = "%identity"
@@ -149,6 +156,11 @@ pub fn containers() -> Array[StructureContainer] {
 }
 
 ///|
+pub fn construction_sites() -> Array[ConstructionSite] {
+  objects_by_type_name("ConstructionSite")
+}
+
+///|
 pub fn my_creeps() -> Array[Creep] {
   creeps().filter(creep => creep.my())
 }
@@ -201,6 +213,13 @@ pub extern "js" fn Creep::ranged_attack_raw(
 ///|
 pub extern "js" fn Creep::heal_raw(self : Creep, target : Creep) -> Int =
   #| (self, target) => self.heal(target)
+
+///|
+pub extern "js" fn Creep::build_raw(
+  self : Creep,
+  target : ConstructionSite,
+) -> Int =
+  #| (self, target) => self.build(target)
 
 ///|
 pub extern "js" fn Creep::move_to_raw(self : Creep, target : GameObject) -> Int =
@@ -259,6 +278,19 @@ pub extern "js" fn SpawnCreepResult::spawned_creep(
   #| (self) => self.object
 
 ///|
+pub extern "js" fn create_tower_construction_site_raw(
+  x : Int,
+  y : Int,
+) -> @core.Nullish[ConstructionSite] =
+  #| (x, y) => {
+  #|   const createTowerSite = globalThis.__moonbit_create_tower_site;
+  #|   if (!createTowerSite) {
+  #|     throw new Error("缺少 __moonbit_create_tower_site helper");
+  #|   }
+  #|   return createTowerSite(x, y);
+  #| }
+
+///|
 pub extern "js" fn StructureTower::store(self : StructureTower) -> Store =
   #| (self) => self.store
 
@@ -274,6 +306,10 @@ pub extern "js" fn StructureContainer::store(
   self : StructureContainer,
 ) -> Store =
   #| (self) => self.store
+
+///|
+pub extern "js" fn ConstructionSite::my(self : ConstructionSite) -> Bool =
+  #| (self) => self.my ?? false
 
 ///|
 pub extern "js" fn Store::used_energy(self : Store) -> Int =

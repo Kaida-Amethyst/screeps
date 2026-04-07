@@ -26,7 +26,13 @@ pub const WORK_PART : String = "work"
 
 pub fn active_sources() -> Array[Source]
 
+pub fn construction_sites() -> Array[ConstructionSite]
+
 pub fn containers() -> Array[StructureContainer]
+
+pub fn create_tower_construction_site(Int, Int) -> ConstructionSite?
+
+pub fn create_tower_construction_site_raw(Int, Int) -> @core.Nullish[ConstructionSite]
 
 pub fn creeps() -> Array[Creep]
 
@@ -35,6 +41,8 @@ pub fn enemy_creeps() -> Array[Creep]
 pub fn flags() -> Array[Flag]
 
 pub fn get_ticks() -> Int
+
+pub fn my_construction_sites() -> Array[ConstructionSite]
 
 pub fn my_creeps() -> Array[Creep]
 
@@ -58,12 +66,21 @@ pub enum ActionResult {
 }
 
 #external
+pub type ConstructionSite
+pub fn ConstructionSite::as_any(Self) -> @core.Any
+pub fn ConstructionSite::my(Self) -> Bool
+pub impl GameObjectLike for ConstructionSite
+
+#external
 pub type Creep
 pub fn Creep::as_any(Self) -> @core.Any
 pub fn[T : AttackTarget] Creep::attack(Self, T) -> Unit
 pub fn Creep::attack_raw(Self, GameObject) -> Int
 pub fn[T : AttackTarget] Creep::attack_result(Self, T) -> ActionResult
 pub fn Creep::body(Self) -> Array[CreepBodyPart]
+pub fn Creep::build(Self, ConstructionSite) -> Unit
+pub fn Creep::build_raw(Self, ConstructionSite) -> Int
+pub fn Creep::build_result(Self, ConstructionSite) -> ActionResult
 pub fn[T : GameObjectLike] Creep::find_closest_by_path(Self, Array[T]) -> T?
 pub fn Creep::find_closest_by_path_raw(Self, Array[GameObject]) -> @core.Nullish[GameObject]
 pub fn Creep::harvest_raw(Self, Source) -> Int

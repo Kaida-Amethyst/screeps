@@ -1175,3 +1175,260 @@ fn spawn_mover(spawn : StructureSpawn) -> Creep? {
 - 它们本身就已经和 tutorial 这类最基础 gameplay 很贴近
 
 这说明目前的 `raw/api/main` 三层拆法至少在资源循环这一块是成立的。
+
+### 12. 从 MoonBit OOP 文章得到的启示
+
+这次额外阅读了项目里的 `moonbit-oop.md`。它对当前 Screeps binding 的设计有几个很直接的启发。
+
+#### 1. 正式 binding 不应照搬 Screeps 的 class 继承树
+
+MoonBit 的思路是“组合优于继承”，更适合把共享数据和共享能力拆开，而不是把：
+
+- `GameObject`
+- `Structure`
+- `OwnedStructure`
+- `StructureTower`
+- `StructureSpawn`
+
+这类 TypeScript / JavaScript 风格的 class 层级直接平移进 MoonBit。
+
+对于 Screeps 来说，更自然的路线仍然是：
+
+```text
+raw JS type
+  -> MoonBit wrapper / view
+  -> 能力 trait
+  -> 更高层 API
+```
+
+也就是说，正式版更应该围绕“对象具备什么能力”来组织，而不是围绕“对象在继承树上的位置”来组织。
+
+#### 2. 当前的目标 trait 方向是对的，但还可以进一步系统化
+
+现在项目里已经有：
+
+- `MoveTarget`
+- `AttackTarget`
+- `TransferTarget`
+- `WithdrawTarget`
+
+这其实已经很接近 MoonBit 风格的能力分层了。
+
+如果后面做正式 binding，可以继续沿这个方向扩展成更完整的一组 capability trait，例如：
+
+- `HasPosition`
+- `Owned`
+- `HasStore`
+- `HasHits`
+- `MoveTarget`
+- `AttackTarget`
+- `TransferTarget`
+- `WithdrawTarget`
+
+这样 `Creep`、`StructureSpawn`、`StructureTower`、`ConstructionSite` 等对象都可以被看成“能力的组合”，而不是“继承树上的节点”。
+
+#### 3. `MyCreep / EnemyCreep` 更适合被理解成 typed view，而不是子类
+
+之前探索里提到过：
+
+```text
+JsCreep
+  -> Creep
+  -> MyCreep / EnemyCreep
+```
+
+现在结合这篇文章来看，这个方向仍然成立，但它们更适合被理解为：
+
+- 更细化的视图
+- 带额外语义保证的 wrapper
+
+而不是传统 OOP 里的“子类”。
+
+也就是说：
+
+- `Creep` 是通用视图
+- `MyCreep` 是“可以安全执行动作”的视图
+- `EnemyCreep` 是“可以安全当作攻击目标”的视图
+
+这更符合 MoonBit 的组合式建模方式。
+
+#### 4. Screeps wrapper 更适合做 live view，不适合过度缓存
+
+文章里的 `SpriteData` 思路很适合解释 MoonBit 风格的封装，但不能原样套到 Screeps 上。
+
+原因是 Screeps 对象不是稳定不变的纯数据，而是 JS 运行时里的 live object。像这些字段变化很快：
+
+- `hits`
+- `store`
+- `fatigue`
+- `spawning`
+
+因此当前对正式版的判断仍然是：
+
+1. wrapper 里只缓存稳定语义，例如 `relation`
+2. 动态状态继续通过 getter 从 raw 对象实时读取
+3. 如果以后要做纯函数 AI，再单独补一层 `Snapshot` / `View`
+
+也就是说，Screeps wrapper 更适合作为“带语义的 live view”，而不是“静态快照”。
+
+#### 5. ADT 很适合处理异构对象集合
+
+文章里关于 ADT 的部分，对 Screeps 这类运行时对象系统很有启发。
+
+如果后面需要认真处理异构集合，例如：
+
+- `getObjects()` 的结果
+- 一组混合结构对象
+- 一组需要统一调度的目标对象
+
+更 MoonBit 的路线不是到处依赖：
+
+- `constructor.name`
+- 一串 `if` / `else`
+- 或多个 `is_xxx` 布尔字段
+
+而是显式引入枚举，例如：
+
+```moonbit
+enum GameObjectView {
+  Creep(Creep)
+  Source(Source)
+  Flag(Flag)
+  Spawn(StructureSpawn)
+  Tower(StructureTower)
+  ConstructionSite(ConstructionSite)
+}
+```
+
+这样后续在 bot 决策里就可以直接 `match`，也更适合在直播里展示 MoonBit 的模式匹配优势。
+
+#### 6. 当前可以形成的阶段性结论
+
+结合前面的探索和这篇文章，目前更倾向于把正式 binding 设计成：
+
+```text
+raw
+  只表达 JS FFI
+
+model / view
+  只提供 MoonBit 包装和稳定语义
+
+capability traits
+  表达“谁能做什么”“谁能当什么目标”
+
+api
+  提供更顺手的 MoonBit 接口
+
+bot
+  只写策略和 tutorial 逻辑
+```
+
+其中最重要的思想有两点：
+
+1. 不要把 Screeps 的继承关系机械翻译成 MoonBit 继承层次
+2. 要把 MoonBit 的优势放在“组合能力 + ADT + 模式匹配”上
+
+这一段目前仍然属于设计思考，不是已经完全定稿的正式方案。等后面继续过 tutorial、补更多 API 之后，还需要再回头检验这套分层是否足够顺手。
+
+### 13. `main.mjs` wrapper + `moonbit-main.mjs` 的当前工程约定
+
+在继续推进 tutorial 的过程中，当前工具链暴露出了一个很具体的问题：
+
+- MoonBit 生成 JS 没问题
+- 普通函数导入和实例方法调用都没问题
+- 但像 `StructureTower`、`Creep` 这种“class 本身作为运行时值传参”的场景，当前 MoonBit JS FFI 还不够顺手
+
+典型例子就是：
+
+```js
+createConstructionSite({ x, y }, StructureTower)
+```
+
+这里的 `StructureTower` 不是实例，也不是字符串，而是一个 JS 运行时里的 class token。
+
+当前观察到的困难主要有三类：
+
+1. 直接把 JS 模块里的 class 值导入到 MoonBit，经常会踩到当前 JS 后端的边角问题
+2. 用 `dynamic import()` 规避时，Screeps Arena 运行时又不一定支持
+3. MoonBit 当前也不允许通过 `#module("./local_file.mjs")` 这种相对路径去导入本地 JS helper
+
+因此，当前阶段更务实的工程约定是：
+
+```text
+main.mjs
+  JS wrapper / host glue
+
+moonbit-main.mjs
+  MoonBit 编译产物
+```
+
+#### 各自职责
+
+1. `moonbit-main.mjs`
+
+   只承载 MoonBit 业务逻辑和导出的 `loop` 实现。
+
+   这里应该尽量保持：
+
+   - bot 决策
+   - 状态机
+   - MoonBit 类型建模
+   - 模式匹配
+
+   而不要塞太多 JS 宿主环境兼容逻辑。
+
+2. `main.mjs`
+
+   只承载非常薄的一层宿主 glue code，例如：
+
+   - 导入 Screeps 提供的 JS class token
+   - 把少量 MoonBit 不方便直接表达的 helper 挂到 `globalThis`
+   - 最终导出 Screeps 需要的 `loop`
+
+   这一层不应该承载真正的 bot 策略。
+
+#### 当前 tutorial 9 的落点
+
+对 `Construction` 这一关来说，当前更可行的结构是：
+
+```text
+main.mjs
+  import { createConstructionSite } from "game/utils"
+  import { StructureTower } from "game/prototypes"
+  import { loop as moonbitLoop } from "./moonbit-main.mjs"
+
+  globalThis.__moonbit_create_tower_site = ...
+
+  export function loop() {
+    moonbitLoop()
+  }
+```
+
+而 MoonBit 侧只调用：
+
+```moonbit
+globalThis.__moonbit_create_tower_site(...)
+```
+
+这条线的好处是：
+
+- MoonBit 代码仍然是主逻辑载体
+- JS wrapper 足够薄，职责清晰
+- 不需要依赖 Screeps 运行时是否支持 `dynamic import()`
+- 也不需要继续硬碰 MoonBit 当前对 class token 导入的边角问题
+
+#### 这条约定的意义
+
+这意味着当前项目可以明确区分：
+
+- MoonBit 负责“语言能力展示”和“bot 逻辑”
+- `main.mjs` 负责“宿主环境适配”
+
+这比“强行要求 MoonBit 直接覆盖所有 Screeps JS 细节”更真实，也更工程化。
+
+当然，这仍然是当前阶段的务实方案，不代表未来一定不能把 wrapper 再压缩掉。后面如果：
+
+- MoonBit JS FFI 对 class token 的支持更成熟
+- 或者找到更正式的 class-value 导入方式
+
+再回头评估能否把这层 wrapper 进一步缩薄或消除。

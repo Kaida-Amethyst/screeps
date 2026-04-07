@@ -69,6 +69,9 @@ pub impl GameObjectLike for StructureTower with as_game_object(self) -> GameObje
 pub impl GameObjectLike for StructureContainer with as_game_object(self) -> GameObject = "%identity"
 
 ///|
+pub impl GameObjectLike for ConstructionSite with as_game_object(self) -> GameObject = "%identity"
+
+///|
 pub impl AttackTarget for Creep with as_attack_target(self) -> GameObject = "%identity"
 
 ///|
@@ -215,6 +218,19 @@ pub fn Creep::heal_result(self : Creep, target : Creep) -> ActionResult {
 }
 
 ///|
+pub fn Creep::build(self : Creep, target : ConstructionSite) -> Unit {
+  ignore(self.build_result(target))
+}
+
+///|
+pub fn Creep::build_result(
+  self : Creep,
+  target : ConstructionSite,
+) -> ActionResult {
+  action_result_of(self.build_raw(target))
+}
+
+///|
 pub fn Creep::harvest_result(self : Creep, target : Source) -> ActionResult {
   action_result_of(self.harvest_raw(target))
 }
@@ -291,8 +307,18 @@ pub fn Store::energy(self : Store) -> Int {
 }
 
 ///|
+pub fn create_tower_construction_site(x : Int, y : Int) -> ConstructionSite? {
+  create_tower_construction_site_raw(x, y).to_option()
+}
+
+///|
 pub fn enemy_creeps() -> Array[Creep] {
   creeps().filter(creep => !creep.my())
+}
+
+///|
+pub fn my_construction_sites() -> Array[ConstructionSite] {
+  construction_sites().filter(site => site.my())
 }
 
 ///|
