@@ -32,6 +32,10 @@ pub type StructureContainer
 
 ///|
 #external
+pub type SpawnCreepResult
+
+///|
+#external
 pub type Store
 
 ///|
@@ -58,6 +62,9 @@ pub fn StructureTower::as_any(self : StructureTower) -> @core.Any = "%identity"
 
 ///|
 pub fn StructureContainer::as_any(self : StructureContainer) -> @core.Any = "%identity"
+
+///|
+pub fn SpawnCreepResult::as_any(self : SpawnCreepResult) -> @core.Any = "%identity"
 
 ///|
 pub fn Store::as_any(self : Store) -> @core.Any = "%identity"
@@ -238,12 +245,18 @@ pub extern "js" fn StructureSpawn::is_spawning(self : StructureSpawn) -> Bool =
 pub extern "js" fn StructureSpawn::spawn_creep(
   self : StructureSpawn,
   body : Array[String],
-) -> @core.Any =
+) -> SpawnCreepResult =
   #| (self, body) => self.spawnCreep(body)
 
 ///|
 pub extern "js" fn StructureSpawn::store(self : StructureSpawn) -> Store =
   #| (self) => self.store
+
+///|
+pub extern "js" fn SpawnCreepResult::spawned_creep(
+  self : SpawnCreepResult,
+) -> @core.Nullish[Creep] =
+  #| (self) => self.object
 
 ///|
 pub extern "js" fn StructureTower::store(self : StructureTower) -> Store =

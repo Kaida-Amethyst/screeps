@@ -106,6 +106,12 @@ pub enum ActionResult {
 }
 
 ///|
+pub enum SpawnResult {
+  Spawned(Creep)
+  Failed
+}
+
+///|
 fn action_result_of(code : Int) -> ActionResult {
   if code == OK_CODE {
     Success
@@ -113,6 +119,28 @@ fn action_result_of(code : Int) -> ActionResult {
     NotInRange
   } else {
     Error(code)
+  }
+}
+
+///|
+pub fn StructureSpawn::spawn_result(
+  self : StructureSpawn,
+  body : Array[String],
+) -> SpawnResult {
+  match self.spawn_creep(body).spawned_creep().to_option() {
+    Some(creep) => Spawned(creep)
+    None => Failed
+  }
+}
+
+///|
+pub fn StructureSpawn::spawn(
+  self : StructureSpawn,
+  body : Array[String],
+) -> Creep? {
+  match self.spawn_result(body) {
+    Spawned(creep) => Some(creep)
+    Failed => None
   }
 }
 

@@ -978,3 +978,129 @@ fn closest_flag(
 ```
 
 当前先不改代码，只把这个命名方向记录下来。
+
+### 10. Spawn creeps：`spawnCreep(...).object` 与模块级状态
+
+第七关 `Spawn creeps` 有两个新的关注点：
+
+1. `spawnCreep(...)` 返回的不是单纯错误码，而是一个结果对象
+2. tutorial 原文使用模块级变量保存 `creep1` / `creep2`
+
+这一关因此顺手验证了两件事：
+
+- MoonBit 侧如何把 `spawnCreep(...).object` 包成更顺手的接口
+- MoonBit 侧如何使用模块级 `Ref` 跨 tick 保存状态
+
+1. `raw.mbt`
+
+   这一层新增：
+
+   - `SpawnCreepResult`
+   - `StructureSpawn::spawn_creep(...) -> SpawnCreepResult`
+   - `SpawnCreepResult::spawned_creep() -> @core.Nullish[Creep]`
+
+   这样 raw 层仍然忠实反映 JS 形状：
+
+   - `spawnCreep` 返回一个对象
+   - 真正想要的 creep 在 `.object` 字段里
+
+2. `api.mbt`
+
+   这一层把 raw 结果对象再收成更适合 MoonBit 使用的接口：
+
+   - `SpawnResult`
+   - `StructureSpawn::spawn_result(...) -> SpawnResult`
+   - `StructureSpawn::spawn(...) -> Creep?`
+
+   对 tutorial 来说，最顺手的是直接使用：
+
+   ```moonbit
+   spawn.spawn([MOVE_PART]) -> Creep?
+   ```
+
+   这样主流程里就不需要直接碰 `.object` 或 `@core.Any`。
+
+3. `main/`
+
+   这一关没有改成“完全根据当前世界状态推断第几个 creep”，
+   而是刻意保留了和 tutorial 原文更接近的风格：
+
+   - 使用模块级 `Ref[Creep?]` 保存 `creep1`
+   - 使用模块级 `Ref[Creep?]` 保存 `creep2`
+
+   也就是：
+
+   ```moonbit
+   let creep1 : @ref.Ref[Creep?] = { val: None }
+   let creep2 : @ref.Ref[Creep?] = { val: None }
+   ```
+
+   这样可以确认一件很重要的事情：
+
+   - MoonBit 生成到 JS 后，模块级状态也可以像 tutorial 原文那样跨 tick 保留
+
+这一关的价值不只是“会 spawn creep”，
+更是把两条很实用的模式验证通了：
+
+- `结果对象 -> typed wrapper`
+- `跨 tick 状态 -> 模块级 Ref`
+
+#### 后续思考：这一关更通用的写法，可能应该围绕“集合与分配”
+
+在进一步尝试之后，我们感觉 tutorial 原文那种：
+
+- `creep1`
+- `creep2`
+
+以及对应的模块级状态写法，虽然忠于 sample code，但从长期代码风格来看，
+可读性和通用性都不太理想。
+
+一个更自然的方向是：
+
+```moonbit
+let creeps = @screeps.my_creeps()
+let flags = @screeps.flags()
+
+if creeps.length() < flags.length() {
+  spawn_mover(...)
+}
+
+for i in 0..<creeps.length().min(flags.length()) {
+  creeps[i].move_to(flags[i])
+}
+```
+
+这条线表达的是：
+
+- creep 数量不足就继续 spawn
+- 已有 creep 按顺序分配到 flags
+
+相比“第一只 creep 做什么、第二只 creep 做什么”，
+这种写法更像是在描述一条通用规则，而不是复刻 tutorial 的一次性叙事。
+
+不过，这里我们也有一个尚未完全想清楚的问题：
+
+```moonbit
+fn spawn_mover(spawn : StructureSpawn) -> Creep? {
+  spawn.spawn([MOVE_PART])
+}
+```
+
+这个 helper 目前只是为了让主流程更短，但它本身并不是一个很成熟的抽象。
+它的问题在于：
+
+- `spawn_mover` 这个名字带有一点“角色”意味
+- 但它真正表达的其实只是“spawn 一个 body 为 `[MOVE]` 的 creep”
+- 真正可复用的概念，也许更应该是 `mover_body()`，而不是 `spawn_mover()`
+
+因此，这里先记录一个阶段性判断：
+
+1. 这关更通用的方向，应该偏向“集合与分配”而不是“creep1 / creep2”
+2. 但像 `spawn_mover` 这样的 helper 现在还不够成熟
+3. 真正要整理成正式风格时，还需要进一步思考：
+
+- body 配置应该怎么命名
+- spawn helper 该不该存在
+- bot 层应该保留多少 tutorial 特定语义
+
+也就是说，这一部分目前只是探索中的想法，不是已经定稿的正式设计。

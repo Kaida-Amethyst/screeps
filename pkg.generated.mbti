@@ -118,6 +118,16 @@ pub fn Source::energy(Self) -> Int
 pub impl GameObjectLike for Source
 
 #external
+pub type SpawnCreepResult
+pub fn SpawnCreepResult::as_any(Self) -> @core.Any
+pub fn SpawnCreepResult::spawned_creep(Self) -> @core.Nullish[Creep]
+
+pub enum SpawnResult {
+  Spawned(Creep)
+  Failed
+}
+
+#external
 pub type Store
 pub fn Store::as_any(Self) -> @core.Any
 pub fn Store::energy(Self) -> Int
@@ -137,7 +147,9 @@ pub type StructureSpawn
 pub fn StructureSpawn::as_any(Self) -> @core.Any
 pub fn StructureSpawn::is_spawning(Self) -> Bool
 pub fn StructureSpawn::my(Self) -> Bool
-pub fn StructureSpawn::spawn_creep(Self, Array[String]) -> @core.Any
+pub fn StructureSpawn::spawn(Self, Array[String]) -> Creep?
+pub fn StructureSpawn::spawn_creep(Self, Array[String]) -> SpawnCreepResult
+pub fn StructureSpawn::spawn_result(Self, Array[String]) -> SpawnResult
 pub fn StructureSpawn::store(Self) -> Store
 pub impl GameObjectLike for StructureSpawn
 pub impl TransferTarget for StructureSpawn
