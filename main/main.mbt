@@ -1,30 +1,31 @@
 ///|
 /// Screeps 的导出入口。
-/// 当前切到第七个 tutorial：Spawn creeps。
-using @screeps {type Creep, type Flag, type StructureSpawn}
+/// 当前切到第八个 tutorial：Harvest energy。
+using @screeps {type Creep, type Source, type StructureSpawn}
 
 ///|
-fn spawn_mover(spawn : StructureSpawn) -> Creep? {
-  spawn.spawn([@screeps.MOVE_PART])
-}
-
-///|
-fn move_creeps_to_flags(creeps : Array[Creep], flags : Array[Flag]) -> Unit {
-  for i in 0..<creeps.length().min(flags.length()) {
-    creeps[i].move_to(flags[i])
+fn run_harvester(
+  creep : Creep,
+  source : Source,
+  spawn : StructureSpawn,
+) -> Unit {
+  if creep.store().free_energy() > 0 {
+    if creep.harvest_result(source) is @screeps.NotInRange {
+      creep.move_to(source)
+    }
+    return
+  }
+  if creep.transfer_energy_result(spawn) is @screeps.NotInRange {
+    creep.move_to(spawn)
   }
 }
 
 ///|
 pub fn main_loop() -> Unit {
-  guard @screeps.my_spawns() is [my_spawn, ..] else { return }
-  let creeps = @screeps.my_creeps()
-  let flags = @screeps.flags()
-
-  if creeps.length() < flags.length() {
-    spawn_mover(my_spawn) |> ignore
-  }
-  move_creeps_to_flags(creeps, flags)
+  guard @screeps.my_creeps() is [creep, ..] else { return }
+  guard @screeps.sources() is [source, ..] else { return }
+  guard @screeps.my_spawns() is [spawn, ..] else { return }
+  run_harvester(creep, source, spawn)
 }
 
 ///|

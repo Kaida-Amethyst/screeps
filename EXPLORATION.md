@@ -1104,3 +1104,74 @@ fn spawn_mover(spawn : StructureSpawn) -> Creep? {
 - bot 层应该保留多少 tutorial 特定语义
 
 也就是说，这一部分目前只是探索中的想法，不是已经定稿的正式设计。
+
+### 11. Harvest energy：这一关基本不需要新增 binding
+
+第八关 `Harvest energy` 的 sample code 是一个很标准的资源循环：
+
+- creep 还有空位：去 harvest
+- creep 满了：回 spawn 交能量
+
+这一关和前面几关不同的地方在于：
+
+- 核心 binding 其实前面已经铺出来了
+- 因此这次主要不是“补 API”，而是验证已有抽象是否足够自然
+
+当前观察是：
+
+1. 现有接口已经足够支撑 tutorial 8
+
+   这一关实际用到的能力包括：
+
+   - `my_creeps()`
+   - `sources()`
+   - `my_spawns()`
+   - `Store::free_energy()`
+   - `Creep::harvest_result(...)`
+   - `Creep::transfer_energy_result(...)`
+   - `Creep::move_to(...)`
+
+   这些在前面 tutorial 和第一版 harvest bot 骨架里都已经具备。
+
+2. `getFreeCapacity(RESOURCE_ENERGY)` 在当前 MoonBit 里对应为：
+
+   ```moonbit
+   creep.store().free_energy() > 0
+   ```
+
+   这里没有逐字去模拟 JS 的：
+
+   ```js
+   creep.store.getFreeCapacity(constants.RESOURCE_ENERGY)
+   ```
+
+   而是用更直接的 helper 来表达“还能不能继续装能量”。
+
+3. `main/` 这一关选择显式写出流程，而不是直接调用已有 helper
+
+   仓库里其实已经有一个更完整的：
+
+   - `run_harvest_bot()`
+
+   但这一关没有直接在 `main` 里调用它，而是仍然显式写出：
+
+   - 取第一个己方 creep
+   - 取第一个 source
+   - 取第一个己方 spawn
+   - 判断 `free_energy()`
+   - `harvest` / `transfer`
+   - 如果 `NotInRange` 就 `move_to`
+
+   这样做的原因是：
+
+   - 更容易和 tutorial sample code 一一对照
+   - 更适合继续观察当前 API 是否顺手
+   - 也能反过来验证之前做的 harvest 封装方向是对的
+
+从探索角度看，这一关其实给了一个正反馈：
+
+- 前面为 harvest bot 提前做的那批抽象
+- 并不是“为了 bot 而 bot”
+- 它们本身就已经和 tutorial 这类最基础 gameplay 很贴近
+
+这说明目前的 `raw/api/main` 三层拆法至少在资源循环这一块是成立的。
