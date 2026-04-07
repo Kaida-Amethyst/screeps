@@ -825,3 +825,156 @@ match decide_tower_mode(towers) {
 - 代码语义比简单的 `if/else` 更显式
 
 当前先不改实现，只把这个方向记下来，后面如果要把 tutorial 代码再 MoonBit 化一层，可以优先考虑这条线。
+
+### 9. Terrain：`findClosestByPath` 与 `Option`
+
+第六关 `Terrain` 的关键点不是 `moveTo`，而是：
+
+- `creep.findClosestByPath(flags)`
+
+这一关第一次明确遇到了一个“可能返回 null 的 JS API”：
+
+- typings 里虽然写成返回 `T`
+- 但文档注释明确说明“如果没有可达目标，则返回 `null`”
+
+因此，这一关最值得记录的点其实是：
+
+- 如何把 Screeps 里的 nullish 返回值收成 MoonBit 的 `Option`
+
+当前采用的分层是：
+
+1. `raw.mbt`
+
+   只补一个原始接口：
+
+   - `Creep::find_closest_by_path_raw(self, positions : Array[GameObject]) -> @core.Nullish[GameObject]`
+
+   这一层仍然忠实反映 JS 行为，不提前帮上层做过多包装。
+
+2. `api.mbt`
+
+   在高层补一个更 MoonBit 的接口：
+
+   - `Creep::find_closest_by_path[T : GameObjectLike](self, targets : Array[T]) -> T?`
+
+   实现思路是：
+
+   - 先把 `Array[T]` 映射成 `Array[GameObject]`
+   - 调 raw 层 `find_closest_by_path_raw`
+   - 再用 `@core.Nullish[T]::to_option()` 把 null/undefined 收成 `Option`
+
+   这样之后，主流程里就不需要直接碰 `@core.Any` 或 `null` 判断。
+
+3. `main/`
+
+   这一关的入口保持很薄：
+
+   - 取 `flags`
+   - 对每个己方 creep 找最近的 flag
+   - 如果找到就 `move_to`
+
+也就是说，这一关的主要价值不只是“沿地形走路”，
+更重要的是确认了一条后面会反复用到的模式：
+
+```text
+JS 可能返回 null
+  -> raw 保留 Nullish
+  -> api 转成 MoonBit Option
+  -> main 用 guard / match 正常消费
+```
+
+这条路线很适合后面继续扩展到：
+
+- `findClosestByRange`
+- `getObjectById`
+- 其他 Screeps 中可能返回空值的查询接口
+
+#### 命名补充：`findClosestByPath` 在 MoonBit 里为什么显得别扭
+
+这一关还有一个值得单独记录的命名问题：
+
+- `find_closest_by_path`
+
+直接从 Screeps JS 接口直译到 MoonBit 之后，读起来会有一点“不知道 closest 的到底是什么”的感觉。
+
+从 Screeps 原始接口看，它其实是一组配套命名：
+
+- `findClosestByPath`
+- `findClosestByRange`
+- `findInRange`
+- `findPathTo`
+- `getRangeTo`
+
+也就是说，原始命名语义是：
+
+- `closest`：在候选对象里找最近的那个
+- `byPath`：这里的“最近”按寻路结果衡量
+- `byRange`：这里的“最近”按线性距离衡量
+
+所以这个名字只有在和 `findClosestByRange` 放在一起看时才完全自然。
+
+如果后面进入正式 binding 设计，当前更推荐的做法是分层处理：
+
+1. `raw`
+
+   保留与 Screeps 接近的名字，例如：
+
+   - `find_closest_by_path_raw`
+   - 后续可能再补 `find_closest_by_range_raw`
+
+2. `api`
+
+   把它们收成一个更像“同一个查询、两种度量方式”的接口，而不是两个平行函数名。
+
+推荐设计是：
+
+```moonbit
+pub enum ClosestMetric {
+  Path
+  Range
+}
+```
+
+```moonbit
+pub fn[T : GameObjectLike] Creep::find_closest(
+  self : Creep,
+  candidates : Array[T],
+  by~ : ClosestMetric = Path,
+) -> T?
+```
+
+调用时就是：
+
+```moonbit
+creep.find_closest(flags)
+creep.find_closest(flags, by=Range)
+```
+
+这里的命名考虑是：
+
+- `find_closest`
+  把“找最近对象”作为统一动作
+- `candidates`
+  比 `targets` 更中性，不把接口误导成“只能找攻击目标”
+- `ClosestMetric`
+  表示“最近”的衡量方式
+- `by`
+  作为 labeled argument，最短也最自然
+
+这样做的好处是：
+
+- 更适合 MoonBit 的 labeled argument 风格
+- 默认值可以自然设成 `Path`
+- 比保留两个高层函数名更容易扩展和抽象
+
+同时，如果后面在 bot/demo 层需要更顺手的写法，再按具体对象类型包一层 helper 即可，例如：
+
+```moonbit
+fn closest_flag(
+  creep : Creep,
+  flags : Array[Flag],
+  by~ : ClosestMetric = Path,
+) -> Flag?
+```
+
+当前先不改代码，只把这个命名方向记录下来。

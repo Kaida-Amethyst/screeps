@@ -64,6 +64,8 @@ pub fn[T : AttackTarget] Creep::attack(Self, T) -> Unit
 pub fn Creep::attack_raw(Self, GameObject) -> Int
 pub fn[T : AttackTarget] Creep::attack_result(Self, T) -> ActionResult
 pub fn Creep::body(Self) -> Array[CreepBodyPart]
+pub fn[T : GameObjectLike] Creep::find_closest_by_path(Self, Array[T]) -> T?
+pub fn Creep::find_closest_by_path_raw(Self, Array[GameObject]) -> @core.Nullish[GameObject]
 pub fn Creep::harvest_raw(Self, Source) -> Int
 pub fn Creep::harvest_result(Self, Source) -> ActionResult
 pub fn Creep::has_body_part(Self, String) -> Bool

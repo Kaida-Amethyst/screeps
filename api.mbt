@@ -130,6 +130,22 @@ pub fn[T : GameObjectLike] Creep::move_to_result(
 }
 
 ///|
+pub fn[T : GameObjectLike] Creep::find_closest_by_path(
+  self : Creep,
+  targets : Array[T],
+) -> T? {
+  match
+    self
+    .find_closest_by_path_raw(
+      targets.map(target => GameObjectLike::as_game_object(target)),
+    )
+    .to_option() {
+    Some(target) => Some(target.as_any().cast())
+    None => None
+  }
+}
+
+///|
 pub fn[T : AttackTarget] Creep::attack(self : Creep, target : T) -> Unit {
   ignore(self.attack_result(target))
 }

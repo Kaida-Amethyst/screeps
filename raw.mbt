@@ -200,6 +200,13 @@ pub extern "js" fn Creep::move_to_raw(self : Creep, target : GameObject) -> Int 
   #| (self, target) => self.moveTo(target)
 
 ///|
+pub extern "js" fn Creep::find_closest_by_path_raw(
+  self : Creep,
+  positions : Array[GameObject],
+) -> @core.Nullish[GameObject] =
+  #| (self, positions) => self.findClosestByPath(positions)
+
+///|
 pub extern "js" fn Creep::transfer_raw(
   self : Creep,
   target : GameObject,
