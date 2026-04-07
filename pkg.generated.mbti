@@ -6,13 +6,19 @@ import {
 }
 
 // Values
+pub const ATTACK_PART : String = "attack"
+
 pub const CARRY_PART : String = "carry"
 
 pub const ERR_NOT_IN_RANGE : Int = -9
 
+pub const HEAL_PART : String = "heal"
+
 pub const MOVE_PART : String = "move"
 
 pub const OK_CODE : Int = 0
+
+pub const RANGED_ATTACK_PART : String = "ranged_attack"
 
 pub const RESOURCE_ENERGY : String = "energy"
 
@@ -20,7 +26,11 @@ pub const WORK_PART : String = "work"
 
 pub fn active_sources() -> Array[Source]
 
+pub fn containers() -> Array[StructureContainer]
+
 pub fn creeps() -> Array[Creep]
+
+pub fn enemy_creeps() -> Array[Creep]
 
 pub fn flags() -> Array[Flag]
 
@@ -36,6 +46,8 @@ pub fn sources() -> Array[Source]
 
 pub fn spawns() -> Array[StructureSpawn]
 
+pub fn towers() -> Array[StructureTower]
+
 // Errors
 
 // Types and methods
@@ -48,17 +60,44 @@ pub enum ActionResult {
 #external
 pub type Creep
 pub fn Creep::as_any(Self) -> @core.Any
+pub fn[T : AttackTarget] Creep::attack(Self, T) -> Unit
+pub fn Creep::attack_raw(Self, GameObject) -> Int
+pub fn[T : AttackTarget] Creep::attack_result(Self, T) -> ActionResult
+pub fn Creep::body(Self) -> Array[CreepBodyPart]
 pub fn Creep::harvest_raw(Self, Source) -> Int
 pub fn Creep::harvest_result(Self, Source) -> ActionResult
+pub fn Creep::has_body_part(Self, String) -> Bool
+pub fn Creep::heal(Self, Self) -> Unit
+pub fn Creep::heal_raw(Self, Self) -> Int
+pub fn Creep::heal_result(Self, Self) -> ActionResult
+pub fn Creep::hits(Self) -> Int
+pub fn Creep::hits_max(Self) -> Int
+pub fn Creep::is_damaged(Self) -> Bool
 pub fn[T : GameObjectLike] Creep::move_to(Self, T) -> Unit
 pub fn Creep::move_to_raw(Self, GameObject) -> Int
 pub fn[T : GameObjectLike] Creep::move_to_result(Self, T) -> ActionResult
 pub fn Creep::my(Self) -> Bool
+pub fn[T : RangedAttackTarget] Creep::ranged_attack(Self, T) -> Unit
+pub fn Creep::ranged_attack_raw(Self, GameObject) -> Int
+pub fn[T : RangedAttackTarget] Creep::ranged_attack_result(Self, T) -> ActionResult
 pub fn Creep::store(Self) -> Store
-pub fn[T : GameObjectLike] Creep::transfer_energy_result(Self, T) -> ActionResult
+pub fn[T : TransferTarget] Creep::transfer_energy_result(Self, T) -> ActionResult
 pub fn Creep::transfer_raw(Self, GameObject, String) -> Int
-pub fn[T : GameObjectLike] Creep::transfer_resource_result(Self, T, String) -> ActionResult
+pub fn[T : TransferTarget] Creep::transfer_resource_result(Self, T, String) -> ActionResult
+pub fn[T : WithdrawTarget] Creep::withdraw_energy_result(Self, T) -> ActionResult
+pub fn Creep::withdraw_raw(Self, GameObject, String) -> Int
+pub fn[T : WithdrawTarget] Creep::withdraw_resource_result(Self, T, String) -> ActionResult
+pub impl AttackTarget for Creep
 pub impl GameObjectLike for Creep
+pub impl RangedAttackTarget for Creep
+pub impl TowerAttackTarget for Creep
+pub impl TransferTarget for Creep
+
+#external
+pub type CreepBodyPart
+pub fn CreepBodyPart::as_any(Self) -> @core.Any
+pub fn CreepBodyPart::hits(Self) -> Int
+pub fn CreepBodyPart::part_type(Self) -> String
 
 #external
 pub type Flag
@@ -79,8 +118,17 @@ pub impl GameObjectLike for Source
 #external
 pub type Store
 pub fn Store::as_any(Self) -> @core.Any
+pub fn Store::energy(Self) -> Int
 pub fn Store::free_energy(Self) -> Int
 pub fn Store::used_energy(Self) -> Int
+
+#external
+pub type StructureContainer
+pub fn StructureContainer::as_any(Self) -> @core.Any
+pub fn StructureContainer::store(Self) -> Store
+pub impl GameObjectLike for StructureContainer
+pub impl TransferTarget for StructureContainer
+pub impl WithdrawTarget for StructureContainer
 
 #external
 pub type StructureSpawn
@@ -90,11 +138,44 @@ pub fn StructureSpawn::my(Self) -> Bool
 pub fn StructureSpawn::spawn_creep(Self, Array[String]) -> @core.Any
 pub fn StructureSpawn::store(Self) -> Store
 pub impl GameObjectLike for StructureSpawn
+pub impl TransferTarget for StructureSpawn
+pub impl WithdrawTarget for StructureSpawn
+
+#external
+pub type StructureTower
+pub fn StructureTower::as_any(Self) -> @core.Any
+pub fn[T : TowerAttackTarget] StructureTower::attack(Self, T) -> Unit
+pub fn StructureTower::attack_raw(Self, GameObject) -> Int
+pub fn[T : TowerAttackTarget] StructureTower::attack_result(Self, T) -> ActionResult
+pub fn StructureTower::store(Self) -> Store
+pub impl GameObjectLike for StructureTower
+pub impl TransferTarget for StructureTower
+pub impl WithdrawTarget for StructureTower
 
 // Type aliases
 
 // Traits
+pub(open) trait AttackTarget {
+  as_attack_target(Self) -> GameObject
+}
+
 pub(open) trait GameObjectLike {
   as_game_object(Self) -> GameObject
+}
+
+pub(open) trait RangedAttackTarget {
+  as_ranged_attack_target(Self) -> GameObject
+}
+
+pub(open) trait TowerAttackTarget {
+  as_tower_attack_target(Self) -> GameObject
+}
+
+pub(open) trait TransferTarget {
+  as_transfer_target(Self) -> GameObject
+}
+
+pub(open) trait WithdrawTarget {
+  as_withdraw_target(Self) -> GameObject
 }
 

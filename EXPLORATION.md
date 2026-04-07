@@ -362,3 +362,466 @@ extern "js" fn object_type_name(object : @core.Any) -> String =
 - 依赖运行时 class name 稳定
 
 后续如果找到 MoonBit 更正式的 ES module class-value 导入方式，再回头把这层换回去。
+
+### 4. First attack 的分层
+
+第三关 `First attack` 继续沿用“raw 忠实、api 语义化、main 只写流程”的结构。
+
+1. `raw.mbt`
+
+   只新增：
+
+   - `Creep::attack_raw(self, target : GameObject) -> Int`
+
+   也就是说 raw 层仍然只反映 JS 原始接口：接收目标，返回错误码。
+
+2. `api.mbt`
+
+   这一关没有直接把 `attack` 做成接受任意 `GameObjectLike`，
+   而是单独引入了：
+
+   - `AttackTarget` trait
+   - `Creep::attack_result(target) -> ActionResult`
+   - `Creep::attack(target) -> Unit`
+   - `enemy_creeps() -> Array[Creep]`
+
+   这样做的原因是：
+
+   - `move_to` 的目标集合和 `attack` 的目标集合并不相同
+   - 如果让 `attack` 直接接受任意 `GameObjectLike`，类型会过宽
+   - 单独引入 `AttackTarget` 更符合“接口语义”
+
+   当前先只给 `Creep` 实现 `AttackTarget`，等后面绑定 `Structure`、`ConstructionSite` 时再补上。
+
+3. `main/`
+
+   主流程保持很薄：
+
+   ```moonbit
+   pub fn main_loop() -> Unit {
+     guard @screeps.my_creeps() is [my_creep, ..] else { return }
+     guard @screeps.enemy_creeps() is [enemy_creep, ..] else { return }
+     match my_creep.attack_result(enemy_creep) {
+       NotInRange => my_creep.move_to(enemy_creep)
+       Success => ()
+       Error(_) => ()
+     }
+   }
+   ```
+
+这一层的代码风格已经比最开始那版更接近我们想要的方向：
+
+- 不直接暴露裸错误码
+- 不在主流程里出现 `as_any()`
+- 用 trait 表达“什么对象可以拿来干什么”
+- 用模式匹配表达 Screeps 行为分支
+
+### 5. 正式 binding 设计草案
+
+如果后面要把这个项目继续做成更正式的 Screeps Arena binding，
+目前更推荐的方向不是“直接把 external type 暴露给用户”，而是：
+
+```text
+raw JS type
+  -> MoonBit wrapper
+  -> 更细化的 typed view
+```
+
+也就是：
+
+1. `raw`
+
+   只放最底层 JS FFI：
+
+   - `JsGameObject`
+   - `JsCreep`
+   - `JsSource`
+   - `JsFlag`
+   - `JsStructureSpawn`
+
+   以及这类原始方法：
+
+   - `JsCreep::my() -> Bool`
+   - `JsCreep::attack(target : JsGameObject) -> Int`
+   - `JsCreep::move_to(target : JsGameObject) -> Int`
+
+   raw 层只表达“JS 真实接口长什么样”，不负责语义包装。
+
+2. `model`
+
+   在 raw 之上提供 MoonBit wrapper，例如：
+
+   ```moonbit
+   pub struct Creep {
+     raw : JsCreep
+     relation : Relation
+   }
+   ```
+
+   其中关系字段建议使用枚举，而不是直接存多个布尔值：
+
+   ```moonbit
+   pub enum Relation {
+     Mine
+     Enemy
+     Neutral
+   }
+   ```
+
+   对 `Creep` 来说当前 Arena 基本只有 `Mine` / `Enemy`，
+   但统一用 `Relation` 更适合后面扩到 `Flag` 之类可中立的对象。
+
+3. `api`
+
+   在 wrapper 之上继续提供更高层的 typed view，例如：
+
+   - `MyCreep`
+   - `EnemyCreep`
+
+   以及：
+
+   - `my_creeps() -> Array[MyCreep]`
+   - `enemy_creeps() -> Array[EnemyCreep]`
+   - `MyCreep::attack(target : EnemyCreep) -> ActionResult`
+   - `MyCreep::move_to(target : MoveTarget) -> ActionResult`
+
+这样做的好处是：
+
+- 普通业务代码不需要接触 `JsCreep`
+- 很多“不是我的 creep 却拿去执行动作”的情况可以被类型系统提前挡掉
+- 主流程 API 会更自然
+
+例如最终用户代码更接近：
+
+```moonbit
+pub fn main_loop() -> Unit {
+  guard @screeps.my_creeps() is [me, ..] else { return }
+  guard @screeps.enemy_creeps() is [enemy, ..] else { return }
+  match me.attack(enemy) {
+    NotInRange => ignore(me.move_to(enemy))
+    Success => ()
+    Error(_) => ()
+  }
+}
+```
+
+#### 为什么不推荐直接存很多 `is_xxx`
+
+像下面这种想法：
+
+```moonbit
+struct Creep {
+  obj : JsCreep
+  is_my : Bool
+  is_enemy : Bool
+}
+```
+
+方向是对的，因为它已经开始把 JS 原始对象包成 MoonBit wrapper 了。
+但正式设计里更推荐：
+
+1. 不存 `is_my` + `is_enemy` 这种冗余布尔组合
+2. 改存单一的 `relation : Relation`
+
+原因是：
+
+- 更不容易出现无效状态
+- 语义更集中
+- 更容易扩展到 `Neutral`
+
+同时，也不建议把太多动态状态都缓存到 wrapper 里，例如：
+
+- `hits`
+- `store`
+- `fatigue`
+- `spawning`
+
+这些值变化很快，更适合作为 getter 从 `raw` 里实时读取。
+
+也就是说，wrapper 更适合作为“带语义的 live view”，
+而不是“一次性拍下来的静态快照”。
+
+#### 当前推荐的正式分层结论
+
+如果后面真的进入正式 binding 阶段，推荐采用：
+
+```text
+JsCreep
+  -> Creep
+  -> MyCreep / EnemyCreep
+```
+
+配合：
+
+- `Relation`
+- `ActionResult`
+- `MoveTarget` / `AttackTarget` / `TransferTarget` 这类目标 trait
+
+这是目前看下来最平衡的一条路线：
+
+- 比直接暴露 external type 更安全
+- 比只做单一 wrapper 更有表达力
+- 比堆很多 `is_xxx` 布尔字段更容易长期维护
+
+### 6. Creeps bodies 的分层
+
+第四关 `Creeps bodies` 主要新增了三个点：
+
+- 读取 `creep.body`
+- 读取 `hits` / `hitsMax`
+- 调用 `rangedAttack` 和 `heal`
+
+这一关继续沿用“raw 忠实、api 语义化、main 只写流程”的结构。
+
+1. `raw.mbt`
+
+   只补原始形状，不提前做过强抽象：
+
+   - `CreepBodyPart` external type
+   - `Creep::body() -> Array[CreepBodyPart]`
+   - `CreepBodyPart::part_type() -> String`
+   - `Creep::hits() -> Int`
+   - `Creep::hits_max() -> Int`
+   - `Creep::ranged_attack_raw(...) -> Int`
+   - `Creep::heal_raw(...) -> Int`
+
+   同时把教程里会用到的 body part 常量补成字符串常量：
+
+   - `ATTACK_PART`
+   - `RANGED_ATTACK_PART`
+   - `HEAL_PART`
+
+2. `api.mbt`
+
+   这一关没有直接把 `body` 暴露成 tutorial 逻辑里的裸数组判断，
+   而是先补两个更顺手的 helper：
+
+   - `Creep::has_body_part(part_type : String) -> Bool`
+   - `Creep::is_damaged() -> Bool`
+
+   再补对应动作结果封装：
+
+   - `RangedAttackTarget` trait
+   - `Creep::ranged_attack_result(...) -> ActionResult`
+   - `Creep::heal_result(...) -> ActionResult`
+
+   这里把 `rangedAttack` 单独拆成 `RangedAttackTarget`，
+   而不是偷懒复用 `AttackTarget`，是因为它们未来允许的目标集合并不完全一致。
+
+3. `main/`
+
+   主流程只表达这一关真正想展示的 bot 决策：
+
+   - 有 `ATTACK` 就近战攻击
+   - 有 `RANGED_ATTACK` 就远程攻击
+   - 有 `HEAL` 就优先治疗己方受伤 creep
+   - 如果动作返回 `NotInRange`，就补一个 `move_to`
+
+   这比直接在 `main` 里写一串裸 `Int` 错误码判断更适合直播展示，
+   也更符合 MoonBit 侧想强调的模式匹配和清晰分层。
+
+### 7. Body part 的正式抽象方向
+
+当前 `body part` 仍然保留为字符串常量，例如：
+
+- `ATTACK_PART`
+- `RANGED_ATTACK_PART`
+- `HEAL_PART`
+
+这是因为目前 `raw.mbt` 还在刻意保持“贴近 JS 真实接口”的风格。
+对 tutorial 推进来说，这种形式足够直接，也更方便快速验证。
+
+但如果后面进入更正式的 binding 阶段，`body part` 很适合进一步抽象成 MoonBit enum。
+
+推荐方向如下：
+
+```moonbit
+pub enum BodyPartKind {
+  Move
+  Carry
+  Work
+  Attack
+  RangedAttack
+  Heal
+  Tough
+}
+```
+
+并补两类转换：
+
+```moonbit
+fn BodyPartKind::to_raw(self) -> String
+fn body_part_kind_of(raw : String) -> BodyPartKind?
+```
+
+这样之后，API 层就可以从：
+
+```moonbit
+pub fn Creep::has_body_part(self : Creep, part_type : String) -> Bool
+```
+
+收紧成：
+
+```moonbit
+pub fn Creep::has_body_part(self : Creep, kind : BodyPartKind) -> Bool
+```
+
+上层代码也会自然很多，例如：
+
+```moonbit
+fn melee_creeps(creeps : Array[Creep]) -> Array[Creep] {
+  creeps.filter(creep => creep.has_body_part(Attack))
+}
+```
+
+如果再往前走一步，还可以把原始 `body` 数组也包成更有语义的结构：
+
+```moonbit
+pub struct BodyPart {
+  kind : BodyPartKind
+  hits : Int
+}
+
+pub fn Creep::body_parts(self : Creep) -> Array[BodyPart]
+```
+
+这样做的好处是：
+
+- 主流程里不再暴露字符串常量
+- 更适合用模式匹配处理不同 body part
+- 更符合 MoonBit 想展示的类型建模风格
+
+当前推荐的落点是：
+
+1. `raw` 继续保留字符串，不做过早包装
+2. `api` 层新增 `BodyPartKind`
+3. `main` 和 bot 逻辑只使用 enum，不直接碰字符串
+
+也就是说，这个方向是可行的，而且很适合后续把教程代码进一步整理成更有 MoonBit 风格的版本；
+只是现在还不急着改代码，先把设计记录下来。
+
+### 8. Tower、Container 和资源搬运的分层
+
+这一关主要新增四类能力：
+
+- `StructureTower`
+- `StructureContainer`
+- `Creep::withdraw`
+- `Tower::attack`
+
+以及一个很实际的问题：
+
+- tutorial 原文里通过 `store[RESOURCE_ENERGY]` 直接读取能量
+
+当前实现里，这一关继续保持“raw 忠实、api 收束语义、main 只表达流程”的结构。
+
+1. `raw.mbt`
+
+   这一层新增：
+
+   - `StructureTower`
+   - `StructureContainer`
+   - `towers()`
+   - `containers()`
+   - `Creep::withdraw_raw(...)`
+   - `StructureTower::attack_raw(...)`
+   - `StructureTower::store()`
+   - `StructureContainer::store()`
+
+   也就是说 raw 层仍然只关心“底层 JS 对象长什么样、方法怎么调”。
+
+2. `api.mbt`
+
+   这一关把目标类型进一步收紧了，而不是继续偷懒复用 `GameObjectLike`：
+
+   - `TransferTarget`
+   - `WithdrawTarget`
+   - `TowerAttackTarget`
+
+   对应高层方法为：
+
+   - `Creep::transfer_energy_result(...)`
+   - `Creep::withdraw_energy_result(...)`
+   - `StructureTower::attack_result(...)`
+
+   这样做的原因是：
+
+   - `transfer`、`withdraw`、`tower.attack` 的合法目标集合并不相同
+   - 如果都压成一个宽泛的 `GameObjectLike`，类型会越来越松
+   - 后面继续补结构类型时，更容易沿着语义分层扩展
+
+3. `Store` 的能量读取
+
+   tutorial 原文使用：
+
+   ```js
+   store[RESOURCE_ENERGY]
+   ```
+
+   当前 MoonBit 实现里没有直接复刻这个动态索引写法，而是先收成：
+
+   ```moonbit
+   pub fn Store::energy(self : Store) -> Int
+   ```
+
+   底层仍然来自 `getUsedCapacity("energy")`，但上层代码会更整洁，
+   也更符合当前 tutorial 的实际需求。
+
+4. `main/`
+
+   主流程继续沿用“命名视图 + 明确动作”的风格：
+
+   - `towers_needing_energy`
+   - `empty_creeps`
+   - `loaded_creeps`
+   - `energy_containers`
+   - `refill_tower`
+   - `defend_with_tower`
+
+   这样一来，`main_loop` 读起来更像：
+
+   - 如果塔缺能量，就做补能
+   - 否则，让塔攻击敌方 creep
+
+这一层的代码虽然和 tutorial 原文不逐字相同，但语义上是等价的，
+而且更接近我们想要的 MoonBit 风格。
+
+#### 一个更适合直播讲解的后续方向：把“模式”抽成 enum
+
+这一关的 `main_loop` 本质上其实是在做一个很简单的二选一决策：
+
+- 塔缺能量：补能
+- 塔不缺能量：攻击
+
+如果后面想把这段代码进一步整理成更适合展示 MoonBit 模式匹配的形式，
+一个自然的方向是把这个“模式”显式抽成 enum，例如：
+
+```moonbit
+enum TowerMode {
+  Refill(StructureTower)
+  Defend(StructureTower)
+}
+```
+
+然后把主流程拆成两步：
+
+1. `decide_tower_mode(towers) -> TowerMode?`
+2. `match` 这个结果执行对应动作
+
+大致会长成：
+
+```moonbit
+match decide_tower_mode(towers) {
+  Some(Refill(tower)) => refill_tower(tower, my_creeps, containers)
+  Some(Defend(tower)) => defend_with_tower(tower, enemy_creeps)
+  None => ()
+}
+```
+
+这样做的价值不在于性能，而在于：
+
+- 更容易把“先决策、后执行”的结构讲清楚
+- 更适合直播里展示 MoonBit 的模式匹配
+- 代码语义比简单的 `if/else` 更显式
+
+当前先不改实现，只把这个方向记下来，后面如果要把 tutorial 代码再 MoonBit 化一层，可以优先考虑这条线。
