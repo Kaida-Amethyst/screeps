@@ -13,7 +13,7 @@ pub fn[T : MoveTarget] MyCreep::move_if_not_in_range(
   result : ActionResult,
 ) -> Unit {
   match result {
-    NotInRange => ignore(self.move_to(target))
+    Failed(NotInRange) => ignore(self.move_to(target))
     _ => ()
   }
 }

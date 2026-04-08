@@ -77,7 +77,7 @@ fn try_spawn_fighter(spawn : MySpawn) -> Unit {
   let heavy_result = spawn.spawn_creep(heavy_fighter_body())
   match heavy_result {
     Spawned(_) => ()
-    SpawnFailed(NotEnoughEnergy) =>
+    SpawnFailed(SpawnNotEnoughEnergy) =>
       ignore(spawn.spawn_creep(light_fighter_body()))
     SpawnFailed(_) => ()
   }

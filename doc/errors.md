@@ -33,8 +33,7 @@
 第一阶段正式采用：
 
 ```moonbit
-pub enum ActionResult {
-  Success
+pub enum ActionFailure {
   NotOwner
   Busy
   NotEnoughEnergy
@@ -45,6 +44,11 @@ pub enum ActionResult {
   Tired
   NoBodyPart
   UnknownRawError(Int)
+}
+
+pub enum ActionResult {
+  Success
+  Failed(ActionFailure)
 }
 ```
 
@@ -79,7 +83,7 @@ pub fn MyCreep::transfer(
 ```moonbit
 match creep.harvest(source) {
   Success => ()
-  NotInRange => ignore(creep.move_to(source))
+  Failed(NotInRange) => ignore(creep.move_to(source))
   _ => ()
 }
 ```
@@ -135,21 +139,34 @@ match creep.harvest(source) {
 
 仍建议保留专门结果类型，而不是硬塞进 `ActionResult`。因为它们成功时往往需要返回对象。
 
-例如后续可以考虑：
+正式版当前建议为对象创建类动作提供更窄的失败类型，例如：
 
 ```moonbit
+pub(all) enum SpawnFailure {
+  SpawnNotOwner
+  SpawnBusy
+  SpawnNotEnoughEnergy
+  SpawnInvalidArgs
+  SpawnUnknownRawError(Int)
+}
+
 pub(all) enum SpawnResult {
   Spawned(MyCreep)
-  SpawnFailed(ActionResult)
+  SpawnFailed(SpawnFailure)
+}
+
+pub(all) enum CreateConstructionSiteFailure {
+  CreateInvalidArgs
+  CreateInvalidTarget
+  CreateFull
+  CreateUnknownRawError(Int)
 }
 
 pub(all) enum CreateConstructionSiteResult {
   Created(ConstructionSite)
-  CreateFailed(ActionResult)
+  CreateFailed(CreateConstructionSiteFailure)
 }
 ```
-
-这部分细节可以在实现阶段继续收紧。
 
 ## wrapper / FFI 异常
 
@@ -167,6 +184,6 @@ wrapper、FFI 或宿主环境异常，不应混入 `ActionResult`。
 
 - 正式版第一阶段移除 `ActionError`
 - 普通动作统一返回 `ActionResult`
-- `Success` 与原失败原因处于同一个 ADT 中
+- 普通动作使用 `ActionFailure + ActionResult` 两层建模
 - 查询类“不存在”继续使用 `Option`
-- 对象创建类动作保留专门结果类型的空间
+- 对象创建类动作使用更窄的专门结果类型

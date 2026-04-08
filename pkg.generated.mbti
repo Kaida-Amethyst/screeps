@@ -61,8 +61,7 @@ pub fn towers() -> Array[StructureTower]
 // Errors
 
 // Types and methods
-pub(all) enum ActionResult {
-  Success
+pub(all) enum ActionFailure {
   NotOwner
   Busy
   NotEnoughEnergy
@@ -73,6 +72,11 @@ pub(all) enum ActionResult {
   Tired
   NoBodyPart
   UnknownRawError(Int)
+} derive(Eq, Show)
+
+pub(all) enum ActionResult {
+  Success
+  Failed(ActionFailure)
 } derive(Eq, Show)
 
 pub(all) enum BodyPartKind {
@@ -115,9 +119,16 @@ pub impl GameObjectLike for ConstructionSite
 pub impl MoveTarget for ConstructionSite
 pub impl MyLike for ConstructionSite
 
+pub(all) enum CreateConstructionSiteFailure {
+  CreateInvalidArgs
+  CreateInvalidTarget
+  CreateFull
+  CreateUnknownRawError(Int)
+} derive(Eq, Show)
+
 pub(all) enum CreateConstructionSiteResult {
   Created(ConstructionSite)
-  CreateFailed(ActionResult)
+  CreateFailed(CreateConstructionSiteFailure)
 }
 
 pub struct Creep {
@@ -440,9 +451,17 @@ pub impl GameObjectLike for Source
 pub impl HarvestTarget for Source
 pub impl MoveTarget for Source
 
+pub(all) enum SpawnFailure {
+  SpawnNotOwner
+  SpawnBusy
+  SpawnNotEnoughEnergy
+  SpawnInvalidArgs
+  SpawnUnknownRawError(Int)
+} derive(Eq, Show)
+
 pub(all) enum SpawnResult {
   Spawned(MyCreep)
-  SpawnFailed(ActionResult)
+  SpawnFailed(SpawnFailure)
 }
 
 pub struct Store {

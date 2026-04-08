@@ -13,8 +13,8 @@ pub fn MySpawn::spawn_creep(
     Some(creep) => Spawned(MyCreep::create(creep))
     None =>
       match result.error().to_option() {
-        Some(code) => SpawnFailed(action_result_of(code))
-        None => SpawnFailed(UnknownRawError(-9999))
+        Some(code) => SpawnFailed(spawn_failure_of(code))
+        None => SpawnFailed(SpawnUnknownRawError(-9999))
       }
   }
 }
