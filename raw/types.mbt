@@ -14,6 +14,11 @@ pub type JsStore
 pub type JsSpawnCreepResult
 
 ///|
+/// Screeps Arena raw 层的原始 construction site 创建结果对象类型。
+#external
+pub type JsCreateConstructionSiteResult
+
+///|
 /// Screeps Arena raw 层的原始 Creep 对象类型。
 #external
 pub type JsCreep

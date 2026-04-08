@@ -48,7 +48,7 @@ pub fn construction_sites() -> Array[JsConstructionSite]
 
 pub fn containers() -> Array[JsStructureContainer]
 
-pub fn create_construction_site_by_name(Int, Int, String) -> @core.Any
+pub fn create_construction_site_by_name(Int, Int, String) -> JsCreateConstructionSiteResult
 
 pub fn creeps() -> Array[JsCreep]
 
@@ -76,13 +76,21 @@ pub fn JsConstructionSite::remove_raw(Self) -> Unit
 pub fn JsConstructionSite::to_game_object(Self) -> JsGameObject
 
 #external
+pub type JsCreateConstructionSiteResult
+pub fn JsCreateConstructionSiteResult::error(Self) -> @core.Nullish[Int]
+pub fn JsCreateConstructionSiteResult::object(Self) -> @core.Nullish[JsConstructionSite]
+
+#external
 pub type JsCreep
+pub fn JsCreep::attack_raw(Self, JsGameObject) -> Int
 pub fn JsCreep::build_raw(Self, JsConstructionSite) -> Int
 pub fn JsCreep::harvest_raw(Self, JsSource) -> Int
+pub fn JsCreep::heal_raw(Self, JsGameObject) -> Int
 pub fn JsCreep::hits(Self) -> Int
 pub fn JsCreep::hits_max(Self) -> Int
 pub fn JsCreep::move_to_raw(Self, JsGameObject) -> Int
 pub fn JsCreep::my(Self) -> Bool
+pub fn JsCreep::ranged_attack_raw(Self, JsGameObject) -> Int
 pub fn JsCreep::spawning(Self) -> Bool
 pub fn JsCreep::store(Self) -> JsStore
 pub fn JsCreep::to_game_object(Self) -> JsGameObject
@@ -92,6 +100,10 @@ pub fn JsCreep::withdraw_raw(Self, JsGameObject, String) -> Int
 #external
 pub type JsGameObject
 pub fn JsGameObject::exists(Self) -> Bool
+pub fn JsGameObject::find_closest_by_path_raw(Self, Array[Self]) -> @core.Nullish[Self]
+pub fn JsGameObject::find_closest_by_range_raw(Self, Array[Self]) -> @core.Nullish[Self]
+pub fn JsGameObject::find_in_range_raw(Self, Array[Self], Int) -> Array[Self]
+pub fn JsGameObject::get_range_to_raw(Self, Self) -> Int
 pub fn JsGameObject::id(Self) -> String
 pub fn JsGameObject::x(Self) -> Int
 pub fn JsGameObject::y(Self) -> Int

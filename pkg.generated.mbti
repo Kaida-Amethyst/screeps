@@ -14,6 +14,8 @@ pub fn construction_sites() -> Array[ConstructionSite]
 
 pub fn containers() -> Array[StructureContainer]
 
+pub fn create_construction_site(Int, Int, StructureKind) -> ConstructionSite raise ActionError
+
 pub fn creeps() -> Array[Creep]
 
 pub fn enemy_creeps() -> Array[EnemyCreep]
@@ -22,6 +24,10 @@ pub fn enemy_spawns() -> Array[EnemySpawn]
 
 pub fn enemy_towers() -> Array[EnemyTower]
 
+pub fn[From : GameObjectLike, T : GameObjectLike] find_closest(From, Array[T], by? : ClosestMetric) -> T?
+
+pub fn[From : GameObjectLike, T : GameObjectLike] find_in_range(From, Array[T], Int) -> Array[T]
+
 pub fn owned_construction_sites() -> Array[ConstructionSite]
 
 pub fn owned_creeps() -> Array[OwnedCreep]
@@ -29,6 +35,8 @@ pub fn owned_creeps() -> Array[OwnedCreep]
 pub fn owned_spawns() -> Array[OwnedSpawn]
 
 pub fn owned_towers() -> Array[OwnedTower]
+
+pub fn[A : GameObjectLike, B : GameObjectLike] range_between(A, B) -> Int
 
 pub fn relation_of_my_bool(Bool) -> Relation
 
@@ -71,17 +79,25 @@ pub enum BodyPartKind {
 } derive(Compare, Eq, Show)
 pub fn BodyPartKind::to_raw(Self) -> String
 
+pub enum ClosestMetric {
+  Path
+  Range
+} derive(Compare, Eq, Show)
+
 pub struct ConstructionSite {
   // private fields
 }
 pub fn ConstructionSite::as_game_object(Self) -> GameObject
 pub fn ConstructionSite::create(@raw.JsConstructionSite) -> Self
 pub fn ConstructionSite::exists(Self) -> Bool
+pub fn[T : GameObjectLike] ConstructionSite::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] ConstructionSite::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn ConstructionSite::id(Self) -> String
 pub fn ConstructionSite::is_enemy(Self) -> Bool
 pub fn ConstructionSite::is_owned(Self) -> Bool
 pub fn ConstructionSite::progress(Self) -> Int
 pub fn ConstructionSite::progress_total(Self) -> Int
+pub fn[T : GameObjectLike] ConstructionSite::range_to(Self, T) -> Int
 pub fn ConstructionSite::relation(Self) -> Relation
 pub fn ConstructionSite::remove(Self) -> Unit
 pub fn ConstructionSite::to_raw(Self) -> @raw.JsConstructionSite
@@ -98,11 +114,14 @@ pub fn Creep::as_game_object(Self) -> GameObject
 pub fn Creep::as_owned(Self) -> OwnedCreep?
 pub fn Creep::create(@raw.JsCreep) -> Self
 pub fn Creep::exists(Self) -> Bool
+pub fn[T : GameObjectLike] Creep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] Creep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn Creep::hits(Self) -> Int
 pub fn Creep::hits_max(Self) -> Int
 pub fn Creep::id(Self) -> String
 pub fn Creep::is_enemy(Self) -> Bool
 pub fn Creep::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] Creep::range_to(Self, T) -> Int
 pub fn Creep::relation(Self) -> Relation
 pub fn Creep::spawning(Self) -> Bool
 pub fn Creep::store(Self) -> Store
@@ -121,11 +140,14 @@ pub fn EnemyCreep::as_creep(Self) -> Creep
 pub fn EnemyCreep::as_game_object(Self) -> GameObject
 pub fn EnemyCreep::create(@raw.JsCreep) -> Self
 pub fn EnemyCreep::exists(Self) -> Bool
+pub fn[T : GameObjectLike] EnemyCreep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] EnemyCreep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn EnemyCreep::hits(Self) -> Int
 pub fn EnemyCreep::hits_max(Self) -> Int
 pub fn EnemyCreep::id(Self) -> String
 pub fn EnemyCreep::is_enemy(Self) -> Bool
 pub fn EnemyCreep::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] EnemyCreep::range_to(Self, T) -> Int
 pub fn EnemyCreep::relation(Self) -> Relation
 pub fn EnemyCreep::spawning(Self) -> Bool
 pub fn EnemyCreep::store(Self) -> Store
@@ -144,11 +166,14 @@ pub fn EnemySpawn::as_game_object(Self) -> GameObject
 pub fn EnemySpawn::as_structure_spawn(Self) -> StructureSpawn
 pub fn EnemySpawn::create(@raw.JsStructureSpawn) -> Self
 pub fn EnemySpawn::exists(Self) -> Bool
+pub fn[T : GameObjectLike] EnemySpawn::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] EnemySpawn::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn EnemySpawn::hits(Self) -> Int
 pub fn EnemySpawn::hits_max(Self) -> Int
 pub fn EnemySpawn::id(Self) -> String
 pub fn EnemySpawn::is_enemy(Self) -> Bool
 pub fn EnemySpawn::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] EnemySpawn::range_to(Self, T) -> Int
 pub fn EnemySpawn::relation(Self) -> Relation
 pub fn EnemySpawn::store(Self) -> Store
 pub fn EnemySpawn::to_raw(Self) -> @raw.JsStructureSpawn
@@ -167,11 +192,14 @@ pub fn EnemyTower::as_structure_tower(Self) -> StructureTower
 pub fn EnemyTower::cooldown(Self) -> Int
 pub fn EnemyTower::create(@raw.JsStructureTower) -> Self
 pub fn EnemyTower::exists(Self) -> Bool
+pub fn[T : GameObjectLike] EnemyTower::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] EnemyTower::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn EnemyTower::hits(Self) -> Int
 pub fn EnemyTower::hits_max(Self) -> Int
 pub fn EnemyTower::id(Self) -> String
 pub fn EnemyTower::is_enemy(Self) -> Bool
 pub fn EnemyTower::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] EnemyTower::range_to(Self, T) -> Int
 pub fn EnemyTower::relation(Self) -> Relation
 pub fn EnemyTower::store(Self) -> Store
 pub fn EnemyTower::to_raw(Self) -> @raw.JsStructureTower
@@ -187,7 +215,10 @@ pub struct GameObject {
 }
 pub fn GameObject::create(@raw.JsGameObject) -> Self
 pub fn GameObject::exists(Self) -> Bool
+pub fn[T : GameObjectLike] GameObject::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] GameObject::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn GameObject::id(Self) -> String
+pub fn[T : GameObjectLike] GameObject::range_to(Self, T) -> Int
 pub fn GameObject::to_raw(Self) -> @raw.JsGameObject
 pub fn GameObject::x(Self) -> Int
 pub fn GameObject::y(Self) -> Int
@@ -198,16 +229,22 @@ pub struct OwnedCreep {
 }
 pub fn OwnedCreep::as_creep(Self) -> Creep
 pub fn OwnedCreep::as_game_object(Self) -> GameObject
+pub fn[T : GameObjectLike] OwnedCreep::attack(Self, T) -> Unit raise ActionError
 pub fn OwnedCreep::build(Self, ConstructionSite) -> Unit raise ActionError
 pub fn OwnedCreep::create(@raw.JsCreep) -> Self
 pub fn OwnedCreep::exists(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedCreep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] OwnedCreep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn OwnedCreep::harvest(Self, Source) -> Unit raise ActionError
+pub fn[T : GameObjectLike] OwnedCreep::heal(Self, T) -> Unit raise ActionError
 pub fn OwnedCreep::hits(Self) -> Int
 pub fn OwnedCreep::hits_max(Self) -> Int
 pub fn OwnedCreep::id(Self) -> String
 pub fn OwnedCreep::is_enemy(Self) -> Bool
 pub fn OwnedCreep::is_owned(Self) -> Bool
 pub fn[T : GameObjectLike] OwnedCreep::move_to(Self, T) -> Unit raise ActionError
+pub fn[T : GameObjectLike] OwnedCreep::range_to(Self, T) -> Int
+pub fn[T : GameObjectLike] OwnedCreep::ranged_attack(Self, T) -> Unit raise ActionError
 pub fn OwnedCreep::relation(Self) -> Relation
 pub fn OwnedCreep::spawning(Self) -> Bool
 pub fn OwnedCreep::store(Self) -> Store
@@ -230,11 +267,14 @@ pub fn OwnedSpawn::as_game_object(Self) -> GameObject
 pub fn OwnedSpawn::as_structure_spawn(Self) -> StructureSpawn
 pub fn OwnedSpawn::create(@raw.JsStructureSpawn) -> Self
 pub fn OwnedSpawn::exists(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedSpawn::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] OwnedSpawn::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn OwnedSpawn::hits(Self) -> Int
 pub fn OwnedSpawn::hits_max(Self) -> Int
 pub fn OwnedSpawn::id(Self) -> String
 pub fn OwnedSpawn::is_enemy(Self) -> Bool
 pub fn OwnedSpawn::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedSpawn::range_to(Self, T) -> Int
 pub fn OwnedSpawn::relation(Self) -> Relation
 pub fn OwnedSpawn::spawn_creep(Self, Array[BodyPartKind]) -> OwnedCreep raise ActionError
 pub fn OwnedSpawn::store(Self) -> Store
@@ -255,12 +295,15 @@ pub fn[T : GameObjectLike] OwnedTower::attack(Self, T) -> Unit raise ActionError
 pub fn OwnedTower::cooldown(Self) -> Int
 pub fn OwnedTower::create(@raw.JsStructureTower) -> Self
 pub fn OwnedTower::exists(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedTower::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] OwnedTower::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn[T : GameObjectLike] OwnedTower::heal(Self, T) -> Unit raise ActionError
 pub fn OwnedTower::hits(Self) -> Int
 pub fn OwnedTower::hits_max(Self) -> Int
 pub fn OwnedTower::id(Self) -> String
 pub fn OwnedTower::is_enemy(Self) -> Bool
 pub fn OwnedTower::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedTower::range_to(Self, T) -> Int
 pub fn OwnedTower::relation(Self) -> Relation
 pub fn OwnedTower::store(Self) -> Store
 pub fn OwnedTower::to_raw(Self) -> @raw.JsStructureTower
@@ -290,7 +333,10 @@ pub fn Source::create(@raw.JsSource) -> Self
 pub fn Source::energy(Self) -> Int
 pub fn Source::energy_capacity(Self) -> Int
 pub fn Source::exists(Self) -> Bool
+pub fn[T : GameObjectLike] Source::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] Source::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn Source::id(Self) -> String
+pub fn[T : GameObjectLike] Source::range_to(Self, T) -> Int
 pub fn Source::to_raw(Self) -> @raw.JsSource
 pub fn Source::x(Self) -> Int
 pub fn Source::y(Self) -> Int
@@ -314,11 +360,14 @@ pub struct StructureContainer {
 pub fn StructureContainer::as_game_object(Self) -> GameObject
 pub fn StructureContainer::create(@raw.JsStructureContainer) -> Self
 pub fn StructureContainer::exists(Self) -> Bool
+pub fn[T : GameObjectLike] StructureContainer::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] StructureContainer::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn StructureContainer::hits(Self) -> Int
 pub fn StructureContainer::hits_max(Self) -> Int
 pub fn StructureContainer::id(Self) -> String
 pub fn StructureContainer::is_enemy(Self) -> Bool
 pub fn StructureContainer::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] StructureContainer::range_to(Self, T) -> Int
 pub fn StructureContainer::relation(Self) -> Relation
 pub fn StructureContainer::store(Self) -> Store
 pub fn StructureContainer::to_raw(Self) -> @raw.JsStructureContainer
@@ -329,6 +378,17 @@ pub impl HasHits for StructureContainer
 pub impl HasStore for StructureContainer
 pub impl OwnedLike for StructureContainer
 
+pub enum StructureKind {
+  Spawn
+  Extension
+  Road
+  Rampart
+  Wall
+  Tower
+  Container
+} derive(Compare, Eq, Show)
+pub fn StructureKind::to_prototype_name(Self) -> String
+
 pub struct StructureSpawn {
   // private fields
 }
@@ -337,11 +397,14 @@ pub fn StructureSpawn::as_game_object(Self) -> GameObject
 pub fn StructureSpawn::as_owned(Self) -> OwnedSpawn?
 pub fn StructureSpawn::create(@raw.JsStructureSpawn) -> Self
 pub fn StructureSpawn::exists(Self) -> Bool
+pub fn[T : GameObjectLike] StructureSpawn::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] StructureSpawn::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn StructureSpawn::hits(Self) -> Int
 pub fn StructureSpawn::hits_max(Self) -> Int
 pub fn StructureSpawn::id(Self) -> String
 pub fn StructureSpawn::is_enemy(Self) -> Bool
 pub fn StructureSpawn::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] StructureSpawn::range_to(Self, T) -> Int
 pub fn StructureSpawn::relation(Self) -> Relation
 pub fn StructureSpawn::store(Self) -> Store
 pub fn StructureSpawn::to_raw(Self) -> @raw.JsStructureSpawn
@@ -361,11 +424,14 @@ pub fn StructureTower::as_owned(Self) -> OwnedTower?
 pub fn StructureTower::cooldown(Self) -> Int
 pub fn StructureTower::create(@raw.JsStructureTower) -> Self
 pub fn StructureTower::exists(Self) -> Bool
+pub fn[T : GameObjectLike] StructureTower::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] StructureTower::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn StructureTower::hits(Self) -> Int
 pub fn StructureTower::hits_max(Self) -> Int
 pub fn StructureTower::id(Self) -> String
 pub fn StructureTower::is_enemy(Self) -> Bool
 pub fn StructureTower::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] StructureTower::range_to(Self, T) -> Int
 pub fn StructureTower::relation(Self) -> Relation
 pub fn StructureTower::store(Self) -> Store
 pub fn StructureTower::to_raw(Self) -> @raw.JsStructureTower

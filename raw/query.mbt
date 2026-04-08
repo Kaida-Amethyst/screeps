@@ -70,7 +70,7 @@ extern "js" fn create_construction_site_by_name_ffi(
   x : Int,
   y : Int,
   name : String,
-) -> @core.Any =
+) -> JsCreateConstructionSiteResult =
   #| (x, y, name) => {
   #|   const host = globalThis.__moonbit_screeps_host;
   #|   if (!host?.createConstructionSiteByPrototypeName) {
@@ -84,6 +84,18 @@ pub fn create_construction_site_by_name(
   x : Int,
   y : Int,
   name : String,
-) -> @core.Any {
+) -> JsCreateConstructionSiteResult {
   create_construction_site_by_name_ffi(x, y, name)
 }
+
+///|
+pub extern "js" fn JsCreateConstructionSiteResult::object(
+  self : JsCreateConstructionSiteResult,
+) -> @core.Nullish[JsConstructionSite] =
+  #| (self) => self.object
+
+///|
+pub extern "js" fn JsCreateConstructionSiteResult::error(
+  self : JsCreateConstructionSiteResult,
+) -> @core.Nullish[Int] =
+  #| (self) => self.error

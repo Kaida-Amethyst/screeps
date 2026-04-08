@@ -62,6 +62,12 @@ creep.find_in_range(enemy_creeps, 3)
 creep.range_to(target)
 ```
 
+当前实现说明：
+
+- 由于 MoonBit 当前不支持多态 trait 方法
+- 方法式接口通过各个 wrapper 上的同名方法提供
+- 同时仍保留函数式版本作为通用入口
+
 原因：
 
 - 这类查询天然有“从谁出发”的中心对象

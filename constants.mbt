@@ -57,3 +57,28 @@ pub fn resource_kind_of(raw : String) -> ResourceKind? {
     _ => None
   }
 }
+
+///|
+/// 结构原型名称用于创建 construction site。
+pub enum StructureKind {
+  Spawn
+  Extension
+  Road
+  Rampart
+  Wall
+  Tower
+  Container
+} derive(Show, Eq, Compare)
+
+///|
+pub fn StructureKind::to_prototype_name(self : StructureKind) -> String {
+  match self {
+    Spawn => "StructureSpawn"
+    Extension => "StructureExtension"
+    Road => "StructureRoad"
+    Rampart => "StructureRampart"
+    Wall => "StructureWall"
+    Tower => "StructureTower"
+    Container => "StructureContainer"
+  }
+}

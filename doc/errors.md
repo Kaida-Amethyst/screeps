@@ -83,7 +83,11 @@ pub fn OwnedSpawn::spawn(
   body : Array[BodyPartKind]
 ) -> OwnedCreep raise ActionError
 
-pub fn create_construction_site(...) -> ConstructionSite raise ActionError
+pub fn create_construction_site(
+  x : Int,
+  y : Int,
+  kind : StructureKind
+) -> ConstructionSite raise ActionError
 ```
 
 ## 调用侧处理方式

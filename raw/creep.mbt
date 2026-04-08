@@ -54,3 +54,24 @@ pub extern "js" fn JsCreep::build_raw(
   target : JsConstructionSite,
 ) -> Int =
   #| (self, target) => self.build(target)
+
+///|
+pub extern "js" fn JsCreep::attack_raw(
+  self : JsCreep,
+  target : JsGameObject,
+) -> Int =
+  #| (self, target) => self.attack(target)
+
+///|
+pub extern "js" fn JsCreep::ranged_attack_raw(
+  self : JsCreep,
+  target : JsGameObject,
+) -> Int =
+  #| (self, target) => self.rangedAttack(target)
+
+///|
+pub extern "js" fn JsCreep::heal_raw(
+  self : JsCreep,
+  target : JsGameObject,
+) -> Int =
+  #| (self, target) => self.heal(target)

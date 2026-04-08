@@ -65,3 +65,29 @@ pub fn OwnedCreep::build(
 ) -> Unit raise ActionError {
   raise_action_error(self.to_raw().build_raw(target.to_raw()))
 }
+
+///|
+pub fn[T : GameObjectLike] OwnedCreep::attack(
+  self : OwnedCreep,
+  target : T,
+) -> Unit raise ActionError {
+  raise_action_error(self.to_raw().attack_raw(target.as_game_object().to_raw()))
+}
+
+///|
+pub fn[T : GameObjectLike] OwnedCreep::ranged_attack(
+  self : OwnedCreep,
+  target : T,
+) -> Unit raise ActionError {
+  raise_action_error(
+    self.to_raw().ranged_attack_raw(target.as_game_object().to_raw()),
+  )
+}
+
+///|
+pub fn[T : GameObjectLike] OwnedCreep::heal(
+  self : OwnedCreep,
+  target : T,
+) -> Unit raise ActionError {
+  raise_action_error(self.to_raw().heal_raw(target.as_game_object().to_raw()))
+}

@@ -10,6 +10,34 @@
 - `raw` 可以继续保留字符串常量和数字常量
 - `api` 不再鼓励用户直接使用字符串常量
 
+## 结构原型抽象
+
+第一阶段正式引入：
+
+```moonbit
+pub enum StructureKind {
+  Spawn
+  Extension
+  Road
+  Rampart
+  Wall
+  Tower
+  Container
+}
+```
+
+并提供：
+
+```moonbit
+fn StructureKind::to_prototype_name(self) -> String
+```
+
+### 当前定位
+
+- 这层抽象主要服务于 `create_construction_site`
+- `raw` 层仍然只处理原始 prototype name
+- 高层 API 不再要求用户直接传 `"StructureTower"` 这类字符串
+
 ## Body Part 抽象
 
 第一阶段建议正式引入：
@@ -159,6 +187,8 @@ pub fn Store::free_energy(self) -> Int
 - 第一阶段正式引入：
   - `BodyPartKind`
   - `ResourceKind`
+- 第一阶段同时引入：
+  - `StructureKind`
 - `raw` 保留原始字符串 / 数字常量
 - `api` 优先暴露 enum
 - `Store` 同时提供通用资源接口与 `energy` 便捷接口
