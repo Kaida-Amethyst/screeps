@@ -46,6 +46,16 @@ pub fn sources() -> Array[JsSource] {
 }
 
 ///|
+pub fn flags() -> Array[JsFlag] {
+  cast_objects(get_objects_by_prototype_name_ffi("Flag"))
+}
+
+///|
+pub fn structures() -> Array[JsGameObject] {
+  cast_objects(get_objects_by_prototype_name_ffi("Structure"))
+}
+
+///|
 pub fn spawns() -> Array[JsStructureSpawn] {
   cast_objects(get_objects_by_prototype_name_ffi("StructureSpawn"))
 }

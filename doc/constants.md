@@ -9,13 +9,15 @@
   - `api`：引入 MoonBit 风格的 enum 和高层 helper
 - `raw` 可以继续保留字符串常量和数字常量
 - `api` 不再鼓励用户直接使用字符串常量
+- 对需要在下游包直接使用的高层 enum，正式版使用 `pub(all)` 导出构造子
+- 正常业务代码应直接使用 `Work`、`Energy`、`Tower` 这类 ADT 值，而不是先写字符串再解析
 
 ## 结构原型抽象
 
 第一阶段正式引入：
 
 ```moonbit
-pub enum StructureKind {
+pub(all) enum StructureKind {
   Spawn
   Extension
   Road
@@ -30,6 +32,7 @@ pub enum StructureKind {
 
 ```moonbit
 fn StructureKind::to_prototype_name(self) -> String
+fn structure_kinds() -> Array[StructureKind]
 ```
 
 ### 当前定位
@@ -43,7 +46,7 @@ fn StructureKind::to_prototype_name(self) -> String
 第一阶段建议正式引入：
 
 ```moonbit
-pub enum BodyPartKind {
+pub(all) enum BodyPartKind {
   Move
   Work
   Carry
@@ -54,12 +57,16 @@ pub enum BodyPartKind {
 }
 ```
 
-并提供双向转换：
+并提供转换：
 
 ```moonbit
 fn BodyPartKind::to_raw(self) -> String
-fn body_part_kind_of(raw : String) -> BodyPartKind?
 ```
+
+其中：
+
+- `to_raw` 主要服务于 binding 内部和 `raw` 交互
+- 正常下游代码直接使用 `Work`、`Carry`、`Move` 等 ADT 值
 
 ### 高层收益
 
@@ -88,16 +95,15 @@ pub struct BodyPart {
 第一阶段也建议引入：
 
 ```moonbit
-pub enum ResourceKind {
+pub(all) enum ResourceKind {
   Energy
 }
 ```
 
-并提供双向转换：
+并提供转换：
 
 ```moonbit
 fn ResourceKind::to_raw(self) -> String
-fn resource_kind_of(raw : String) -> ResourceKind?
 ```
 
 ### 当前策略
@@ -105,6 +111,7 @@ fn resource_kind_of(raw : String) -> ResourceKind?
 - 第一阶段先只覆盖 `Energy`
 - 但结构上从一开始就采用 enum
 - 不继续把 `RESOURCE_ENERGY` 字符串常量作为正式高层 API 主入口
+- 下游包应可以直接使用 `Energy`
 
 ## `raw` 层策略
 
@@ -134,7 +141,7 @@ fn resource_kind_of(raw : String) -> ResourceKind?
 pub fn OwnedSpawn::spawn(
   self,
   body : Array[BodyPartKind]
-) -> OwnedCreep raise ActionError
+) -> SpawnResult
 ```
 
 ```moonbit
@@ -143,7 +150,7 @@ pub fn OwnedCreep::transfer(
   target : TransferTarget,
   resource : ResourceKind,
   amount? : Int
-) -> Unit raise ActionError
+) -> ActionResult
 ```
 
 同时允许提供更顺手的常用 helper，例如：
@@ -175,7 +182,7 @@ pub fn Store::free_energy(self) -> Int
 
 - `raw` 保留原始数字常量
 - `api` 不鼓励用户直接处理 `ERR_*` 数字常量
-- 高层错误处理以 `suberror ActionError` 为主
+- 高层动作结果以 `ActionResult` 为主
 
 因此：
 
@@ -189,7 +196,8 @@ pub fn Store::free_energy(self) -> Int
   - `ResourceKind`
 - 第一阶段同时引入：
   - `StructureKind`
+- 可通过 `structure_kinds()` 获取当前支持的结构原型种类列表
 - `raw` 保留原始字符串 / 数字常量
-- `api` 优先暴露 enum
+- `api` 优先暴露 enum，并允许下游直接构造这些 enum 的值
 - `Store` 同时提供通用资源接口与 `energy` 便捷接口
 - 错误码常量留在底层，不作为高层主接口

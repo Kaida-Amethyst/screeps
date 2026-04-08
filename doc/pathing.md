@@ -9,6 +9,7 @@
 - 高层主推荐方法式接口
 - 同时保留函数式通用版本
 - `findPath / searchPath` 这类路径搜索工具仍以函数式为主
+- `ClosestMetric` 采用 `pub(all)` 导出构造子，下游包可直接使用 `Path` / `Range`
 
 ## `findClosestByPath / findClosestByRange` 的统一
 
@@ -36,7 +37,7 @@ find_closest(candidates, by~ : ClosestMetric = Path)
 当前建议正式引入：
 
 ```moonbit
-pub enum ClosestMetric {
+pub(all) enum ClosestMetric {
   Path
   Range
 }
@@ -48,6 +49,14 @@ pub enum ClosestMetric {
 - 支持默认参数
 - 提高可读性
 - 为后续扩展保留空间
+
+同时提供：
+
+```moonbit
+fn closest_metrics() -> Array[ClosestMetric]
+```
+
+用于获取当前支持的距离度量方式列表。
 
 ## 方法式与函数式的取舍
 

@@ -88,15 +88,15 @@
 
 ## 动作返回值与错误建模
 
-- 确认 `ActionResult` 是否继续作为统一结果类型
-- 讨论是否需要更细的结果类型
+- 已决定普通动作统一使用 `ActionResult`
+- 后续继续讨论是否需要更细的结果类型
   - `SpawnResult`
   - `CreateConstructionSiteResult`
   - `TransferResult`
 - 决定原始错误码在哪一层暴露
   - `raw` 全暴露
   - `api` 转为 ADT
-- 讨论 `Unit` 风格便捷方法与 `*_result` 方法是否同时保留
+- 讨论对象创建类动作最终采用哪一种专门结果类型
 
 ## 常量、资源与 Body Part 抽象
 

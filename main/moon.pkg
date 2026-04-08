@@ -1,0 +1,8 @@
+import {
+  "username/screeps",
+}
+
+options(
+  "is-main": true,
+  link: { "js": { "exports": [ "main_loop:loop" ] } },
+)

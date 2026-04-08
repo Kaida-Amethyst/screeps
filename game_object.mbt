@@ -58,6 +58,24 @@ pub fn GameObject::as_source(self : GameObject) -> Source? {
 }
 
 ///|
+pub fn GameObject::as_flag(self : GameObject) -> Flag? {
+  if self.prototype_name() == "Flag" {
+    Some(Flag::create(self.raw.to_flag()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_structure(self : GameObject) -> Structure? {
+  if self.raw.is_structure() {
+    Some(Structure::create(self.raw))
+  } else {
+    None
+  }
+}
+
+///|
 pub fn GameObject::as_structure_spawn(self : GameObject) -> StructureSpawn? {
   if self.prototype_name() == "StructureSpawn" {
     Some(StructureSpawn::create(self.raw.to_structure_spawn()))

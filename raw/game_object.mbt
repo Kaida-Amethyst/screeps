@@ -6,6 +6,9 @@ pub fn JsCreep::to_game_object(self : JsCreep) -> JsGameObject = "%identity"
 pub fn JsSource::to_game_object(self : JsSource) -> JsGameObject = "%identity"
 
 ///|
+pub fn JsFlag::to_game_object(self : JsFlag) -> JsGameObject = "%identity"
+
+///|
 pub fn JsStructureSpawn::to_game_object(
   self : JsStructureSpawn,
 ) -> JsGameObject = "%identity"
@@ -30,6 +33,9 @@ pub fn JsGameObject::to_creep(self : JsGameObject) -> JsCreep = "%identity"
 
 ///|
 pub fn JsGameObject::to_source(self : JsGameObject) -> JsSource = "%identity"
+
+///|
+pub fn JsGameObject::to_flag(self : JsGameObject) -> JsFlag = "%identity"
 
 ///|
 pub fn JsGameObject::to_structure_spawn(
@@ -67,6 +73,26 @@ pub extern "js" fn JsGameObject::y(self : JsGameObject) -> Int =
 ///|
 pub extern "js" fn JsGameObject::exists(self : JsGameObject) -> Bool =
   #| (self) => self.exists
+
+///|
+pub extern "js" fn JsGameObject::my(self : JsGameObject) -> @core.Nullish[Bool] =
+  #| (self) => self.my
+
+///|
+pub extern "js" fn JsGameObject::hits(
+  self : JsGameObject,
+) -> @core.Nullish[Int] =
+  #| (self) => self.hits
+
+///|
+pub extern "js" fn JsGameObject::hits_max(
+  self : JsGameObject,
+) -> @core.Nullish[Int] =
+  #| (self) => self.hitsMax
+
+///|
+pub extern "js" fn JsGameObject::is_structure(self : JsGameObject) -> Bool =
+  #| (self) => self?.constructor?.name?.startsWith("Structure") ?? false
 
 ///|
 pub extern "js" fn JsGameObject::prototype_name(self : JsGameObject) -> String =

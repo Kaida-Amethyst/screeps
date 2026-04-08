@@ -4,7 +4,6 @@ pub suberror ActionError {
   NotOwner
   Busy
   NotEnoughEnergy
-  NotEnoughResources
   InvalidTarget
   Full
   NotInRange

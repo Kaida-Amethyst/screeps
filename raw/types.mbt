@@ -29,6 +29,11 @@ pub type JsCreep
 pub type JsSource
 
 ///|
+/// Screeps Arena raw 层的原始 Flag 对象类型。
+#external
+pub type JsFlag
+
+///|
 /// Screeps Arena raw 层的原始 StructureSpawn 对象类型。
 #external
 pub type JsStructureSpawn

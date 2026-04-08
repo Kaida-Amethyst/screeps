@@ -8,7 +8,7 @@ import {
 // Values
 pub fn active_sources() -> Array[Source]
 
-pub fn body_part_kind_of(String) -> BodyPartKind?
+pub fn closest_metrics() -> Array[ClosestMetric]
 
 pub fn construction_sites() -> Array[ConstructionSite]
 
@@ -28,6 +28,8 @@ pub fn[From : GameObjectLike, T : GameObjectLike] find_closest(From, Array[T], b
 
 pub fn[From : GameObjectLike, T : GameObjectLike] find_in_range(From, Array[T], Int) -> Array[T]
 
+pub fn flags() -> Array[Flag]
+
 pub fn object_by_id(String) -> GameObject?
 
 pub fn owned_construction_sites() -> Array[ConstructionSite]
@@ -44,11 +46,13 @@ pub fn relation_of_my_bool(Bool) -> Relation
 
 pub fn relation_of_owned_flag(Bool?) -> Relation
 
-pub fn resource_kind_of(String) -> ResourceKind?
-
 pub fn sources() -> Array[Source]
 
 pub fn spawns() -> Array[StructureSpawn]
+
+pub fn structure_kinds() -> Array[StructureKind]
+
+pub fn structures() -> Array[Structure]
 
 pub fn ticks() -> Int
 
@@ -59,7 +63,6 @@ pub suberror ActionError {
   NotOwner
   Busy
   NotEnoughEnergy
-  NotEnoughResources
   InvalidTarget
   Full
   NotInRange
@@ -70,7 +73,7 @@ pub suberror ActionError {
 } derive(Show)
 
 // Types and methods
-pub enum BodyPartKind {
+pub(all) enum BodyPartKind {
   Move
   Work
   Carry
@@ -81,7 +84,7 @@ pub enum BodyPartKind {
 } derive(Compare, Eq, Show)
 pub fn BodyPartKind::to_raw(Self) -> String
 
-pub enum ClosestMetric {
+pub(all) enum ClosestMetric {
   Path
   Range
 } derive(Compare, Eq, Show)
@@ -238,12 +241,34 @@ pub impl TowerAttackTarget for EnemyTower
 pub impl TransferTarget for EnemyTower
 pub impl WithdrawTarget for EnemyTower
 
+pub struct Flag {
+  // private fields
+}
+pub fn Flag::as_game_object(Self) -> GameObject
+pub fn Flag::create(@raw.JsFlag) -> Self
+pub fn Flag::exists(Self) -> Bool
+pub fn[T : GameObjectLike] Flag::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] Flag::find_in_range(Self, Array[T], Int) -> Array[T]
+pub fn Flag::id(Self) -> String
+pub fn Flag::is_enemy(Self) -> Bool
+pub fn Flag::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] Flag::range_to(Self, T) -> Int
+pub fn Flag::relation(Self) -> Relation
+pub fn Flag::to_raw(Self) -> @raw.JsFlag
+pub fn Flag::x(Self) -> Int
+pub fn Flag::y(Self) -> Int
+pub impl GameObjectLike for Flag
+pub impl MoveTarget for Flag
+pub impl OwnedLike for Flag
+
 pub struct GameObject {
   // private fields
 }
 pub fn GameObject::as_construction_site(Self) -> ConstructionSite?
 pub fn GameObject::as_creep(Self) -> Creep?
+pub fn GameObject::as_flag(Self) -> Flag?
 pub fn GameObject::as_source(Self) -> Source?
+pub fn GameObject::as_structure(Self) -> Structure?
 pub fn GameObject::as_structure_container(Self) -> StructureContainer?
 pub fn GameObject::as_structure_spawn(Self) -> StructureSpawn?
 pub fn GameObject::as_structure_tower(Self) -> StructureTower?
@@ -374,7 +399,7 @@ pub enum Relation {
   Neutral
 } derive(Compare, Eq, Show)
 
-pub enum ResourceKind {
+pub(all) enum ResourceKind {
   Energy
 } derive(Compare, Eq, Show)
 pub fn ResourceKind::to_raw(Self) -> String
@@ -410,6 +435,33 @@ pub fn Store::free_energy(Self) -> Int
 pub fn Store::to_raw(Self) -> @raw.JsStore
 pub fn Store::used(Self, ResourceKind) -> Int
 
+pub struct Structure {
+  // private fields
+}
+pub fn Structure::as_game_object(Self) -> GameObject
+pub fn Structure::create(@raw.JsGameObject) -> Self
+pub fn Structure::exists(Self) -> Bool
+pub fn[T : GameObjectLike] Structure::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
+pub fn[T : GameObjectLike] Structure::find_in_range(Self, Array[T], Int) -> Array[T]
+pub fn Structure::hits(Self) -> Int
+pub fn Structure::hits_max(Self) -> Int
+pub fn Structure::id(Self) -> String
+pub fn Structure::is_enemy(Self) -> Bool
+pub fn Structure::is_owned(Self) -> Bool
+pub fn Structure::prototype_name(Self) -> String
+pub fn[T : GameObjectLike] Structure::range_to(Self, T) -> Int
+pub fn Structure::relation(Self) -> Relation
+pub fn Structure::to_raw(Self) -> @raw.JsGameObject
+pub fn Structure::x(Self) -> Int
+pub fn Structure::y(Self) -> Int
+pub impl AttackTarget for Structure
+pub impl GameObjectLike for Structure
+pub impl HasHits for Structure
+pub impl MoveTarget for Structure
+pub impl OwnedLike for Structure
+pub impl RangedAttackTarget for Structure
+pub impl TowerAttackTarget for Structure
+
 pub struct StructureContainer {
   // private fields
 }
@@ -440,7 +492,7 @@ pub impl TowerAttackTarget for StructureContainer
 pub impl TransferTarget for StructureContainer
 pub impl WithdrawTarget for StructureContainer
 
-pub enum StructureKind {
+pub(all) enum StructureKind {
   Spawn
   Extension
   Road

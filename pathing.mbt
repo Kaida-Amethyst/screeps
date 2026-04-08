@@ -1,8 +1,14 @@
 ///|
-pub enum ClosestMetric {
+pub(all) enum ClosestMetric {
   Path
   Range
 } derive(Show, Eq, Compare)
+
+///|
+/// 返回当前支持的最近距离度量方式。
+pub fn closest_metrics() -> Array[ClosestMetric] {
+  [Path, Range]
+}
 
 ///|
 fn[T : GameObjectLike] raw_candidates(
@@ -190,6 +196,55 @@ pub fn[T : GameObjectLike] Source::find_in_range(
 
 ///|
 pub fn[T : GameObjectLike] Source::range_to(self : Source, target : T) -> Int {
+  range_between(self, target)
+}
+
+///|
+pub fn[T : GameObjectLike] Flag::find_closest(
+  self : Flag,
+  candidates : Array[T],
+  by? : ClosestMetric = Path,
+) -> T? {
+  find_closest(self, candidates, by~)
+}
+
+///|
+pub fn[T : GameObjectLike] Flag::find_in_range(
+  self : Flag,
+  candidates : Array[T],
+  range : Int,
+) -> Array[T] {
+  find_in_range(self, candidates, range)
+}
+
+///|
+pub fn[T : GameObjectLike] Flag::range_to(self : Flag, target : T) -> Int {
+  range_between(self, target)
+}
+
+///|
+pub fn[T : GameObjectLike] Structure::find_closest(
+  self : Structure,
+  candidates : Array[T],
+  by? : ClosestMetric = Path,
+) -> T? {
+  find_closest(self, candidates, by~)
+}
+
+///|
+pub fn[T : GameObjectLike] Structure::find_in_range(
+  self : Structure,
+  candidates : Array[T],
+  range : Int,
+) -> Array[T] {
+  find_in_range(self, candidates, range)
+}
+
+///|
+pub fn[T : GameObjectLike] Structure::range_to(
+  self : Structure,
+  target : T,
+) -> Int {
   range_between(self, target)
 }
 

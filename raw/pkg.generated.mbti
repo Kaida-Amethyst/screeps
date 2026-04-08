@@ -52,6 +52,8 @@ pub fn create_construction_site_by_name(Int, Int, String) -> JsCreateConstructio
 
 pub fn creeps() -> Array[JsCreep]
 
+pub fn flags() -> Array[JsFlag]
+
 pub fn get_object_by_id(String) -> JsGameObject?
 
 pub fn get_objects() -> Array[JsGameObject]
@@ -61,6 +63,8 @@ pub fn get_ticks() -> Int
 pub fn sources() -> Array[JsSource]
 
 pub fn spawns() -> Array[JsStructureSpawn]
+
+pub fn structures() -> Array[JsGameObject]
 
 pub fn towers() -> Array[JsStructureTower]
 
@@ -98,16 +102,26 @@ pub fn JsCreep::transfer_raw(Self, JsGameObject, String) -> Int
 pub fn JsCreep::withdraw_raw(Self, JsGameObject, String) -> Int
 
 #external
+pub type JsFlag
+pub fn JsFlag::my(Self) -> @core.Nullish[Bool]
+pub fn JsFlag::to_game_object(Self) -> JsGameObject
+
+#external
 pub type JsGameObject
 pub fn JsGameObject::exists(Self) -> Bool
 pub fn JsGameObject::find_closest_by_path_raw(Self, Array[Self]) -> @core.Nullish[Self]
 pub fn JsGameObject::find_closest_by_range_raw(Self, Array[Self]) -> @core.Nullish[Self]
 pub fn JsGameObject::find_in_range_raw(Self, Array[Self], Int) -> Array[Self]
 pub fn JsGameObject::get_range_to_raw(Self, Self) -> Int
+pub fn JsGameObject::hits(Self) -> @core.Nullish[Int]
+pub fn JsGameObject::hits_max(Self) -> @core.Nullish[Int]
 pub fn JsGameObject::id(Self) -> String
+pub fn JsGameObject::is_structure(Self) -> Bool
+pub fn JsGameObject::my(Self) -> @core.Nullish[Bool]
 pub fn JsGameObject::prototype_name(Self) -> String
 pub fn JsGameObject::to_construction_site(Self) -> JsConstructionSite
 pub fn JsGameObject::to_creep(Self) -> JsCreep
+pub fn JsGameObject::to_flag(Self) -> JsFlag
 pub fn JsGameObject::to_source(Self) -> JsSource
 pub fn JsGameObject::to_structure_container(Self) -> JsStructureContainer
 pub fn JsGameObject::to_structure_spawn(Self) -> JsStructureSpawn

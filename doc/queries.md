@@ -54,8 +54,10 @@ let sources = sources()
 
 建议提供：
 
+- `flags() -> Array[Flag]`
 - `creeps() -> Array[Creep]`
 - `sources() -> Array[Source]`
+- `structures() -> Array[Structure]`
 - `spawns() -> Array[StructureSpawn]`
 - `towers() -> Array[StructureTower]`
 - `containers() -> Array[StructureContainer]`
@@ -118,8 +120,10 @@ let sources = sources()
 
 例如：
 
+- `as_flag()`
 - `as_creep()`
 - `as_source()`
+- `as_structure()`
 - `as_structure_spawn()`
 - `as_structure_tower()`
 - `as_structure_container()`
@@ -181,7 +185,9 @@ creep.range_to(target)
 - `api` 只暴露 typed query
 - `object_by_id` 的第一阶段正式接口返回 `GameObject?`
 - 正式命名统一走：
+  - `flags()`
   - `creeps() / owned_creeps() / enemy_creeps()`
+  - `structures()`
   - `spawns() / owned_spawns() / enemy_spawns()`
   - `towers() / owned_towers() / enemy_towers()`
 - 距离查询统一走：

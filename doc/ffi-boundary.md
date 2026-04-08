@@ -28,7 +28,7 @@
 - bot 策略
 - world 语义查询
   - 例如 `owned_creeps()`、`enemy_towers()`
-- 错误码到 `ActionError` 的映射
+- 错误码到 `ActionResult` 的映射
 - typed view 转换
 - tutorial helper
 - 每 tick 的游戏状态缓存
@@ -52,7 +52,7 @@ MoonBit 侧继续负责：
 - `owned_creeps()`
 - `enemy_spawns()`
 - `BodyPartKind`
-- `ActionError`
+- `ActionResult`
 - `OwnedCreep::harvest`
 - `find_closest(..., by~=Path)`
 
@@ -105,7 +105,7 @@ globalThis.__moonbit_screeps_host = {
 
 - `JsCreep` 可以跨边界
 - `StructureTower` class token 尽量不要直接跨边界
-- `ActionError` 绝不在 wrapper 中构造
+- `ActionResult` 绝不在 wrapper 中构造
 
 ## 当前项目的正式约定
 

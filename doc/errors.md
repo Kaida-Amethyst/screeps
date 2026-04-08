@@ -1,18 +1,14 @@
 # 动作返回值与错误建模
 
-本文档记录正式版 Screeps Arena binding 的错误处理设计。
+本文档记录正式版 Screeps Arena binding 的动作结果设计。
 
 ## 总体结论
 
-- 不再把显式 `ActionResult` 当作第一层正式接口
-- 正式版优先采用：
-  - `suberror`
-  - `raise`
-  - `try?`
-  - `try!`
-  - `try/catch`
-- `raw` 继续保留原始返回值形状
-- `api` 负责把原始错误码转换成 MoonBit 错误类型
+- 不再保留 `ActionError`
+- 不再把普通动作失败建模成 `raise`
+- 第一阶段普通动作统一返回 `ActionResult`
+- `raw` 继续保留原始 `Int` 错误码
+- `api` 负责把原始错误码转换成 MoonBit 风格 ADT
 
 ## 分层职责
 
@@ -23,29 +19,25 @@
 - 原始 `Int` 错误码
 - 原始 `{ object?, error? }` 结果对象
 
-`raw` 不负责高层错误语义整理。
-
-### `model`
-
-`model` 不负责错误码解释。
+`raw` 不负责高层语义整理。
 
 ### `api`
 
 `api` 负责：
 
-- 把原始错误码映射成 `suberror`
-- 把对象创建类结果整理成“成功返回对象，失败 raise 错误”
+- 把普通动作的原始错误码映射成 `ActionResult`
+- 为对象创建类动作设计更合适的高层结果类型
 
-## 核心错误类型
+## 核心结果类型
 
-第一阶段建议采用一个共享错误类型：
+第一阶段正式采用：
 
 ```moonbit
-pub suberror ActionError {
+pub enum ActionResult {
+  Success
   NotOwner
   Busy
   NotEnoughEnergy
-  NotEnoughResources
   InvalidTarget
   Full
   NotInRange
@@ -56,132 +48,125 @@ pub suberror ActionError {
 }
 ```
 
-这样做的目标是：
+设计意图是：
 
-- 足够统一
-- 足够可模式匹配
-- 足够适合第一阶段实现
-
-当前不建议一开始就为每个动作单独定义一套 error 类型。
+- 让 Screeps 中“本 tick 动作结果”直接成为一等值
+- 让 `NotInRange` 这类高频结果自然参与模式匹配
+- 避免把正常控制流伪装成异常处理
 
 ## 正式 API 风格
 
-动作方法默认采用：
+普通动作方法默认采用：
 
-- 成功时返回正常值
-- 失败时 `raise ActionError`
+- 返回 `ActionResult`
+- 不使用 `raise`
 
 例如：
 
 ```moonbit
-pub fn OwnedCreep::harvest(self, target : Source) -> Unit raise ActionError
-pub fn OwnedCreep::attack(self, target : EnemyCreep) -> Unit raise ActionError
-pub fn OwnedCreep::move_to[T : MoveTarget](self, target : T) -> Unit raise ActionError
-
-pub fn OwnedSpawn::spawn(
+pub fn OwnedCreep::harvest(self, target : Source) -> ActionResult
+pub fn OwnedCreep::attack(self, target : EnemyCreep) -> ActionResult
+pub fn OwnedCreep::move_to[T : MoveTarget](self, target : T) -> ActionResult
+pub fn OwnedCreep::transfer(
   self,
-  body : Array[BodyPartKind]
-) -> OwnedCreep raise ActionError
-
-pub fn create_construction_site(
-  x : Int,
-  y : Int,
-  kind : StructureKind
-) -> ConstructionSite raise ActionError
+  target : TransferTarget,
+  resource : ResourceKind,
+) -> ActionResult
 ```
 
-## 调用侧处理方式
-
-### 1. 向上传递
+这样调用侧可以直接写：
 
 ```moonbit
-fn run_worker(...) -> Unit raise ActionError {
-  creep.harvest(source)
+match creep.harvest(source) {
+  Success => ()
+  NotInRange => ignore(creep.move_to(source))
+  _ => ()
 }
 ```
 
-### 2. 使用 `try?` 转成 `Result`
+## 为什么不用 `raise`
 
-```moonbit
-match try? creep.harvest(source) {
-  Ok(_) => ()
-  Err(NotInRange) => try!(creep.move_to(source))
-  Err(_) => ()
-}
-```
+在 Screeps 里，很多动作失败并不代表异常，而是代表：
 
-### 3. 使用 `try/catch`
+- 目标不在范围内
+- 本 tick 能量不足
+- 当前对象状态不满足执行条件
 
-适合更复杂的局部恢复逻辑。
+这些都更像“动作结果”，不是“程序异常”。
 
-### 4. 使用 `try!`
+因此：
 
-适合调用方明确认为这里绝不会失败的场合。
+- `NotInRange`
+- `NotEnoughEnergy`
+- `Tired`
+- `InvalidTarget`
 
-## 不同类型失败的处理原则
+都应优先被看作正常控制流分支。
 
-### 1. 游戏规则失败
+## 查询类接口的处理原则
 
-使用 `raise ActionError`。
-
-例如：
-
-- `ERR_NOT_IN_RANGE`
-- `ERR_BUSY`
-- `ERR_NOT_ENOUGH_ENERGY`
-
-### 2. 正常“没找到”
-
-使用 `Option`。
-
-例如：
+“没找到对象”仍然使用 `Option`，例如：
 
 - `find_closest(...) -> T?`
-- `object_by_id(...) -> T?`
+- `object_by_id(...) -> GameObject?`
 
-### 3. 成功时返回对象的动作
+也就是说：
 
-成功直接返回对象，失败 `raise ActionError`。
+- 查询不到：`Option`
+- 普通动作结果：`ActionResult`
+
+## 对象创建类动作
+
+当前结论主要覆盖普通动作：
+
+- `move_to`
+- `harvest`
+- `attack`
+- `ranged_attack`
+- `heal`
+- `transfer`
+- `withdraw`
+- `build`
+
+对于以下动作：
+
+- `spawn_creep`
+- `create_construction_site`
+
+仍建议保留专门结果类型，而不是硬塞进 `ActionResult`。因为它们成功时往往需要返回对象。
+
+例如后续可以考虑：
+
+```moonbit
+pub enum SpawnResult {
+  Spawned(OwnedCreep)
+  Failed(ActionResult)
+}
+
+pub enum CreateConstructionSiteResult {
+  Created(ConstructionSite)
+  Failed(ActionResult)
+}
+```
+
+这部分细节可以在实现阶段继续收紧。
+
+## wrapper / FFI 异常
+
+wrapper、FFI 或宿主环境异常，不应混入 `ActionResult`。
 
 例如：
 
-- `spawn(...) -> OwnedCreep raise ActionError`
-- `create_construction_site(...) -> ConstructionSite raise ActionError`
-
-### 4. FFI / wrapper / 宿主环境异常
-
-不混入 `ActionError`。
-
-这类错误属于更一般的运行时或宿主环境错误，例如：
-
-- wrapper 没有注入所需 helper
+- wrapper 没注入所需 helper
 - host glue 失效
-- 运行时状态与约定不一致
+- FFI 返回值形状与约定不一致
 
-## 为什么第一阶段不优先做专用错误类型
-
-当前不建议一开始就做：
-
-- `MoveError`
-- `HarvestError`
-- `SpawnError`
-
-原因：
-
-- 类型数量膨胀过快
-- 文档与维护成本明显增加
-- 对第一阶段直播和 bot 开发的收益不够大
-
-第一阶段更优先的是：
-
-- 统一错误映射
-- 统一处理模式
-- 先让 API 风格稳定下来
+这些仍然属于更一般的运行时异常，而不是游戏动作结果。
 
 ## 当前结论
 
-- 正式版第一阶段以 `suberror ActionError` 为核心
-- 动作方法默认 `raise ActionError`
-- 查询类“不存在”使用 `Option`
-- 需要分支判断时使用 `try?`
-- 认为不该失败时使用 `try!`
+- 正式版第一阶段移除 `ActionError`
+- 普通动作统一返回 `ActionResult`
+- `Success` 与原失败原因处于同一个 ADT 中
+- 查询类“不存在”继续使用 `Option`
+- 对象创建类动作保留专门结果类型的空间

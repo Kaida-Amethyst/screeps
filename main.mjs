@@ -9,6 +9,7 @@ import {
   StructureRampart,
   StructureRoad,
   StructureSpawn,
+  Structure,
   StructureTower,
   StructureWall,
 } from "game/prototypes";
@@ -23,6 +24,7 @@ const prototypeTable = {
   StructureExtension,
   StructureRampart,
   StructureRoad,
+  Structure,
   StructureSpawn,
   StructureTower,
   StructureWall,

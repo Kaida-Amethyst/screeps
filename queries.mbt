@@ -11,6 +11,11 @@ pub fn object_by_id(id : String) -> GameObject? {
 }
 
 ///|
+pub fn flags() -> Array[Flag] {
+  @raw.flags().map(Flag::create)
+}
+
+///|
 pub fn creeps() -> Array[Creep] {
   @raw.creeps().map(Creep::create)
 }
@@ -33,6 +38,11 @@ pub fn sources() -> Array[Source] {
 ///|
 pub fn active_sources() -> Array[Source] {
   sources().filter(source => source.energy() > 0)
+}
+
+///|
+pub fn structures() -> Array[Structure] {
+  @raw.structures().map(Structure::create)
 }
 
 ///|

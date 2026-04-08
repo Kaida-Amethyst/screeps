@@ -218,10 +218,93 @@ pub fn OwnedCreep::harvest(target : Source) -> ActionResult
 - Arena 文档和 typings 中就是 `Source`
 - 这一命名已经足够明确
 
+## `Flag` 的建模结论
+
+### 总结
+
+- `Flag` 采用 `JsFlag + Flag wrapper`
+- 第一阶段不做 `OwnedFlag / EnemyFlag`
+- 保留 `relation`
+- 主要作为移动、路径与胜利目标对象使用
+
+### 推荐结构
+
+`raw` 层：
+
+```moonbit
+pub extern type JsFlag
+```
+
+`model` 层：
+
+```moonbit
+pub struct Flag {
+  raw : JsFlag
+  relation : Relation
+}
+```
+
+### 为什么不做 typed view
+
+`Flag` 虽然有 `my` 语义，但第一阶段的主要使用方式仍然是：
+
+- 查询全部 flag
+- 作为 `moveTo` / `find_closest` 的目标
+- 在 bot 中用作控制点或胜利目标
+
+因此第一阶段单一 wrapper 足够。
+
+## `Structure` 的建模结论
+
+### 总结
+
+- `Structure` 第一阶段只做薄观察视图
+- 不额外引入 `JsStructure`
+- 直接基于 `JsGameObject` 包一层通用 `Structure`
+- 主要用于：
+  - 提供共享结构属性
+  - 支撑 `object_by_id` 的安全下转
+
+### 推荐结构
+
+`model` 层：
+
+```moonbit
+pub struct Structure {
+  raw : JsGameObject
+  relation : Relation
+}
+```
+
+### 为什么要有这层
+
+虽然具体结构类型已经有：
+
+- `StructureSpawn`
+- `StructureTower`
+- `StructureContainer`
+
+但正式版仍然值得保留一个薄的 `Structure` 视图，因为：
+
+- Screeps typings 里确实存在 `Structure`
+- 有些场景只关心“这是个结构”，不关心具体子类
+- `object_by_id` 返回统一 `GameObject` 时，需要一个合理的通用结构下转目标
+
+### 当前边界
+
+- `Structure` 第一阶段只暴露：
+  - 位置与存在性
+  - `relation`
+  - `hits / hits_max`
+  - `prototype_name`
+- 不把所有具体结构能力提升到 `Structure` 上
+
 ## 当前已固化对象
 
 - `Creep`
 - `Source`
+- `Flag`
+- `Structure`
 
 ## `StructureSpawn` 的建模结论
 

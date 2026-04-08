@@ -124,6 +124,56 @@ pub impl GameObjectLike for Source with exists(self) -> Bool {
 }
 
 ///|
+pub impl GameObjectLike for Flag with as_game_object(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl GameObjectLike for Flag with id(self) -> String {
+  self.id()
+}
+
+///|
+pub impl GameObjectLike for Flag with x(self) -> Int {
+  self.x()
+}
+
+///|
+pub impl GameObjectLike for Flag with y(self) -> Int {
+  self.y()
+}
+
+///|
+pub impl GameObjectLike for Flag with exists(self) -> Bool {
+  self.exists()
+}
+
+///|
+pub impl GameObjectLike for Structure with as_game_object(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl GameObjectLike for Structure with id(self) -> String {
+  self.id()
+}
+
+///|
+pub impl GameObjectLike for Structure with x(self) -> Int {
+  self.x()
+}
+
+///|
+pub impl GameObjectLike for Structure with y(self) -> Int {
+  self.y()
+}
+
+///|
+pub impl GameObjectLike for Structure with exists(self) -> Bool {
+  self.exists()
+}
+
+///|
 pub impl GameObjectLike for StructureSpawn with as_game_object(self) -> GameObject {
   self.as_game_object()
 }
@@ -489,6 +539,36 @@ pub impl OwnedLike for ConstructionSite with is_enemy(self) -> Bool {
 }
 
 ///|
+pub impl OwnedLike for Flag with relation(self) -> Relation {
+  self.relation()
+}
+
+///|
+pub impl OwnedLike for Flag with is_owned(self) -> Bool {
+  self.is_owned()
+}
+
+///|
+pub impl OwnedLike for Flag with is_enemy(self) -> Bool {
+  self.is_enemy()
+}
+
+///|
+pub impl OwnedLike for Structure with relation(self) -> Relation {
+  self.relation()
+}
+
+///|
+pub impl OwnedLike for Structure with is_owned(self) -> Bool {
+  self.is_owned()
+}
+
+///|
+pub impl OwnedLike for Structure with is_enemy(self) -> Bool {
+  self.is_enemy()
+}
+
+///|
 pub impl HasStore for Creep with store(self) -> Store {
   self.store()
 }
@@ -639,6 +719,16 @@ pub impl HasHits for StructureContainer with hits_max(self) -> Int {
 }
 
 ///|
+pub impl HasHits for Structure with hits(self) -> Int {
+  self.hits()
+}
+
+///|
+pub impl HasHits for Structure with hits_max(self) -> Int {
+  self.hits_max()
+}
+
+///|
 pub impl MoveTarget for GameObject with as_move_target(self) -> GameObject {
   self
 }
@@ -660,6 +750,16 @@ pub impl MoveTarget for EnemyCreep with as_move_target(self) -> GameObject {
 
 ///|
 pub impl MoveTarget for Source with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for Flag with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for Structure with as_move_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -719,6 +819,11 @@ pub impl AttackTarget for EnemyCreep with as_attack_target(self) -> GameObject {
 }
 
 ///|
+pub impl AttackTarget for Structure with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
 pub impl AttackTarget for StructureSpawn with as_attack_target(self) -> GameObject {
   self.as_game_object()
 }
@@ -765,6 +870,11 @@ pub impl RangedAttackTarget for OwnedCreep with as_ranged_attack_target(self) ->
 
 ///|
 pub impl RangedAttackTarget for EnemyCreep with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for Structure with as_ranged_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -836,6 +946,11 @@ pub impl TowerAttackTarget for OwnedCreep with as_tower_attack_target(self) -> G
 
 ///|
 pub impl TowerAttackTarget for EnemyCreep with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for Structure with as_tower_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 

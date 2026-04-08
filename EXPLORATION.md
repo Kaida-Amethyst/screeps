@@ -647,11 +647,10 @@ pub enum BodyPartKind {
 }
 ```
 
-并补两类转换：
+并补一类底层转换：
 
 ```moonbit
 fn BodyPartKind::to_raw(self) -> String
-fn body_part_kind_of(raw : String) -> BodyPartKind?
 ```
 
 这样之后，API 层就可以从：

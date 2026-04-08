@@ -1,6 +1,6 @@
 ///|
 /// 正式 API 中使用枚举表达 body part，而不是直接暴露原始字符串。
-pub enum BodyPartKind {
+pub(all) enum BodyPartKind {
   Move
   Work
   Carry
@@ -24,22 +24,8 @@ pub fn BodyPartKind::to_raw(self : BodyPartKind) -> String {
 }
 
 ///|
-pub fn body_part_kind_of(raw : String) -> BodyPartKind? {
-  match raw {
-    "move" => Some(Move)
-    "work" => Some(Work)
-    "carry" => Some(Carry)
-    "attack" => Some(Attack)
-    "ranged_attack" => Some(RangedAttack)
-    "heal" => Some(Heal)
-    "tough" => Some(Tough)
-    _ => None
-  }
-}
-
-///|
 /// 第一阶段资源类型先只覆盖 Energy，但正式 API 仍采用枚举结构。
-pub enum ResourceKind {
+pub(all) enum ResourceKind {
   Energy
 } derive(Show, Eq, Compare)
 
@@ -51,16 +37,8 @@ pub fn ResourceKind::to_raw(self : ResourceKind) -> String {
 }
 
 ///|
-pub fn resource_kind_of(raw : String) -> ResourceKind? {
-  match raw {
-    "energy" => Some(Energy)
-    _ => None
-  }
-}
-
-///|
 /// 结构原型名称用于创建 construction site。
-pub enum StructureKind {
+pub(all) enum StructureKind {
   Spawn
   Extension
   Road
@@ -81,4 +59,10 @@ pub fn StructureKind::to_prototype_name(self : StructureKind) -> String {
     Tower => "StructureTower"
     Container => "StructureContainer"
   }
+}
+
+///|
+/// 返回当前已知的结构原型种类列表。
+pub fn structure_kinds() -> Array[StructureKind] {
+  [Spawn, Extension, Road, Rampart, Wall, Tower, Container]
 }
