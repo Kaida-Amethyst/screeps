@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/screeps/main"
+package "Kaida-Amethyst/screeps/main"
 
 // Values
 pub fn main_loop() -> Unit
@@ -7,6 +7,7 @@ pub fn main_loop() -> Unit
 // Errors
 
 // Types and methods
+type SpawnRole
 
 // Type aliases
 

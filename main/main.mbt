@@ -48,7 +48,7 @@ fn choose_enemy(creep : MyCreep, enemies : Array[EnemyCreep]) -> EnemyCreep? {
 }
 
 ///|
-fn run_worker(
+fn worker_action(
   creep : MyCreep,
   sources : Array[Source],
   spawn : MySpawn,
@@ -62,18 +62,18 @@ fn run_worker(
 }
 
 ///|
-fn run_fighter(creep : MyCreep, enemies : Array[EnemyCreep]) -> Unit {
+fn fighter_action(creep : MyCreep, enemies : Array[EnemyCreep]) -> Unit {
   guard choose_enemy(creep, enemies) is Some(enemy) else { return }
   creep.attack_or_move(enemy)
 }
 
 ///|
-fn try_spawn_worker(spawn : MySpawn) -> Unit {
+fn spawn_worker_if_possible(spawn : MySpawn) -> Unit {
   ignore(spawn.spawn_creep(worker_body()))
 }
 
 ///|
-fn try_spawn_fighter(spawn : MySpawn) -> Unit {
+fn spawn_fighter_if_possible(spawn : MySpawn) -> Unit {
   let heavy_result = spawn.spawn_creep(heavy_fighter_body())
   match heavy_result {
     Spawned(_) => ()
@@ -84,24 +84,31 @@ fn try_spawn_fighter(spawn : MySpawn) -> Unit {
 }
 
 ///|
-fn run_spawn_logic(
-  spawn : MySpawn,
-  my_creeps : Array[MyCreep],
-  enemies : Array[EnemyCreep],
-) -> Unit {
+enum SpawnRole {
+  Worker
+  Fighter
+}
+
+///|
+fn next_spawn_role(my_creeps : Array[MyCreep]) -> SpawnRole {
   let worker_count = workers(my_creeps).length()
   let fighter_count = fighters(my_creeps).length()
-  let enemy_count = enemies.length()
   if worker_count == 0 {
-    try_spawn_worker(spawn)
+    Worker
   } else if fighter_count == 0 {
-    try_spawn_fighter(spawn)
+    Fighter
   } else if worker_count < 2 {
-    try_spawn_worker(spawn)
-  } else if fighter_count < enemy_count + 1 {
-    try_spawn_fighter(spawn)
+    Worker
   } else {
-    try_spawn_fighter(spawn)
+    Fighter
+  }
+}
+
+///|
+fn spawn_action(spawn : MySpawn, my_creeps : Array[MyCreep]) -> Unit {
+  match next_spawn_role(my_creeps) {
+    Worker => spawn_worker_if_possible(spawn)
+    Fighter => spawn_fighter_if_possible(spawn)
   }
 }
 
@@ -121,13 +128,9 @@ pub fn main_loop() -> Unit {
   let my_creeps = @screeps.my_creeps()
   let enemies = @screeps.enemy_creeps()
   let sources = fallback_sources()
-  run_spawn_logic(spawn, my_creeps, enemies)
-  for creep in workers(my_creeps) {
-    run_worker(creep, sources, spawn)
-  }
-  for creep in fighters(my_creeps) {
-    run_fighter(creep, enemies)
-  }
+  spawn_action(spawn, my_creeps)
+  workers(my_creeps).each(creep => worker_action(creep, sources, spawn))
+  fighters(my_creeps).each(creep => fighter_action(creep, enemies))
 }
 
 ///|

@@ -1,5 +1,5 @@
 // Generated using `moon info`, DON'T EDIT IT
-package "username/screeps/raw"
+package "Kaida-Amethyst/screeps/raw"
 
 import {
   "mizchi/js/core",
