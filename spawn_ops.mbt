@@ -7,14 +7,14 @@ fn body_to_raw(body : Array[BodyPartKind]) -> Array[String] {
 pub fn OwnedSpawn::spawn_creep(
   self : OwnedSpawn,
   body : Array[BodyPartKind],
-) -> OwnedCreep raise ActionError {
+) -> SpawnResult {
   let result = self.to_raw().spawn_creep_raw(body_to_raw(body))
   match result.object().to_option() {
-    Some(creep) => OwnedCreep::create(creep)
+    Some(creep) => Spawned(OwnedCreep::create(creep))
     None =>
       match result.error().to_option() {
-        Some(code) => raise action_error_of(code)
-        None => raise UnknownRawError(-9999)
+        Some(code) => SpawnFailed(action_result_of(code))
+        None => SpawnFailed(UnknownRawError(-9999))
       }
   }
 }

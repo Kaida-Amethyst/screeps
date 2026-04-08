@@ -138,14 +138,14 @@ match creep.harvest(source) {
 例如后续可以考虑：
 
 ```moonbit
-pub enum SpawnResult {
+pub(all) enum SpawnResult {
   Spawned(OwnedCreep)
-  Failed(ActionResult)
+  SpawnFailed(ActionResult)
 }
 
-pub enum CreateConstructionSiteResult {
+pub(all) enum CreateConstructionSiteResult {
   Created(ConstructionSite)
-  Failed(ActionResult)
+  CreateFailed(ActionResult)
 }
 ```
 

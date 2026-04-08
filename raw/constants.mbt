@@ -25,7 +25,7 @@ pub const BODY_PART_TOUGH = "tough"
 pub const RESOURCE_ENERGY = "energy"
 
 ///|
-/// raw 层保留官方错误码常量，供 api 层映射为 `ActionError`。
+/// raw 层保留官方错误码常量，供高层接口映射为 `ActionResult`。
 pub const OK_CODE = 0
 
 ///|

@@ -14,7 +14,7 @@ pub fn construction_sites() -> Array[ConstructionSite]
 
 pub fn containers() -> Array[StructureContainer]
 
-pub fn create_construction_site(Int, Int, StructureKind) -> ConstructionSite raise ActionError
+pub fn create_construction_site(Int, Int, StructureKind) -> CreateConstructionSiteResult
 
 pub fn creeps() -> Array[Creep]
 
@@ -59,7 +59,10 @@ pub fn ticks() -> Int
 pub fn towers() -> Array[StructureTower]
 
 // Errors
-pub suberror ActionError {
+
+// Types and methods
+pub(all) enum ActionResult {
+  Success
   NotOwner
   Busy
   NotEnoughEnergy
@@ -70,9 +73,8 @@ pub suberror ActionError {
   Tired
   NoBodyPart
   UnknownRawError(Int)
-} derive(Show)
+} derive(Eq, Show)
 
-// Types and methods
 pub(all) enum BodyPartKind {
   Move
   Work
@@ -112,6 +114,11 @@ pub impl BuildTarget for ConstructionSite
 pub impl GameObjectLike for ConstructionSite
 pub impl MoveTarget for ConstructionSite
 pub impl OwnedLike for ConstructionSite
+
+pub(all) enum CreateConstructionSiteResult {
+  Created(ConstructionSite)
+  CreateFailed(ActionResult)
+}
 
 pub struct Creep {
   // private fields
@@ -290,30 +297,40 @@ pub struct OwnedCreep {
 }
 pub fn OwnedCreep::as_creep(Self) -> Creep
 pub fn OwnedCreep::as_game_object(Self) -> GameObject
-pub fn[T : AttackTarget] OwnedCreep::attack(Self, T) -> Unit raise ActionError
-pub fn[T : BuildTarget] OwnedCreep::build(Self, T) -> Unit raise ActionError
+pub fn[T : AttackTarget] OwnedCreep::attack(Self, T) -> ActionResult
+pub fn[T : AttackTarget] OwnedCreep::attack_or_move(Self, T) -> Unit
+pub fn[T : BuildTarget] OwnedCreep::build(Self, T) -> ActionResult
+pub fn[T : BuildTarget] OwnedCreep::build_or_move(Self, T) -> Unit
 pub fn OwnedCreep::create(@raw.JsCreep) -> Self
 pub fn OwnedCreep::exists(Self) -> Bool
 pub fn[T : GameObjectLike] OwnedCreep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] OwnedCreep::find_in_range(Self, Array[T], Int) -> Array[T]
-pub fn[T : HarvestTarget] OwnedCreep::harvest(Self, T) -> Unit raise ActionError
-pub fn[T : HealTarget] OwnedCreep::heal(Self, T) -> Unit raise ActionError
+pub fn[T : HarvestTarget] OwnedCreep::harvest(Self, T) -> ActionResult
+pub fn[T : HarvestTarget] OwnedCreep::harvest_or_move(Self, T) -> Unit
+pub fn[T : HealTarget] OwnedCreep::heal(Self, T) -> ActionResult
+pub fn[T : HealTarget] OwnedCreep::heal_or_move(Self, T) -> Unit
 pub fn OwnedCreep::hits(Self) -> Int
 pub fn OwnedCreep::hits_max(Self) -> Int
 pub fn OwnedCreep::id(Self) -> String
 pub fn OwnedCreep::is_enemy(Self) -> Bool
 pub fn OwnedCreep::is_owned(Self) -> Bool
-pub fn[T : MoveTarget] OwnedCreep::move_to(Self, T) -> Unit raise ActionError
+pub fn[T : MoveTarget] OwnedCreep::move_if_not_in_range(Self, T, ActionResult) -> Unit
+pub fn[T : MoveTarget] OwnedCreep::move_to(Self, T) -> ActionResult
 pub fn[T : GameObjectLike] OwnedCreep::range_to(Self, T) -> Int
-pub fn[T : RangedAttackTarget] OwnedCreep::ranged_attack(Self, T) -> Unit raise ActionError
+pub fn[T : RangedAttackTarget] OwnedCreep::ranged_attack(Self, T) -> ActionResult
+pub fn[T : RangedAttackTarget] OwnedCreep::ranged_attack_or_move(Self, T) -> Unit
 pub fn OwnedCreep::relation(Self) -> Relation
 pub fn OwnedCreep::spawning(Self) -> Bool
 pub fn OwnedCreep::store(Self) -> Store
 pub fn OwnedCreep::to_raw(Self) -> @raw.JsCreep
-pub fn[T : TransferTarget] OwnedCreep::transfer(Self, T, ResourceKind) -> Unit raise ActionError
-pub fn[T : TransferTarget] OwnedCreep::transfer_energy(Self, T) -> Unit raise ActionError
-pub fn[T : WithdrawTarget] OwnedCreep::withdraw(Self, T, ResourceKind) -> Unit raise ActionError
-pub fn[T : WithdrawTarget] OwnedCreep::withdraw_energy(Self, T) -> Unit raise ActionError
+pub fn[T : TransferTarget] OwnedCreep::transfer(Self, T, ResourceKind) -> ActionResult
+pub fn[T : TransferTarget] OwnedCreep::transfer_energy(Self, T) -> ActionResult
+pub fn[T : TransferTarget] OwnedCreep::transfer_energy_or_move(Self, T) -> Unit
+pub fn[T : TransferTarget] OwnedCreep::transfer_or_move(Self, T, ResourceKind) -> Unit
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw(Self, T, ResourceKind) -> ActionResult
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw_energy(Self, T) -> ActionResult
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw_energy_or_move(Self, T) -> Unit
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw_or_move(Self, T, ResourceKind) -> Unit
 pub fn OwnedCreep::x(Self) -> Int
 pub fn OwnedCreep::y(Self) -> Int
 pub impl AttackTarget for OwnedCreep
@@ -343,7 +360,7 @@ pub fn OwnedSpawn::is_enemy(Self) -> Bool
 pub fn OwnedSpawn::is_owned(Self) -> Bool
 pub fn[T : GameObjectLike] OwnedSpawn::range_to(Self, T) -> Int
 pub fn OwnedSpawn::relation(Self) -> Relation
-pub fn OwnedSpawn::spawn_creep(Self, Array[BodyPartKind]) -> OwnedCreep raise ActionError
+pub fn OwnedSpawn::spawn_creep(Self, Array[BodyPartKind]) -> SpawnResult
 pub fn OwnedSpawn::store(Self) -> Store
 pub fn OwnedSpawn::to_raw(Self) -> @raw.JsStructureSpawn
 pub fn OwnedSpawn::x(Self) -> Int
@@ -364,13 +381,13 @@ pub struct OwnedTower {
 }
 pub fn OwnedTower::as_game_object(Self) -> GameObject
 pub fn OwnedTower::as_structure_tower(Self) -> StructureTower
-pub fn[T : TowerAttackTarget] OwnedTower::attack(Self, T) -> Unit raise ActionError
+pub fn[T : TowerAttackTarget] OwnedTower::attack(Self, T) -> ActionResult
 pub fn OwnedTower::cooldown(Self) -> Int
 pub fn OwnedTower::create(@raw.JsStructureTower) -> Self
 pub fn OwnedTower::exists(Self) -> Bool
 pub fn[T : GameObjectLike] OwnedTower::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] OwnedTower::find_in_range(Self, Array[T], Int) -> Array[T]
-pub fn[T : HealTarget] OwnedTower::heal(Self, T) -> Unit raise ActionError
+pub fn[T : HealTarget] OwnedTower::heal(Self, T) -> ActionResult
 pub fn OwnedTower::hits(Self) -> Int
 pub fn OwnedTower::hits_max(Self) -> Int
 pub fn OwnedTower::id(Self) -> String
@@ -422,6 +439,11 @@ pub fn Source::y(Self) -> Int
 pub impl GameObjectLike for Source
 pub impl HarvestTarget for Source
 pub impl MoveTarget for Source
+
+pub(all) enum SpawnResult {
+  Spawned(OwnedCreep)
+  SpawnFailed(ActionResult)
+}
 
 pub struct Store {
   // private fields

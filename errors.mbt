@@ -1,6 +1,7 @@
 ///|
-/// Screeps 行为失败在第一阶段统一映射到共享错误类型。
-pub suberror ActionError {
+/// Screeps 普通动作在第一阶段统一映射到共享结果类型。
+pub(all) enum ActionResult {
+  Success
   NotOwner
   Busy
   NotEnoughEnergy
@@ -11,11 +12,26 @@ pub suberror ActionError {
   Tired
   NoBodyPart
   UnknownRawError(Int)
-} derive(Show)
+} derive(Show, Eq)
 
 ///|
-fn action_error_of(code : Int) -> ActionError {
+/// `spawn_creep` 的正式高层结果。
+pub(all) enum SpawnResult {
+  Spawned(OwnedCreep)
+  SpawnFailed(ActionResult)
+}
+
+///|
+/// `create_construction_site` 的正式高层结果。
+pub(all) enum CreateConstructionSiteResult {
+  Created(ConstructionSite)
+  CreateFailed(ActionResult)
+}
+
+///|
+fn action_result_of(code : Int) -> ActionResult {
   match code {
+    @raw.OK_CODE => Success
     @raw.ERR_NOT_OWNER => NotOwner
     @raw.ERR_BUSY => Busy
     // Arena 中 `ERR_NOT_ENOUGH_ENERGY` 与 `ERR_NOT_ENOUGH_RESOURCES`
@@ -28,14 +44,5 @@ fn action_error_of(code : Int) -> ActionError {
     @raw.ERR_TIRED => Tired
     @raw.ERR_NO_BODYPART => NoBodyPart
     _ => UnknownRawError(code)
-  }
-}
-
-///|
-fn raise_action_error(code : Int) -> Unit raise ActionError {
-  if code == @raw.OK_CODE {
-    ()
-  } else {
-    raise action_error_of(code)
   }
 }

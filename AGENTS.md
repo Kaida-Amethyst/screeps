@@ -40,7 +40,7 @@
 
 - 查询类“不存在”使用 `Option`。
 
-- 动作失败使用 `suberror ActionError` + `raise`，不再把原始错误码直接暴露为高层主接口。
+- 普通动作失败统一使用 `ActionResult`，不再把原始错误码直接暴露为高层主接口。
 
 - `api` 层优先使用 `BodyPartKind`、`ResourceKind` 等高层类型，不继续以原始字符串常量作为正式接口。
 
