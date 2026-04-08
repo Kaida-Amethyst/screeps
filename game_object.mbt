@@ -33,3 +33,64 @@ pub fn GameObject::y(self : GameObject) -> Int {
 pub fn GameObject::exists(self : GameObject) -> Bool {
   self.raw.exists()
 }
+
+///|
+pub fn GameObject::prototype_name(self : GameObject) -> String {
+  self.raw.prototype_name()
+}
+
+///|
+pub fn GameObject::as_creep(self : GameObject) -> Creep? {
+  if self.prototype_name() == "Creep" {
+    Some(Creep::create(self.raw.to_creep()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_source(self : GameObject) -> Source? {
+  if self.prototype_name() == "Source" {
+    Some(Source::create(self.raw.to_source()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_structure_spawn(self : GameObject) -> StructureSpawn? {
+  if self.prototype_name() == "StructureSpawn" {
+    Some(StructureSpawn::create(self.raw.to_structure_spawn()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_structure_tower(self : GameObject) -> StructureTower? {
+  if self.prototype_name() == "StructureTower" {
+    Some(StructureTower::create(self.raw.to_structure_tower()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_structure_container(
+  self : GameObject,
+) -> StructureContainer? {
+  if self.prototype_name() == "StructureContainer" {
+    Some(StructureContainer::create(self.raw.to_structure_container()))
+  } else {
+    None
+  }
+}
+
+///|
+pub fn GameObject::as_construction_site(self : GameObject) -> ConstructionSite? {
+  if self.prototype_name() == "ConstructionSite" {
+    Some(ConstructionSite::create(self.raw.to_construction_site()))
+  } else {
+    None
+  }
+}

@@ -637,3 +637,336 @@ pub impl HasHits for StructureContainer with hits(self) -> Int {
 pub impl HasHits for StructureContainer with hits_max(self) -> Int {
   self.hits_max()
 }
+
+///|
+pub impl MoveTarget for GameObject with as_move_target(self) -> GameObject {
+  self
+}
+
+///|
+pub impl MoveTarget for Creep with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for OwnedCreep with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for EnemyCreep with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for Source with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for StructureSpawn with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for OwnedSpawn with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for EnemySpawn with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for StructureTower with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for OwnedTower with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for EnemyTower with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for StructureContainer with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl MoveTarget for ConstructionSite with as_move_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for Creep with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for OwnedCreep with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for EnemyCreep with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for StructureSpawn with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for OwnedSpawn with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for EnemySpawn with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for StructureTower with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for OwnedTower with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for EnemyTower with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl AttackTarget for StructureContainer with as_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for Creep with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for OwnedCreep with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for EnemyCreep with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for StructureSpawn with as_ranged_attack_target(
+  self,
+) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for OwnedSpawn with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for EnemySpawn with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for StructureTower with as_ranged_attack_target(
+  self,
+) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for OwnedTower with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for EnemyTower with as_ranged_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl RangedAttackTarget for StructureContainer with as_ranged_attack_target(
+  self,
+) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl HealTarget for Creep with as_heal_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl HealTarget for OwnedCreep with as_heal_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl HealTarget for EnemyCreep with as_heal_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for Creep with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for OwnedCreep with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for EnemyCreep with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for StructureSpawn with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for OwnedSpawn with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for EnemySpawn with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for StructureTower with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for OwnedTower with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for EnemyTower with as_tower_attack_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TowerAttackTarget for StructureContainer with as_tower_attack_target(
+  self,
+) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl HarvestTarget for Source with as_harvest_target(self) -> Source {
+  self
+}
+
+///|
+pub impl TransferTarget for Creep with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for OwnedCreep with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for EnemyCreep with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for StructureSpawn with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for OwnedSpawn with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for EnemySpawn with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for StructureTower with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for OwnedTower with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for EnemyTower with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl TransferTarget for StructureContainer with as_transfer_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for StructureSpawn with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for OwnedSpawn with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for EnemySpawn with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for StructureTower with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for OwnedTower with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for EnemyTower with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl WithdrawTarget for StructureContainer with as_withdraw_target(self) -> GameObject {
+  self.as_game_object()
+}
+
+///|
+pub impl BuildTarget for ConstructionSite with as_build_target(self) -> ConstructionSite {
+  self
+}

@@ -105,6 +105,13 @@ pub fn JsGameObject::find_closest_by_range_raw(Self, Array[Self]) -> @core.Nulli
 pub fn JsGameObject::find_in_range_raw(Self, Array[Self], Int) -> Array[Self]
 pub fn JsGameObject::get_range_to_raw(Self, Self) -> Int
 pub fn JsGameObject::id(Self) -> String
+pub fn JsGameObject::prototype_name(Self) -> String
+pub fn JsGameObject::to_construction_site(Self) -> JsConstructionSite
+pub fn JsGameObject::to_creep(Self) -> JsCreep
+pub fn JsGameObject::to_source(Self) -> JsSource
+pub fn JsGameObject::to_structure_container(Self) -> JsStructureContainer
+pub fn JsGameObject::to_structure_spawn(Self) -> JsStructureSpawn
+pub fn JsGameObject::to_structure_tower(Self) -> JsStructureTower
 pub fn JsGameObject::x(Self) -> Int
 pub fn JsGameObject::y(Self) -> Int
 

@@ -31,32 +31,54 @@ pub(open) trait HasHits {
 
 ///|
 /// Move 的目标对象。
-pub(open) trait MoveTarget: GameObjectLike {}
+pub(open) trait MoveTarget: GameObjectLike {
+  as_move_target(Self) -> GameObject
+}
 
 ///|
 /// 近战攻击目标。
-pub(open) trait AttackTarget: GameObjectLike {}
+pub(open) trait AttackTarget: GameObjectLike {
+  as_attack_target(Self) -> GameObject
+}
 
 ///|
 /// 远程攻击目标。
-pub(open) trait RangedAttackTarget: GameObjectLike {}
+pub(open) trait RangedAttackTarget: GameObjectLike {
+  as_ranged_attack_target(Self) -> GameObject
+}
 
 ///|
 /// 治疗目标。
-pub(open) trait HealTarget: GameObjectLike {}
+pub(open) trait HealTarget: GameObjectLike {
+  as_heal_target(Self) -> GameObject
+}
+
+///|
+/// Tower 的攻击目标。
+pub(open) trait TowerAttackTarget: GameObjectLike {
+  as_tower_attack_target(Self) -> GameObject
+}
 
 ///|
 /// 采集目标。
-pub(open) trait HarvestTarget: GameObjectLike {}
+pub(open) trait HarvestTarget {
+  as_harvest_target(Self) -> Source
+}
 
 ///|
 /// 转移资源目标。
-pub(open) trait TransferTarget: GameObjectLike {}
+pub(open) trait TransferTarget: GameObjectLike {
+  as_transfer_target(Self) -> GameObject
+}
 
 ///|
 /// 提取资源目标。
-pub(open) trait WithdrawTarget: GameObjectLike {}
+pub(open) trait WithdrawTarget: GameObjectLike {
+  as_withdraw_target(Self) -> GameObject
+}
 
 ///|
 /// 建造目标。
-pub(open) trait BuildTarget: GameObjectLike {}
+pub(open) trait BuildTarget {
+  as_build_target(Self) -> ConstructionSite
+}

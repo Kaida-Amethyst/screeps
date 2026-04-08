@@ -5,6 +5,12 @@ pub fn ticks() -> Int {
 }
 
 ///|
+/// 通过 id 获取正式高层 `GameObject` 视图。
+pub fn object_by_id(id : String) -> GameObject? {
+  @raw.get_object_by_id(id).map(GameObject::create)
+}
+
+///|
 pub fn creeps() -> Array[Creep] {
   @raw.creeps().map(Creep::create)
 }

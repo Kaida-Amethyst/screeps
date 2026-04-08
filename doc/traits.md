@@ -76,6 +76,7 @@
 - `AttackTarget`
 - `RangedAttackTarget`
 - `HealTarget`
+- `TowerAttackTarget`
 - `HarvestTarget`
 - `TransferTarget`
 - `WithdrawTarget`
@@ -95,6 +96,32 @@ creep.build(site)
 ```
 
 这类自然写法依赖的就是目标能力 trait。
+
+## 动作目标 trait 的形态
+
+当前结论：
+
+- 第一阶段不把动作目标 trait 做成纯 marker trait
+- 动作目标 trait 应显式提供“转成底层可用目标”的接口
+
+例如：
+
+- `MoveTarget::as_move_target`
+- `AttackTarget::as_attack_target`
+- `HealTarget::as_heal_target`
+- `TransferTarget::as_transfer_target`
+
+这样做的原因是：
+
+- 实现更稳定
+- 不依赖空 marker trait 的额外语法技巧
+- 目标转换逻辑可以明确落在 trait 上，而不是散落在动作实现里
+
+其中：
+
+- 大部分目标 trait 转成 `GameObject`
+- `HarvestTarget` 转成 `Source`
+- `BuildTarget` 转成 `ConstructionSite`
 
 ## trait 粒度结论
 
@@ -143,6 +170,7 @@ trait 用来表达“它能做什么 / 它能被做什么”。
 - `AttackTarget`
 - `RangedAttackTarget`
 - `HealTarget`
+- `TowerAttackTarget`
 - `HarvestTarget`
 - `TransferTarget`
 - `WithdrawTarget`

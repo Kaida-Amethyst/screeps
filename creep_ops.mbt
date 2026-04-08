@@ -1,23 +1,25 @@
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::move_to(
+pub fn[T : MoveTarget] OwnedCreep::move_to(
   self : OwnedCreep,
   target : T,
 ) -> Unit raise ActionError {
   raise_action_error(
-    self.to_raw().move_to_raw(target.as_game_object().to_raw()),
+    self.to_raw().move_to_raw(target.as_move_target().to_raw()),
   )
 }
 
 ///|
-pub fn OwnedCreep::harvest(
+pub fn[T : HarvestTarget] OwnedCreep::harvest(
   self : OwnedCreep,
-  target : Source,
+  target : T,
 ) -> Unit raise ActionError {
-  raise_action_error(self.to_raw().harvest_raw(target.to_raw()))
+  raise_action_error(
+    self.to_raw().harvest_raw(target.as_harvest_target().to_raw()),
+  )
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::transfer(
+pub fn[T : TransferTarget] OwnedCreep::transfer(
   self : OwnedCreep,
   target : T,
   resource : ResourceKind,
@@ -25,20 +27,20 @@ pub fn[T : GameObjectLike] OwnedCreep::transfer(
   raise_action_error(
     self
     .to_raw()
-    .transfer_raw(target.as_game_object().to_raw(), resource.to_raw()),
+    .transfer_raw(target.as_transfer_target().to_raw(), resource.to_raw()),
   )
 }
 
 ///|
-pub fn OwnedCreep::transfer_energy(
+pub fn[T : TransferTarget] OwnedCreep::transfer_energy(
   self : OwnedCreep,
-  target : OwnedSpawn,
+  target : T,
 ) -> Unit raise ActionError {
   self.transfer(target, Energy)
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::withdraw(
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw(
   self : OwnedCreep,
   target : T,
   resource : ResourceKind,
@@ -46,48 +48,50 @@ pub fn[T : GameObjectLike] OwnedCreep::withdraw(
   raise_action_error(
     self
     .to_raw()
-    .withdraw_raw(target.as_game_object().to_raw(), resource.to_raw()),
+    .withdraw_raw(target.as_withdraw_target().to_raw(), resource.to_raw()),
   )
 }
 
 ///|
-pub fn OwnedCreep::withdraw_energy(
+pub fn[T : WithdrawTarget] OwnedCreep::withdraw_energy(
   self : OwnedCreep,
-  target : StructureContainer,
+  target : T,
 ) -> Unit raise ActionError {
   self.withdraw(target, Energy)
 }
 
 ///|
-pub fn OwnedCreep::build(
-  self : OwnedCreep,
-  target : ConstructionSite,
-) -> Unit raise ActionError {
-  raise_action_error(self.to_raw().build_raw(target.to_raw()))
-}
-
-///|
-pub fn[T : GameObjectLike] OwnedCreep::attack(
+pub fn[T : BuildTarget] OwnedCreep::build(
   self : OwnedCreep,
   target : T,
 ) -> Unit raise ActionError {
-  raise_action_error(self.to_raw().attack_raw(target.as_game_object().to_raw()))
+  raise_action_error(self.to_raw().build_raw(target.as_build_target().to_raw()))
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::ranged_attack(
+pub fn[T : AttackTarget] OwnedCreep::attack(
   self : OwnedCreep,
   target : T,
 ) -> Unit raise ActionError {
   raise_action_error(
-    self.to_raw().ranged_attack_raw(target.as_game_object().to_raw()),
+    self.to_raw().attack_raw(target.as_attack_target().to_raw()),
   )
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::heal(
+pub fn[T : RangedAttackTarget] OwnedCreep::ranged_attack(
   self : OwnedCreep,
   target : T,
 ) -> Unit raise ActionError {
-  raise_action_error(self.to_raw().heal_raw(target.as_game_object().to_raw()))
+  raise_action_error(
+    self.to_raw().ranged_attack_raw(target.as_ranged_attack_target().to_raw()),
+  )
+}
+
+///|
+pub fn[T : HealTarget] OwnedCreep::heal(
+  self : OwnedCreep,
+  target : T,
+) -> Unit raise ActionError {
+  raise_action_error(self.to_raw().heal_raw(target.as_heal_target().to_raw()))
 }

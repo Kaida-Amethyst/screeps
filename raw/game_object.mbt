@@ -26,6 +26,32 @@ pub fn JsConstructionSite::to_game_object(
 ) -> JsGameObject = "%identity"
 
 ///|
+pub fn JsGameObject::to_creep(self : JsGameObject) -> JsCreep = "%identity"
+
+///|
+pub fn JsGameObject::to_source(self : JsGameObject) -> JsSource = "%identity"
+
+///|
+pub fn JsGameObject::to_structure_spawn(
+  self : JsGameObject,
+) -> JsStructureSpawn = "%identity"
+
+///|
+pub fn JsGameObject::to_structure_tower(
+  self : JsGameObject,
+) -> JsStructureTower = "%identity"
+
+///|
+pub fn JsGameObject::to_structure_container(
+  self : JsGameObject,
+) -> JsStructureContainer = "%identity"
+
+///|
+pub fn JsGameObject::to_construction_site(
+  self : JsGameObject,
+) -> JsConstructionSite = "%identity"
+
+///|
 /// `id` 在 typings 中可能是 `number | string`，formal API 统一转成字符串。
 pub extern "js" fn JsGameObject::id(self : JsGameObject) -> String =
   #| (self) => String(self.id)
@@ -41,3 +67,7 @@ pub extern "js" fn JsGameObject::y(self : JsGameObject) -> Int =
 ///|
 pub extern "js" fn JsGameObject::exists(self : JsGameObject) -> Bool =
   #| (self) => self.exists
+
+///|
+pub extern "js" fn JsGameObject::prototype_name(self : JsGameObject) -> String =
+  #| (self) => self?.constructor?.name ?? ""

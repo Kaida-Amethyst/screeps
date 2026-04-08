@@ -105,19 +105,31 @@ let sources = sources()
 
 ## 单对象查询
 
-第一阶段建议谨慎处理。
+第一阶段建议保留：
 
-可以考虑保留：
+- `ticks()`
+- `object_by_id(id) -> GameObject?`
 
-- `get_ticks()` 或 `ticks()`
-- `object_by_id(id)` 或 `find_object_by_id(id)`
+当前结论：
 
-但不建议在第一阶段就为 `object_by_id` 引入过重的统一对象 ADT。
+- `object_by_id` 的正式高层接口先返回 `GameObject?`
+- 不在第一阶段引入过重的统一对象 ADT
+- 通过 `GameObject` 上的安全下转方法进入具体对象视图
 
-因此当前更稳的路线是：
+例如：
 
-- `raw` 保留 `get_object_by_id_raw`
-- `api` 先低优先级处理高层单对象查询
+- `as_creep()`
+- `as_source()`
+- `as_structure_spawn()`
+- `as_structure_tower()`
+- `as_structure_container()`
+- `as_construction_site()`
+
+这样可以兼顾：
+
+- 高层接口的正式性
+- API 复杂度的可控性
+- 后续扩展为更强统一视图的空间
 
 ## 距离与最近目标查询
 
@@ -167,6 +179,7 @@ creep.range_to(target)
 
 - `raw` 允许保留 workaround
 - `api` 只暴露 typed query
+- `object_by_id` 的第一阶段正式接口返回 `GameObject?`
 - 正式命名统一走：
   - `creeps() / owned_creeps() / enemy_creeps()`
   - `spawns() / owned_spawns() / enemy_spawns()`
