@@ -1,0 +1,126 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "username/screeps/raw"
+
+import {
+  "mizchi/js/core",
+}
+
+// Values
+pub const BODY_PART_ATTACK : String = "attack"
+
+pub const BODY_PART_CARRY : String = "carry"
+
+pub const BODY_PART_HEAL : String = "heal"
+
+pub const BODY_PART_MOVE : String = "move"
+
+pub const BODY_PART_RANGED_ATTACK : String = "ranged_attack"
+
+pub const BODY_PART_TOUGH : String = "tough"
+
+pub const BODY_PART_WORK : String = "work"
+
+pub const ERR_BUSY : Int = -4
+
+pub const ERR_FULL : Int = -8
+
+pub const ERR_INVALID_ARGS : Int = -10
+
+pub const ERR_INVALID_TARGET : Int = -7
+
+pub const ERR_NOT_ENOUGH_ENERGY : Int = -6
+
+pub const ERR_NOT_ENOUGH_RESOURCES : Int = -6
+
+pub const ERR_NOT_IN_RANGE : Int = -9
+
+pub const ERR_NOT_OWNER : Int = -1
+
+pub const ERR_NO_BODYPART : Int = -12
+
+pub const ERR_TIRED : Int = -11
+
+pub const OK_CODE : Int = 0
+
+pub const RESOURCE_ENERGY : String = "energy"
+
+pub fn creeps() -> Array[JsCreep]
+
+pub fn get_object_by_id(String) -> JsGameObject?
+
+pub fn get_objects() -> Array[JsGameObject]
+
+pub fn get_ticks() -> Int
+
+pub fn sources() -> Array[JsSource]
+
+pub fn spawns() -> Array[JsStructureSpawn]
+
+// Errors
+
+// Types and methods
+#external
+pub type JsConstructionSite
+pub fn JsConstructionSite::to_game_object(Self) -> JsGameObject
+
+#external
+pub type JsCreep
+pub fn JsCreep::harvest_raw(Self, JsSource) -> Int
+pub fn JsCreep::hits(Self) -> Int
+pub fn JsCreep::hits_max(Self) -> Int
+pub fn JsCreep::move_to_raw(Self, JsGameObject) -> Int
+pub fn JsCreep::my(Self) -> Bool
+pub fn JsCreep::spawning(Self) -> Bool
+pub fn JsCreep::store(Self) -> JsStore
+pub fn JsCreep::to_game_object(Self) -> JsGameObject
+pub fn JsCreep::transfer_raw(Self, JsGameObject, String) -> Int
+
+#external
+pub type JsGameObject
+pub fn JsGameObject::exists(Self) -> Bool
+pub fn JsGameObject::id(Self) -> String
+pub fn JsGameObject::x(Self) -> Int
+pub fn JsGameObject::y(Self) -> Int
+
+#external
+pub type JsSource
+pub fn JsSource::energy(Self) -> Int
+pub fn JsSource::energy_capacity(Self) -> Int
+pub fn JsSource::to_game_object(Self) -> JsGameObject
+
+#external
+pub type JsSpawnCreepResult
+pub fn JsSpawnCreepResult::error(Self) -> @core.Nullish[Int]
+pub fn JsSpawnCreepResult::object(Self) -> @core.Nullish[JsCreep]
+
+#external
+pub type JsStore
+pub fn JsStore::get_capacity(Self) -> @core.Nullish[Int]
+pub fn JsStore::get_capacity_by(Self, String) -> @core.Nullish[Int]
+pub fn JsStore::get_free_capacity(Self) -> @core.Nullish[Int]
+pub fn JsStore::get_free_capacity_by(Self, String) -> @core.Nullish[Int]
+pub fn JsStore::get_used_capacity(Self) -> @core.Nullish[Int]
+pub fn JsStore::get_used_capacity_by(Self, String) -> @core.Nullish[Int]
+pub fn JsStore::resource_amount(Self, String) -> Int
+
+#external
+pub type JsStructureContainer
+pub fn JsStructureContainer::to_game_object(Self) -> JsGameObject
+
+#external
+pub type JsStructureSpawn
+pub fn JsStructureSpawn::hits(Self) -> Int
+pub fn JsStructureSpawn::hits_max(Self) -> Int
+pub fn JsStructureSpawn::my(Self) -> @core.Nullish[Bool]
+pub fn JsStructureSpawn::spawn_creep_raw(Self, Array[String]) -> JsSpawnCreepResult
+pub fn JsStructureSpawn::store(Self) -> JsStore
+pub fn JsStructureSpawn::to_game_object(Self) -> JsGameObject
+
+#external
+pub type JsStructureTower
+pub fn JsStructureTower::to_game_object(Self) -> JsGameObject
+
+// Type aliases
+
+// Traits
+

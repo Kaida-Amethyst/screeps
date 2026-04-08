@@ -1,0 +1,190 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "username/screeps/model"
+
+import {
+  "username/screeps/raw",
+}
+
+// Values
+pub fn relation_of_my_bool(Bool) -> Relation
+
+pub fn relation_of_owned_flag(Bool?) -> Relation
+
+// Errors
+
+// Types and methods
+pub struct ConstructionSite {
+  raw : @raw.JsConstructionSite
+  relation : Relation
+}
+
+pub struct Creep {
+  // private fields
+}
+pub fn Creep::as_enemy(Self) -> EnemyCreep?
+pub fn Creep::as_game_object(Self) -> GameObject
+pub fn Creep::as_owned(Self) -> OwnedCreep?
+pub fn Creep::create(@raw.JsCreep) -> Self
+pub fn Creep::exists(Self) -> Bool
+pub fn Creep::hits(Self) -> Int
+pub fn Creep::hits_max(Self) -> Int
+pub fn Creep::id(Self) -> String
+pub fn Creep::is_enemy(Self) -> Bool
+pub fn Creep::is_owned(Self) -> Bool
+pub fn Creep::relation(Self) -> Relation
+pub fn Creep::spawning(Self) -> Bool
+pub fn Creep::store(Self) -> Store
+pub fn Creep::to_raw(Self) -> @raw.JsCreep
+pub fn Creep::x(Self) -> Int
+pub fn Creep::y(Self) -> Int
+
+pub struct EnemyCreep {
+  // private fields
+}
+pub fn EnemyCreep::as_creep(Self) -> Creep
+pub fn EnemyCreep::as_game_object(Self) -> GameObject
+pub fn EnemyCreep::create(@raw.JsCreep) -> Self
+pub fn EnemyCreep::exists(Self) -> Bool
+pub fn EnemyCreep::hits(Self) -> Int
+pub fn EnemyCreep::hits_max(Self) -> Int
+pub fn EnemyCreep::id(Self) -> String
+pub fn EnemyCreep::is_enemy(Self) -> Bool
+pub fn EnemyCreep::is_owned(Self) -> Bool
+pub fn EnemyCreep::relation(Self) -> Relation
+pub fn EnemyCreep::spawning(Self) -> Bool
+pub fn EnemyCreep::store(Self) -> Store
+pub fn EnemyCreep::to_raw(Self) -> @raw.JsCreep
+pub fn EnemyCreep::x(Self) -> Int
+pub fn EnemyCreep::y(Self) -> Int
+
+pub struct EnemySpawn {
+  // private fields
+}
+pub fn EnemySpawn::as_game_object(Self) -> GameObject
+pub fn EnemySpawn::as_structure_spawn(Self) -> StructureSpawn
+pub fn EnemySpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn EnemySpawn::exists(Self) -> Bool
+pub fn EnemySpawn::hits(Self) -> Int
+pub fn EnemySpawn::hits_max(Self) -> Int
+pub fn EnemySpawn::id(Self) -> String
+pub fn EnemySpawn::is_enemy(Self) -> Bool
+pub fn EnemySpawn::is_owned(Self) -> Bool
+pub fn EnemySpawn::relation(Self) -> Relation
+pub fn EnemySpawn::store(Self) -> Store
+pub fn EnemySpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn EnemySpawn::x(Self) -> Int
+pub fn EnemySpawn::y(Self) -> Int
+
+pub struct EnemyTower {
+  raw : @raw.JsStructureTower
+}
+
+pub struct GameObject {
+  // private fields
+}
+pub fn GameObject::create(@raw.JsGameObject) -> Self
+pub fn GameObject::exists(Self) -> Bool
+pub fn GameObject::id(Self) -> String
+pub fn GameObject::to_raw(Self) -> @raw.JsGameObject
+pub fn GameObject::x(Self) -> Int
+pub fn GameObject::y(Self) -> Int
+
+pub struct OwnedCreep {
+  // private fields
+}
+pub fn OwnedCreep::as_creep(Self) -> Creep
+pub fn OwnedCreep::as_game_object(Self) -> GameObject
+pub fn OwnedCreep::create(@raw.JsCreep) -> Self
+pub fn OwnedCreep::exists(Self) -> Bool
+pub fn OwnedCreep::hits(Self) -> Int
+pub fn OwnedCreep::hits_max(Self) -> Int
+pub fn OwnedCreep::id(Self) -> String
+pub fn OwnedCreep::is_enemy(Self) -> Bool
+pub fn OwnedCreep::is_owned(Self) -> Bool
+pub fn OwnedCreep::relation(Self) -> Relation
+pub fn OwnedCreep::spawning(Self) -> Bool
+pub fn OwnedCreep::store(Self) -> Store
+pub fn OwnedCreep::to_raw(Self) -> @raw.JsCreep
+pub fn OwnedCreep::x(Self) -> Int
+pub fn OwnedCreep::y(Self) -> Int
+
+pub struct OwnedSpawn {
+  // private fields
+}
+pub fn OwnedSpawn::as_game_object(Self) -> GameObject
+pub fn OwnedSpawn::as_structure_spawn(Self) -> StructureSpawn
+pub fn OwnedSpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn OwnedSpawn::exists(Self) -> Bool
+pub fn OwnedSpawn::hits(Self) -> Int
+pub fn OwnedSpawn::hits_max(Self) -> Int
+pub fn OwnedSpawn::id(Self) -> String
+pub fn OwnedSpawn::is_enemy(Self) -> Bool
+pub fn OwnedSpawn::is_owned(Self) -> Bool
+pub fn OwnedSpawn::relation(Self) -> Relation
+pub fn OwnedSpawn::store(Self) -> Store
+pub fn OwnedSpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn OwnedSpawn::x(Self) -> Int
+pub fn OwnedSpawn::y(Self) -> Int
+
+pub struct OwnedTower {
+  raw : @raw.JsStructureTower
+}
+
+pub enum Relation {
+  Mine
+  Enemy
+  Neutral
+} derive(Compare, Eq, Show)
+
+pub struct Source {
+  // private fields
+}
+pub fn Source::as_game_object(Self) -> GameObject
+pub fn Source::create(@raw.JsSource) -> Self
+pub fn Source::energy(Self) -> Int
+pub fn Source::energy_capacity(Self) -> Int
+pub fn Source::exists(Self) -> Bool
+pub fn Source::id(Self) -> String
+pub fn Source::to_raw(Self) -> @raw.JsSource
+pub fn Source::x(Self) -> Int
+pub fn Source::y(Self) -> Int
+
+pub struct Store {
+  // private fields
+}
+pub fn Store::create(@raw.JsStore) -> Self
+pub fn Store::to_raw(Self) -> @raw.JsStore
+
+pub struct StructureContainer {
+  raw : @raw.JsStructureContainer
+  relation : Relation
+}
+
+pub struct StructureSpawn {
+  // private fields
+}
+pub fn StructureSpawn::as_enemy(Self) -> EnemySpawn?
+pub fn StructureSpawn::as_game_object(Self) -> GameObject
+pub fn StructureSpawn::as_owned(Self) -> OwnedSpawn?
+pub fn StructureSpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn StructureSpawn::exists(Self) -> Bool
+pub fn StructureSpawn::hits(Self) -> Int
+pub fn StructureSpawn::hits_max(Self) -> Int
+pub fn StructureSpawn::id(Self) -> String
+pub fn StructureSpawn::is_enemy(Self) -> Bool
+pub fn StructureSpawn::is_owned(Self) -> Bool
+pub fn StructureSpawn::relation(Self) -> Relation
+pub fn StructureSpawn::store(Self) -> Store
+pub fn StructureSpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn StructureSpawn::x(Self) -> Int
+pub fn StructureSpawn::y(Self) -> Int
+
+pub struct StructureTower {
+  raw : @raw.JsStructureTower
+  relation : Relation
+}
+
+// Type aliases
+
+// Traits
+
