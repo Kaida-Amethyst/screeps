@@ -1,6 +1,6 @@
 ///|
-pub fn[T : TowerAttackTarget] OwnedTower::attack(
-  self : OwnedTower,
+pub fn[T : TowerAttackTarget] MyTower::attack(
+  self : MyTower,
   target : T,
 ) -> ActionResult {
   action_result_of(
@@ -9,8 +9,8 @@ pub fn[T : TowerAttackTarget] OwnedTower::attack(
 }
 
 ///|
-pub fn[T : HealTarget] OwnedTower::heal(
-  self : OwnedTower,
+pub fn[T : HealTarget] MyTower::heal(
+  self : MyTower,
   target : T,
 ) -> ActionResult {
   action_result_of(self.to_raw().heal_raw(target.as_heal_target().to_raw()))

@@ -21,7 +21,7 @@
 - `GameObjectLike`
 - `HasStore`
 - `HasHits`
-- `OwnedLike`
+- `MyLike`
 
 ### `GameObjectLike`
 
@@ -42,7 +42,7 @@
 
 适用对象例如：
 
-- `OwnedCreep`
+- `MyCreep`
 - `StructureSpawn`
 - `StructureTower`
 - `StructureContainer`
@@ -56,14 +56,14 @@
 - `hits`
 - `hits_max`
 
-### `OwnedLike`
+### `MyLike`
 
 用于表达对象带有所有权语义。
 
 建议覆盖：
 
 - `relation`
-- `is_owned()`
+- `is_my()`
 - `is_enemy()`
 
 ## 动作目标 trait
@@ -133,7 +133,7 @@ creep.build(site)
 - `SourceLike`
 - `ContainerLike`
 - `StructureLike`
-- `OwnedStructureLike`
+- `MyStructureLike`
 - `CombatUnitLike`
 
 原因是这些抽象在第一阶段很容易变成“为了抽象而抽象”。
@@ -142,11 +142,11 @@ creep.build(site)
 
 typed view 用来表达“它是什么”：
 
-- `OwnedCreep`
+- `MyCreep`
 - `EnemyCreep`
-- `OwnedSpawn`
+- `MySpawn`
 - `EnemySpawn`
-- `OwnedTower`
+- `MyTower`
 - `EnemyTower`
 
 trait 用来表达“它能做什么 / 它能被做什么”。
@@ -165,7 +165,7 @@ trait 用来表达“它能做什么 / 它能被做什么”。
 - `GameObjectLike`
 - `HasStore`
 - `HasHits`
-- `OwnedLike`
+- `MyLike`
 - `MoveTarget`
 - `AttackTarget`
 - `RangedAttackTarget`
@@ -186,11 +186,12 @@ trait 用来表达“它能做什么 / 它能被做什么”。
 
 当前结论：
 
-- trait 的**定义**应主要放在 `api`
-- `model` 负责 concrete wrapper、typed view 与必要的实现
+- trait 的定义放在高层包中
+- `model` 关注点负责 concrete wrapper、typed view 与必要的实现
+- `api` 关注点负责 trait 设计与高层语义整理
 - `raw` 不定义这些高层 trait
 
-## 为什么 trait 定义放在 `api`
+## 为什么 trait 定义属于高层 `api` 关注点
 
 原因如下：
 
@@ -204,7 +205,7 @@ trait 用来表达“它能做什么 / 它能被做什么”。
 
 这些都不是 raw/runtime 层天然存在的东西，而是 MoonBit API 层对 Arena 能力的整理结果。
 
-因此更适合放在 `api`。
+因此更适合放在高层包内部的 `api` 关注点。
 
 ### 2. `model` 应保持对象层稳定
 
@@ -215,15 +216,15 @@ trait 用来表达“它能做什么 / 它能被做什么”。
 - 提供 live getter
 - 提供 typed view 转换
 
-如果把 trait 定义也塞进 `model`，容易让 `model` 逐渐承担过多高层语义，最终与 `api` 混在一起。
+如果把 trait 定义也塞进 `model`，容易让 `model` 逐渐承担过多高层语义，最终与高层 `api` 关注点混在一起。
 
 ### 3. 分层更利于长期维护
 
 采用以下分工会更清楚：
 
 - `raw`：怎么连上
-- `model`：对象是什么
-- `api`：怎么好用地用
+- 高层 `model` 关注点：对象是什么
+- 高层 `api` 关注点：怎么好用地用
 
 trait 明显更接近第三层。
 
@@ -233,15 +234,15 @@ trait 明显更接近第三层。
 
 建议承载：
 
-- `Creep`、`OwnedCreep`、`EnemyCreep`
+- `Creep`、`MyCreep`、`EnemyCreep`
 - `Source`
-- `StructureSpawn`、`OwnedSpawn`、`EnemySpawn`
-- `StructureTower`、`OwnedTower`、`EnemyTower`
+- `StructureSpawn`、`MySpawn`、`EnemySpawn`
+- `StructureTower`、`MyTower`、`EnemyTower`
 - `StructureContainer`
 - `ConstructionSite`
 - `Relation`
 - live getter
-- `as_owned()` / `as_enemy()` 这类 typed view 转换
+- `as_my()` / `as_enemy()` 这类 typed view 转换
 
 ### `api`
 
@@ -250,7 +251,7 @@ trait 明显更接近第三层。
 - `GameObjectLike`
 - `HasStore`
 - `HasHits`
-- `OwnedLike`
+- `MyLike`
 - `MoveTarget`
 - `AttackTarget`
 - `RangedAttackTarget`

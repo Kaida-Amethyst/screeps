@@ -38,7 +38,7 @@ pub struct Creep {
   relation : Relation
 }
 
-pub struct OwnedCreep {
+pub struct MyCreep {
   raw : JsCreep
 }
 
@@ -58,7 +58,7 @@ pub trait CreepLike : GameObjectLike {
 说明：
 
 - `Creep` 是通用观察视图
-- `OwnedCreep` 是可行动的己方 creep 视图
+- `MyCreep` 是可行动的己方 creep 视图
 - `EnemyCreep` 是敌方 creep 视图
 - `CreepLike` 用来表达共享能力，而不是把 `Creep` 本身做成 trait object
 
@@ -87,21 +87,21 @@ pub trait CreepLike : GameObjectLike {
 因此：
 
 - 平时查询 `creeps()` 可以返回 `Array[Creep]`
-- `my_creeps()` 更适合返回 `Array[OwnedCreep]`
+- `my_creeps()` 更适合返回 `Array[MyCreep]`
 - `enemy_creeps()` 更适合返回 `Array[EnemyCreep]`
 - 如果未来需要统一处理不同 creep 视图，可以再讨论是否增加 `enum CreepView`
 
 ### 命名结论
 
-- 不采用 `MyCreep`
-- 当前更推荐：
-  - `OwnedCreep`
+- 当前采用：
+  - `MyCreep`
   - `EnemyCreep`
 
 理由：
 
-- `OwnedCreep` 比 `MyCreep` 更正式
-- `OwnedCreep` 与 Screeps 的 `OwnedStructure` 语义更接近
+- 与 Screeps 原始 API 中的 `my` 语义保持一致
+- 直播与示例代码里更直观
+- 与 `my_creeps()` / `my_spawns()` / `my_towers()` 这一组查询命名一致
 
 ### 字段缓存结论
 
@@ -193,7 +193,7 @@ pub struct Source {
 更合理的动作边界是：
 
 ```moonbit
-pub fn OwnedCreep::harvest(target : Source) -> ActionResult
+pub fn MyCreep::harvest(target : Source) -> ActionResult
 ```
 
 而不是把动词反向挂在 `Source` 上。
@@ -313,7 +313,7 @@ pub struct Structure {
 - `raw` 层只需要 `JsStructureSpawn`
 - MoonBit API 层需要：
   - `StructureSpawn`
-  - `OwnedSpawn`
+  - `MySpawn`
   - `EnemySpawn`
 - `EnemySpawn` 是 MoonBit API 视图，不是官方原始类型
 
@@ -333,7 +333,7 @@ pub struct StructureSpawn {
   relation : Relation
 }
 
-pub struct OwnedSpawn {
+pub struct MySpawn {
   raw : JsStructureSpawn
 }
 
@@ -349,10 +349,10 @@ pub struct EnemySpawn {
 ```moonbit
 fn wrap_spawn(raw : JsStructureSpawn) -> StructureSpawn
 
-pub fn StructureSpawn::is_owned(self) -> Bool
+pub fn StructureSpawn::is_my(self) -> Bool
 pub fn StructureSpawn::is_enemy(self) -> Bool
 
-pub fn StructureSpawn::as_owned(self) -> OwnedSpawn?
+pub fn StructureSpawn::as_my(self) -> MySpawn?
 pub fn StructureSpawn::as_enemy(self) -> EnemySpawn?
 ```
 
@@ -362,16 +362,16 @@ pub fn StructureSpawn::as_enemy(self) -> EnemySpawn?
 
 ```moonbit
 pub fn spawns() -> Array[StructureSpawn]
-pub fn owned_spawns() -> Array[OwnedSpawn]
+pub fn my_spawns() -> Array[MySpawn]
 pub fn enemy_spawns() -> Array[EnemySpawn]
 ```
 
 当前更推荐：
 
-- `owned_spawns()`
+- `my_spawns()`
 - `enemy_spawns()`
 
-而不是 `my_spawns()`，因为与 `EnemySpawn` 配套时，`OwnedSpawn` 这组命名更统一。
+这样与 `EnemySpawn` 配套时，`MySpawn` 这一组命名也足够统一，同时更贴近 Screeps 原始 API。
 
 ### 能力分工
 
@@ -386,7 +386,7 @@ pub fn enemy_spawns() -> Array[EnemySpawn]
   - `hits`
   - `x / y`
 
-`OwnedSpawn`：
+`MySpawn`：
 
 - 可行动视图
 - 放主动动作
@@ -411,13 +411,13 @@ pub fn enemy_spawns() -> Array[EnemySpawn]
 
 - bot 代码可以避免反复 `filter(i => !i.my)`
 - 类型语义更强
-- 它与 `OwnedSpawn` 配套
-- 它与 `OwnedCreep / EnemyCreep` 的方向一致
+- 它与 `MySpawn` 配套
+- 它与 `MyCreep / EnemyCreep` 的方向一致
 
 ### 当前结论
 
 - `StructureSpawn` 是通用视图
-- `OwnedSpawn` 是可行动视图
+- `MySpawn` 是可行动视图
 - `EnemySpawn` 是敌方观察视图
 - `EnemySpawn` 属于 MoonBit API 的高层抽象，不属于官方 raw 类型层级
 
@@ -428,7 +428,7 @@ pub fn enemy_spawns() -> Array[EnemySpawn]
 - `raw` 层只需要 `JsStructureTower`
 - MoonBit API 层建议提供：
   - `StructureTower`
-  - `OwnedTower`
+  - `MyTower`
   - `EnemyTower`
 
 ### 推荐结构
@@ -447,7 +447,7 @@ pub struct StructureTower {
   relation : Relation
 }
 
-pub struct OwnedTower {
+pub struct MyTower {
   raw : JsStructureTower
 }
 
@@ -462,7 +462,7 @@ pub struct EnemyTower {
 
 ```moonbit
 pub fn towers() -> Array[StructureTower]
-pub fn owned_towers() -> Array[OwnedTower]
+pub fn my_towers() -> Array[MyTower]
 pub fn enemy_towers() -> Array[EnemyTower]
 ```
 
@@ -477,7 +477,7 @@ pub fn enemy_towers() -> Array[EnemyTower]
   - `hits`
   - `x / y`
 
-`OwnedTower`：
+`MyTower`：
 
 - 可行动视图
 - 例如：
@@ -496,8 +496,8 @@ pub fn enemy_towers() -> Array[EnemyTower]
 
 ### 为什么需要 `EnemyTower`
 
-- 与 `OwnedTower` 配套
-- 与 `OwnedSpawn / EnemySpawn` 保持一致
+- 与 `MyTower` 配套
+- 与 `MySpawn / EnemySpawn` 保持一致
 - 在 bot 决策中，敌方 tower 是很自然的重要目标
 
 ### 当前结论
@@ -640,7 +640,7 @@ pub fn my_construction_sites() -> Array[ConstructionSite]
 更合理的边界是：
 
 ```moonbit
-pub fn OwnedCreep::build(target : ConstructionSite) -> ActionResult
+pub fn MyCreep::build(target : ConstructionSite) -> ActionResult
 ```
 
 ### 与 `createConstructionSite` 的关系

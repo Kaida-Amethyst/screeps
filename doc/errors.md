@@ -64,10 +64,10 @@ pub enum ActionResult {
 例如：
 
 ```moonbit
-pub fn OwnedCreep::harvest(self, target : Source) -> ActionResult
-pub fn OwnedCreep::attack(self, target : EnemyCreep) -> ActionResult
-pub fn OwnedCreep::move_to[T : MoveTarget](self, target : T) -> ActionResult
-pub fn OwnedCreep::transfer(
+pub fn MyCreep::harvest(self, target : Source) -> ActionResult
+pub fn MyCreep::attack(self, target : EnemyCreep) -> ActionResult
+pub fn MyCreep::move_to[T : MoveTarget](self, target : T) -> ActionResult
+pub fn MyCreep::transfer(
   self,
   target : TransferTarget,
   resource : ResourceKind,
@@ -139,7 +139,7 @@ match creep.harvest(source) {
 
 ```moonbit
 pub(all) enum SpawnResult {
-  Spawned(OwnedCreep)
+  Spawned(MyCreep)
   SpawnFailed(ActionResult)
 }
 

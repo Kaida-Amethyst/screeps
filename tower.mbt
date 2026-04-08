@@ -7,7 +7,7 @@ pub struct StructureTower {
 
 ///|
 /// 己方 tower 的强约束视图。
-pub struct OwnedTower {
+pub struct MyTower {
   priv raw : @raw.JsStructureTower
 }
 
@@ -19,15 +19,12 @@ pub struct EnemyTower {
 
 ///|
 pub fn StructureTower::create(raw : @raw.JsStructureTower) -> StructureTower {
-  StructureTower::{
-    raw,
-    relation: relation_of_owned_flag(raw.my().to_option()),
-  }
+  StructureTower::{ raw, relation: relation_of_my_flag(raw.my().to_option()) }
 }
 
 ///|
-pub fn OwnedTower::create(raw : @raw.JsStructureTower) -> OwnedTower {
-  OwnedTower::{ raw, }
+pub fn MyTower::create(raw : @raw.JsStructureTower) -> MyTower {
+  MyTower::{ raw, }
 }
 
 ///|
@@ -41,7 +38,7 @@ pub fn StructureTower::to_raw(self : StructureTower) -> @raw.JsStructureTower {
 }
 
 ///|
-pub fn OwnedTower::to_raw(self : OwnedTower) -> @raw.JsStructureTower {
+pub fn MyTower::to_raw(self : MyTower) -> @raw.JsStructureTower {
   self.raw
 }
 
@@ -56,7 +53,7 @@ pub fn StructureTower::as_game_object(self : StructureTower) -> GameObject {
 }
 
 ///|
-pub fn OwnedTower::as_game_object(self : OwnedTower) -> GameObject {
+pub fn MyTower::as_game_object(self : MyTower) -> GameObject {
   GameObject::create(self.raw.to_game_object())
 }
 
@@ -71,7 +68,7 @@ pub fn StructureTower::relation(self : StructureTower) -> Relation {
 }
 
 ///|
-pub fn OwnedTower::relation(_self : OwnedTower) -> Relation {
+pub fn MyTower::relation(_self : MyTower) -> Relation {
   Mine
 }
 
@@ -81,7 +78,7 @@ pub fn EnemyTower::relation(_self : EnemyTower) -> Relation {
 }
 
 ///|
-pub fn StructureTower::is_owned(self : StructureTower) -> Bool {
+pub fn StructureTower::is_my(self : StructureTower) -> Bool {
   self.relation == Mine
 }
 
@@ -91,17 +88,17 @@ pub fn StructureTower::is_enemy(self : StructureTower) -> Bool {
 }
 
 ///|
-pub fn OwnedTower::is_owned(_self : OwnedTower) -> Bool {
+pub fn MyTower::is_my(_self : MyTower) -> Bool {
   true
 }
 
 ///|
-pub fn OwnedTower::is_enemy(_self : OwnedTower) -> Bool {
+pub fn MyTower::is_enemy(_self : MyTower) -> Bool {
   false
 }
 
 ///|
-pub fn EnemyTower::is_owned(_self : EnemyTower) -> Bool {
+pub fn EnemyTower::is_my(_self : EnemyTower) -> Bool {
   false
 }
 
@@ -111,9 +108,9 @@ pub fn EnemyTower::is_enemy(_self : EnemyTower) -> Bool {
 }
 
 ///|
-pub fn StructureTower::as_owned(self : StructureTower) -> OwnedTower? {
+pub fn StructureTower::as_my(self : StructureTower) -> MyTower? {
   if self.relation == Mine {
-    Some(OwnedTower::{ raw: self.raw })
+    Some(MyTower::{ raw: self.raw })
   } else {
     None
   }
@@ -129,7 +126,7 @@ pub fn StructureTower::as_enemy(self : StructureTower) -> EnemyTower? {
 }
 
 ///|
-pub fn OwnedTower::as_structure_tower(self : OwnedTower) -> StructureTower {
+pub fn MyTower::as_structure_tower(self : MyTower) -> StructureTower {
   StructureTower::{ raw: self.raw, relation: Mine }
 }
 
@@ -144,7 +141,7 @@ pub fn StructureTower::id(self : StructureTower) -> String {
 }
 
 ///|
-pub fn OwnedTower::id(self : OwnedTower) -> String {
+pub fn MyTower::id(self : MyTower) -> String {
   self.as_game_object().id()
 }
 
@@ -159,7 +156,7 @@ pub fn StructureTower::x(self : StructureTower) -> Int {
 }
 
 ///|
-pub fn OwnedTower::x(self : OwnedTower) -> Int {
+pub fn MyTower::x(self : MyTower) -> Int {
   self.as_game_object().x()
 }
 
@@ -174,7 +171,7 @@ pub fn StructureTower::y(self : StructureTower) -> Int {
 }
 
 ///|
-pub fn OwnedTower::y(self : OwnedTower) -> Int {
+pub fn MyTower::y(self : MyTower) -> Int {
   self.as_game_object().y()
 }
 
@@ -189,7 +186,7 @@ pub fn StructureTower::exists(self : StructureTower) -> Bool {
 }
 
 ///|
-pub fn OwnedTower::exists(self : OwnedTower) -> Bool {
+pub fn MyTower::exists(self : MyTower) -> Bool {
   self.as_game_object().exists()
 }
 
@@ -204,7 +201,7 @@ pub fn StructureTower::store(self : StructureTower) -> Store {
 }
 
 ///|
-pub fn OwnedTower::store(self : OwnedTower) -> Store {
+pub fn MyTower::store(self : MyTower) -> Store {
   Store::create(self.raw.store())
 }
 
@@ -219,7 +216,7 @@ pub fn StructureTower::hits(self : StructureTower) -> Int {
 }
 
 ///|
-pub fn OwnedTower::hits(self : OwnedTower) -> Int {
+pub fn MyTower::hits(self : MyTower) -> Int {
   self.raw.hits()
 }
 
@@ -234,7 +231,7 @@ pub fn StructureTower::hits_max(self : StructureTower) -> Int {
 }
 
 ///|
-pub fn OwnedTower::hits_max(self : OwnedTower) -> Int {
+pub fn MyTower::hits_max(self : MyTower) -> Int {
   self.raw.hits_max()
 }
 
@@ -249,7 +246,7 @@ pub fn StructureTower::cooldown(self : StructureTower) -> Int {
 }
 
 ///|
-pub fn OwnedTower::cooldown(self : OwnedTower) -> Int {
+pub fn MyTower::cooldown(self : MyTower) -> Int {
   self.raw.cooldown()
 }
 

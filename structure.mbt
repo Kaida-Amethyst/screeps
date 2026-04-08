@@ -15,7 +15,7 @@ fn structure_stat_or_zero(value : @core.Nullish[Int]) -> Int {
 
 ///|
 pub fn Structure::create(raw : @raw.JsGameObject) -> Structure {
-  Structure::{ raw, relation: relation_of_owned_flag(raw.my().to_option()) }
+  Structure::{ raw, relation: relation_of_my_flag(raw.my().to_option()) }
 }
 
 ///|
@@ -34,7 +34,7 @@ pub fn Structure::relation(self : Structure) -> Relation {
 }
 
 ///|
-pub fn Structure::is_owned(self : Structure) -> Bool {
+pub fn Structure::is_my(self : Structure) -> Bool {
   self.relation == Mine
 }
 

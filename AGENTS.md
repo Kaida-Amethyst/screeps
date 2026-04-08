@@ -22,11 +22,11 @@
 
 - 如果 `doc/*.md` 与 `EXPLORATION.md` 冲突，以 `doc/*.md` 为准。
 
-- 正式版 binding 采用 `raw / model / api / wrapper` 四层：
+- 正式版 binding 在物理结构上采用 `raw / 高层包 / wrapper` 三层：
   - `raw`：只做忠实 FFI，不放高层语义。
-  - `model`：只放 wrapper、typed view、live getter、视图转换。
-  - `api`：放 trait、enum、错误映射、查询接口和高层方法。
+  - 高层包：承载 wrapper、typed view、trait、enum、错误映射、查询接口和高层方法。
   - `wrapper`：只做宿主 glue，不放 bot 逻辑和游戏语义。
+  - 其中 `model / api` 仍然保留为高层包内部的逻辑分工，不再拆成独立 package。
 
 - AI 可以大量生成 `raw` 层代码，但不能自由设计 public API。
 
@@ -36,7 +36,7 @@
 
 - 不要为了省事绕过 enum、typed view 或 trait 设计，直接把 `String` 或低层语义暴露到 `api`。
 
-- 查询正式命名优先使用 `owned_* / enemy_*`，不再新增 `my_*` 作为正式主风格。
+- 查询正式命名优先使用 `my_* / enemy_*`，与 Screeps 原始 API 保持一致。
 
 - 查询类“不存在”使用 `Option`。
 

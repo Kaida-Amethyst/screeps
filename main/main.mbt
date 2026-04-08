@@ -1,10 +1,10 @@
 ///|
 using @screeps {
   type BodyPartKind,
-  type OwnedCreep,
+  type MyCreep,
   type EnemyCreep,
   type Source,
-  type OwnedSpawn,
+  type MySpawn,
 }
 
 ///|
@@ -23,35 +23,35 @@ fn light_fighter_body() -> Array[@screeps.BodyPartKind] {
 }
 
 ///|
-fn is_worker(creep : OwnedCreep) -> Bool {
+fn is_worker(creep : MyCreep) -> Bool {
   creep.store().capacity(@screeps.Energy) > 0
 }
 
 ///|
-fn workers(creeps : Array[OwnedCreep]) -> Array[OwnedCreep] {
+fn workers(creeps : Array[MyCreep]) -> Array[MyCreep] {
   creeps.filter(is_worker)
 }
 
 ///|
-fn fighters(creeps : Array[OwnedCreep]) -> Array[OwnedCreep] {
+fn fighters(creeps : Array[MyCreep]) -> Array[MyCreep] {
   creeps.filter(creep => !is_worker(creep))
 }
 
 ///|
-fn choose_source(creep : OwnedCreep, sources : Array[Source]) -> Source? {
+fn choose_source(creep : MyCreep, sources : Array[Source]) -> Source? {
   creep.find_closest(sources, by=Range)
 }
 
 ///|
-fn choose_enemy(creep : OwnedCreep, enemies : Array[EnemyCreep]) -> EnemyCreep? {
+fn choose_enemy(creep : MyCreep, enemies : Array[EnemyCreep]) -> EnemyCreep? {
   creep.find_closest(enemies, by=Range)
 }
 
 ///|
 fn run_worker(
-  creep : OwnedCreep,
+  creep : MyCreep,
   sources : Array[Source],
-  spawn : OwnedSpawn,
+  spawn : MySpawn,
 ) -> Unit {
   if creep.store().free_energy() > 0 {
     guard choose_source(creep, sources) is Some(source) else { return }
@@ -62,18 +62,18 @@ fn run_worker(
 }
 
 ///|
-fn run_fighter(creep : OwnedCreep, enemies : Array[EnemyCreep]) -> Unit {
+fn run_fighter(creep : MyCreep, enemies : Array[EnemyCreep]) -> Unit {
   guard choose_enemy(creep, enemies) is Some(enemy) else { return }
   creep.attack_or_move(enemy)
 }
 
 ///|
-fn try_spawn_worker(spawn : OwnedSpawn) -> Unit {
+fn try_spawn_worker(spawn : MySpawn) -> Unit {
   ignore(spawn.spawn_creep(worker_body()))
 }
 
 ///|
-fn try_spawn_fighter(spawn : OwnedSpawn) -> Unit {
+fn try_spawn_fighter(spawn : MySpawn) -> Unit {
   let heavy_result = spawn.spawn_creep(heavy_fighter_body())
   match heavy_result {
     Spawned(_) => ()
@@ -85,8 +85,8 @@ fn try_spawn_fighter(spawn : OwnedSpawn) -> Unit {
 
 ///|
 fn run_spawn_logic(
-  spawn : OwnedSpawn,
-  my_creeps : Array[OwnedCreep],
+  spawn : MySpawn,
+  my_creeps : Array[MyCreep],
   enemies : Array[EnemyCreep],
 ) -> Unit {
   let worker_count = workers(my_creeps).length()
@@ -117,8 +117,8 @@ fn fallback_sources() -> Array[Source] {
 
 ///|
 pub fn main_loop() -> Unit {
-  guard @screeps.owned_spawns() is [spawn, ..] else { return }
-  let my_creeps = @screeps.owned_creeps()
+  guard @screeps.my_spawns() is [spawn, ..] else { return }
+  let my_creeps = @screeps.my_creeps()
   let enemies = @screeps.enemy_creeps()
   let sources = fallback_sources()
   run_spawn_logic(spawn, my_creeps, enemies)

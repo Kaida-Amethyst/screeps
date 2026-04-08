@@ -11,7 +11,7 @@ pub fn StructureContainer::create(
 ) -> StructureContainer {
   StructureContainer::{
     raw,
-    relation: relation_of_owned_flag(raw.my().to_option()),
+    relation: relation_of_my_flag(raw.my().to_option()),
   }
 }
 
@@ -35,7 +35,7 @@ pub fn StructureContainer::relation(self : StructureContainer) -> Relation {
 }
 
 ///|
-pub fn StructureContainer::is_owned(self : StructureContainer) -> Bool {
+pub fn StructureContainer::is_my(self : StructureContainer) -> Bool {
   self.relation == Mine
 }
 

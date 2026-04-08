@@ -41,7 +41,7 @@
 最终用户应写：
 
 ```moonbit
-let creeps = owned_creeps()
+let creeps = my_creeps()
 let towers = enemy_towers()
 let sources = sources()
 ```
@@ -67,26 +67,26 @@ let sources = sources()
 
 只对已经有 typed view 的对象提供：
 
-- `owned_creeps() -> Array[OwnedCreep]`
+- `my_creeps() -> Array[MyCreep]`
 - `enemy_creeps() -> Array[EnemyCreep]`
-- `owned_spawns() -> Array[OwnedSpawn]`
+- `my_spawns() -> Array[MySpawn]`
 - `enemy_spawns() -> Array[EnemySpawn]`
-- `owned_towers() -> Array[OwnedTower]`
+- `my_towers() -> Array[MyTower]`
 - `enemy_towers() -> Array[EnemyTower]`
 
 正式 API 统一优先使用：
 
-- `owned_*`
+- `my_*`
 - `enemy_*`
 
-不再把 `my_*` 作为正式命名主线。
+与 Screeps 原始 API 的 `my` 语义保持一致。
 
 ### 3. 特定语义筛选
 
 只保留稳定、价值高的语义筛选：
 
 - `active_sources()`
-- `owned_construction_sites()`
+- `my_construction_sites()`
 
 不鼓励把大量 tutorial / bot 语义 helper 提升为 binding 核心 API。
 
@@ -186,10 +186,10 @@ creep.range_to(target)
 - `object_by_id` 的第一阶段正式接口返回 `GameObject?`
 - 正式命名统一走：
   - `flags()`
-  - `creeps() / owned_creeps() / enemy_creeps()`
+  - `creeps() / my_creeps() / enemy_creeps()`
   - `structures()`
-  - `spawns() / owned_spawns() / enemy_spawns()`
-  - `towers() / owned_towers() / enemy_towers()`
+  - `spawns() / my_spawns() / enemy_spawns()`
+  - `towers() / my_towers() / enemy_towers()`
 - 距离查询统一走：
   - `find_closest(..., by~=Path)`
   - `find_in_range(...)`

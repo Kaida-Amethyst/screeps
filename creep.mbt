@@ -7,7 +7,7 @@ pub struct Creep {
 
 ///|
 /// 己方 creep 的强约束视图。
-pub struct OwnedCreep {
+pub struct MyCreep {
   priv raw : @raw.JsCreep
 }
 
@@ -23,8 +23,8 @@ pub fn Creep::create(raw : @raw.JsCreep) -> Creep {
 }
 
 ///|
-pub fn OwnedCreep::create(raw : @raw.JsCreep) -> OwnedCreep {
-  OwnedCreep::{ raw, }
+pub fn MyCreep::create(raw : @raw.JsCreep) -> MyCreep {
+  MyCreep::{ raw, }
 }
 
 ///|
@@ -38,7 +38,7 @@ pub fn Creep::to_raw(self : Creep) -> @raw.JsCreep {
 }
 
 ///|
-pub fn OwnedCreep::to_raw(self : OwnedCreep) -> @raw.JsCreep {
+pub fn MyCreep::to_raw(self : MyCreep) -> @raw.JsCreep {
   self.raw
 }
 
@@ -53,7 +53,7 @@ pub fn Creep::as_game_object(self : Creep) -> GameObject {
 }
 
 ///|
-pub fn OwnedCreep::as_game_object(self : OwnedCreep) -> GameObject {
+pub fn MyCreep::as_game_object(self : MyCreep) -> GameObject {
   GameObject::create(self.raw.to_game_object())
 }
 
@@ -68,7 +68,7 @@ pub fn Creep::relation(self : Creep) -> Relation {
 }
 
 ///|
-pub fn OwnedCreep::relation(_self : OwnedCreep) -> Relation {
+pub fn MyCreep::relation(_self : MyCreep) -> Relation {
   Mine
 }
 
@@ -78,7 +78,7 @@ pub fn EnemyCreep::relation(_self : EnemyCreep) -> Relation {
 }
 
 ///|
-pub fn Creep::is_owned(self : Creep) -> Bool {
+pub fn Creep::is_my(self : Creep) -> Bool {
   self.relation == Mine
 }
 
@@ -88,17 +88,17 @@ pub fn Creep::is_enemy(self : Creep) -> Bool {
 }
 
 ///|
-pub fn OwnedCreep::is_owned(_self : OwnedCreep) -> Bool {
+pub fn MyCreep::is_my(_self : MyCreep) -> Bool {
   true
 }
 
 ///|
-pub fn OwnedCreep::is_enemy(_self : OwnedCreep) -> Bool {
+pub fn MyCreep::is_enemy(_self : MyCreep) -> Bool {
   false
 }
 
 ///|
-pub fn EnemyCreep::is_owned(_self : EnemyCreep) -> Bool {
+pub fn EnemyCreep::is_my(_self : EnemyCreep) -> Bool {
   false
 }
 
@@ -108,9 +108,9 @@ pub fn EnemyCreep::is_enemy(_self : EnemyCreep) -> Bool {
 }
 
 ///|
-pub fn Creep::as_owned(self : Creep) -> OwnedCreep? {
+pub fn Creep::as_my(self : Creep) -> MyCreep? {
   if self.relation == Mine {
-    Some(OwnedCreep::{ raw: self.raw })
+    Some(MyCreep::{ raw: self.raw })
   } else {
     None
   }
@@ -126,7 +126,7 @@ pub fn Creep::as_enemy(self : Creep) -> EnemyCreep? {
 }
 
 ///|
-pub fn OwnedCreep::as_creep(self : OwnedCreep) -> Creep {
+pub fn MyCreep::as_creep(self : MyCreep) -> Creep {
   Creep::{ raw: self.raw, relation: Mine }
 }
 
@@ -141,7 +141,7 @@ pub fn Creep::id(self : Creep) -> String {
 }
 
 ///|
-pub fn OwnedCreep::id(self : OwnedCreep) -> String {
+pub fn MyCreep::id(self : MyCreep) -> String {
   self.as_game_object().id()
 }
 
@@ -156,7 +156,7 @@ pub fn Creep::x(self : Creep) -> Int {
 }
 
 ///|
-pub fn OwnedCreep::x(self : OwnedCreep) -> Int {
+pub fn MyCreep::x(self : MyCreep) -> Int {
   self.as_game_object().x()
 }
 
@@ -171,7 +171,7 @@ pub fn Creep::y(self : Creep) -> Int {
 }
 
 ///|
-pub fn OwnedCreep::y(self : OwnedCreep) -> Int {
+pub fn MyCreep::y(self : MyCreep) -> Int {
   self.as_game_object().y()
 }
 
@@ -186,7 +186,7 @@ pub fn Creep::exists(self : Creep) -> Bool {
 }
 
 ///|
-pub fn OwnedCreep::exists(self : OwnedCreep) -> Bool {
+pub fn MyCreep::exists(self : MyCreep) -> Bool {
   self.as_game_object().exists()
 }
 
@@ -201,7 +201,7 @@ pub fn Creep::store(self : Creep) -> Store {
 }
 
 ///|
-pub fn OwnedCreep::store(self : OwnedCreep) -> Store {
+pub fn MyCreep::store(self : MyCreep) -> Store {
   Store::create(self.raw.store())
 }
 
@@ -216,7 +216,7 @@ pub fn Creep::hits(self : Creep) -> Int {
 }
 
 ///|
-pub fn OwnedCreep::hits(self : OwnedCreep) -> Int {
+pub fn MyCreep::hits(self : MyCreep) -> Int {
   self.raw.hits()
 }
 
@@ -231,7 +231,7 @@ pub fn Creep::hits_max(self : Creep) -> Int {
 }
 
 ///|
-pub fn OwnedCreep::hits_max(self : OwnedCreep) -> Int {
+pub fn MyCreep::hits_max(self : MyCreep) -> Int {
   self.raw.hits_max()
 }
 
@@ -246,7 +246,7 @@ pub fn Creep::spawning(self : Creep) -> Bool {
 }
 
 ///|
-pub fn OwnedCreep::spawning(self : OwnedCreep) -> Bool {
+pub fn MyCreep::spawning(self : MyCreep) -> Bool {
   self.raw.spawning()
 }
 

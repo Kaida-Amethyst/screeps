@@ -7,7 +7,7 @@ pub struct Flag {
 
 ///|
 pub fn Flag::create(raw : @raw.JsFlag) -> Flag {
-  Flag::{ raw, relation: relation_of_owned_flag(raw.my().to_option()) }
+  Flag::{ raw, relation: relation_of_my_flag(raw.my().to_option()) }
 }
 
 ///|
@@ -26,7 +26,7 @@ pub fn Flag::relation(self : Flag) -> Relation {
 }
 
 ///|
-pub fn Flag::is_owned(self : Flag) -> Bool {
+pub fn Flag::is_my(self : Flag) -> Bool {
   self.relation == Mine
 }
 

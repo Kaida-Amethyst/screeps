@@ -125,8 +125,8 @@ pub fn[T : GameObjectLike] Creep::range_to(self : Creep, target : T) -> Int {
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::find_closest(
-  self : OwnedCreep,
+pub fn[T : GameObjectLike] MyCreep::find_closest(
+  self : MyCreep,
   candidates : Array[T],
   by? : ClosestMetric = Path,
 ) -> T? {
@@ -134,8 +134,8 @@ pub fn[T : GameObjectLike] OwnedCreep::find_closest(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::find_in_range(
-  self : OwnedCreep,
+pub fn[T : GameObjectLike] MyCreep::find_in_range(
+  self : MyCreep,
   candidates : Array[T],
   range : Int,
 ) -> Array[T] {
@@ -143,10 +143,7 @@ pub fn[T : GameObjectLike] OwnedCreep::find_in_range(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedCreep::range_to(
-  self : OwnedCreep,
-  target : T,
-) -> Int {
+pub fn[T : GameObjectLike] MyCreep::range_to(self : MyCreep, target : T) -> Int {
   range_between(self, target)
 }
 
@@ -275,8 +272,8 @@ pub fn[T : GameObjectLike] StructureSpawn::range_to(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedSpawn::find_closest(
-  self : OwnedSpawn,
+pub fn[T : GameObjectLike] MySpawn::find_closest(
+  self : MySpawn,
   candidates : Array[T],
   by? : ClosestMetric = Path,
 ) -> T? {
@@ -284,8 +281,8 @@ pub fn[T : GameObjectLike] OwnedSpawn::find_closest(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedSpawn::find_in_range(
-  self : OwnedSpawn,
+pub fn[T : GameObjectLike] MySpawn::find_in_range(
+  self : MySpawn,
   candidates : Array[T],
   range : Int,
 ) -> Array[T] {
@@ -293,10 +290,7 @@ pub fn[T : GameObjectLike] OwnedSpawn::find_in_range(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedSpawn::range_to(
-  self : OwnedSpawn,
-  target : T,
-) -> Int {
+pub fn[T : GameObjectLike] MySpawn::range_to(self : MySpawn, target : T) -> Int {
   range_between(self, target)
 }
 
@@ -353,8 +347,8 @@ pub fn[T : GameObjectLike] StructureTower::range_to(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedTower::find_closest(
-  self : OwnedTower,
+pub fn[T : GameObjectLike] MyTower::find_closest(
+  self : MyTower,
   candidates : Array[T],
   by? : ClosestMetric = Path,
 ) -> T? {
@@ -362,8 +356,8 @@ pub fn[T : GameObjectLike] OwnedTower::find_closest(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedTower::find_in_range(
-  self : OwnedTower,
+pub fn[T : GameObjectLike] MyTower::find_in_range(
+  self : MyTower,
   candidates : Array[T],
   range : Int,
 ) -> Array[T] {
@@ -371,10 +365,7 @@ pub fn[T : GameObjectLike] OwnedTower::find_in_range(
 }
 
 ///|
-pub fn[T : GameObjectLike] OwnedTower::range_to(
-  self : OwnedTower,
-  target : T,
-) -> Int {
+pub fn[T : GameObjectLike] MyTower::range_to(self : MyTower, target : T) -> Int {
   range_between(self, target)
 }
 

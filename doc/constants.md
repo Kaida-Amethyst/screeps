@@ -138,14 +138,14 @@ fn ResourceKind::to_raw(self) -> String
 例如：
 
 ```moonbit
-pub fn OwnedSpawn::spawn(
+pub fn MySpawn::spawn(
   self,
   body : Array[BodyPartKind]
 ) -> SpawnResult
 ```
 
 ```moonbit
-pub fn OwnedCreep::transfer(
+pub fn MyCreep::transfer(
   self,
   target : TransferTarget,
   resource : ResourceKind,

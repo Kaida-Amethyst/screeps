@@ -7,7 +7,7 @@ pub struct StructureSpawn {
 
 ///|
 /// 己方 spawn 的强约束视图。
-pub struct OwnedSpawn {
+pub struct MySpawn {
   priv raw : @raw.JsStructureSpawn
 }
 
@@ -19,15 +19,12 @@ pub struct EnemySpawn {
 
 ///|
 pub fn StructureSpawn::create(raw : @raw.JsStructureSpawn) -> StructureSpawn {
-  StructureSpawn::{
-    raw,
-    relation: relation_of_owned_flag(raw.my().to_option()),
-  }
+  StructureSpawn::{ raw, relation: relation_of_my_flag(raw.my().to_option()) }
 }
 
 ///|
-pub fn OwnedSpawn::create(raw : @raw.JsStructureSpawn) -> OwnedSpawn {
-  OwnedSpawn::{ raw, }
+pub fn MySpawn::create(raw : @raw.JsStructureSpawn) -> MySpawn {
+  MySpawn::{ raw, }
 }
 
 ///|
@@ -41,7 +38,7 @@ pub fn StructureSpawn::to_raw(self : StructureSpawn) -> @raw.JsStructureSpawn {
 }
 
 ///|
-pub fn OwnedSpawn::to_raw(self : OwnedSpawn) -> @raw.JsStructureSpawn {
+pub fn MySpawn::to_raw(self : MySpawn) -> @raw.JsStructureSpawn {
   self.raw
 }
 
@@ -56,7 +53,7 @@ pub fn StructureSpawn::as_game_object(self : StructureSpawn) -> GameObject {
 }
 
 ///|
-pub fn OwnedSpawn::as_game_object(self : OwnedSpawn) -> GameObject {
+pub fn MySpawn::as_game_object(self : MySpawn) -> GameObject {
   GameObject::create(self.raw.to_game_object())
 }
 
@@ -71,7 +68,7 @@ pub fn StructureSpawn::relation(self : StructureSpawn) -> Relation {
 }
 
 ///|
-pub fn OwnedSpawn::relation(_self : OwnedSpawn) -> Relation {
+pub fn MySpawn::relation(_self : MySpawn) -> Relation {
   Mine
 }
 
@@ -81,7 +78,7 @@ pub fn EnemySpawn::relation(_self : EnemySpawn) -> Relation {
 }
 
 ///|
-pub fn StructureSpawn::is_owned(self : StructureSpawn) -> Bool {
+pub fn StructureSpawn::is_my(self : StructureSpawn) -> Bool {
   self.relation == Mine
 }
 
@@ -91,17 +88,17 @@ pub fn StructureSpawn::is_enemy(self : StructureSpawn) -> Bool {
 }
 
 ///|
-pub fn OwnedSpawn::is_owned(_self : OwnedSpawn) -> Bool {
+pub fn MySpawn::is_my(_self : MySpawn) -> Bool {
   true
 }
 
 ///|
-pub fn OwnedSpawn::is_enemy(_self : OwnedSpawn) -> Bool {
+pub fn MySpawn::is_enemy(_self : MySpawn) -> Bool {
   false
 }
 
 ///|
-pub fn EnemySpawn::is_owned(_self : EnemySpawn) -> Bool {
+pub fn EnemySpawn::is_my(_self : EnemySpawn) -> Bool {
   false
 }
 
@@ -111,9 +108,9 @@ pub fn EnemySpawn::is_enemy(_self : EnemySpawn) -> Bool {
 }
 
 ///|
-pub fn StructureSpawn::as_owned(self : StructureSpawn) -> OwnedSpawn? {
+pub fn StructureSpawn::as_my(self : StructureSpawn) -> MySpawn? {
   if self.relation == Mine {
-    Some(OwnedSpawn::{ raw: self.raw })
+    Some(MySpawn::{ raw: self.raw })
   } else {
     None
   }
@@ -129,7 +126,7 @@ pub fn StructureSpawn::as_enemy(self : StructureSpawn) -> EnemySpawn? {
 }
 
 ///|
-pub fn OwnedSpawn::as_structure_spawn(self : OwnedSpawn) -> StructureSpawn {
+pub fn MySpawn::as_structure_spawn(self : MySpawn) -> StructureSpawn {
   StructureSpawn::{ raw: self.raw, relation: Mine }
 }
 
@@ -144,7 +141,7 @@ pub fn StructureSpawn::id(self : StructureSpawn) -> String {
 }
 
 ///|
-pub fn OwnedSpawn::id(self : OwnedSpawn) -> String {
+pub fn MySpawn::id(self : MySpawn) -> String {
   self.as_game_object().id()
 }
 
@@ -159,7 +156,7 @@ pub fn StructureSpawn::x(self : StructureSpawn) -> Int {
 }
 
 ///|
-pub fn OwnedSpawn::x(self : OwnedSpawn) -> Int {
+pub fn MySpawn::x(self : MySpawn) -> Int {
   self.as_game_object().x()
 }
 
@@ -174,7 +171,7 @@ pub fn StructureSpawn::y(self : StructureSpawn) -> Int {
 }
 
 ///|
-pub fn OwnedSpawn::y(self : OwnedSpawn) -> Int {
+pub fn MySpawn::y(self : MySpawn) -> Int {
   self.as_game_object().y()
 }
 
@@ -189,7 +186,7 @@ pub fn StructureSpawn::exists(self : StructureSpawn) -> Bool {
 }
 
 ///|
-pub fn OwnedSpawn::exists(self : OwnedSpawn) -> Bool {
+pub fn MySpawn::exists(self : MySpawn) -> Bool {
   self.as_game_object().exists()
 }
 
@@ -204,7 +201,7 @@ pub fn StructureSpawn::store(self : StructureSpawn) -> Store {
 }
 
 ///|
-pub fn OwnedSpawn::store(self : OwnedSpawn) -> Store {
+pub fn MySpawn::store(self : MySpawn) -> Store {
   Store::create(self.raw.store())
 }
 
@@ -219,7 +216,7 @@ pub fn StructureSpawn::hits(self : StructureSpawn) -> Int {
 }
 
 ///|
-pub fn OwnedSpawn::hits(self : OwnedSpawn) -> Int {
+pub fn MySpawn::hits(self : MySpawn) -> Int {
   self.raw.hits()
 }
 
@@ -234,7 +231,7 @@ pub fn StructureSpawn::hits_max(self : StructureSpawn) -> Int {
 }
 
 ///|
-pub fn OwnedSpawn::hits_max(self : OwnedSpawn) -> Int {
+pub fn MySpawn::hits_max(self : MySpawn) -> Int {
   self.raw.hits_max()
 }
 

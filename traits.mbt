@@ -10,9 +10,9 @@ pub(open) trait GameObjectLike {
 
 ///|
 /// 带有所有权关系语义的对象应实现这一 trait。
-pub(open) trait OwnedLike {
+pub(open) trait MyLike {
   relation(Self) -> Relation
-  is_owned(Self) -> Bool
+  is_my(Self) -> Bool
   is_enemy(Self) -> Bool
 }
 

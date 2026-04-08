@@ -27,7 +27,7 @@
 
 - bot 策略
 - world 语义查询
-  - 例如 `owned_creeps()`、`enemy_towers()`
+  - 例如 `my_creeps()`、`enemy_towers()`
 - 错误码到 `ActionResult` 的映射
 - typed view 转换
 - tutorial helper
@@ -49,11 +49,11 @@ MoonBit 侧继续负责：
 
 这些都不应迁移到 wrapper：
 
-- `owned_creeps()`
+- `my_creeps()`
 - `enemy_spawns()`
 - `BodyPartKind`
 - `ActionResult`
-- `OwnedCreep::harvest`
+- `MyCreep::harvest`
 - `find_closest(..., by~=Path)`
 
 ## wrapper 中应统一解决的问题类型

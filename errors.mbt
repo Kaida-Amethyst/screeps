@@ -17,7 +17,7 @@ pub(all) enum ActionResult {
 ///|
 /// `spawn_creep` 的正式高层结果。
 pub(all) enum SpawnResult {
-  Spawned(OwnedCreep)
+  Spawned(MyCreep)
   SpawnFailed(ActionResult)
 }
 

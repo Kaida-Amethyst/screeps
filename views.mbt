@@ -49,27 +49,27 @@ pub impl GameObjectLike for Creep with exists(self) -> Bool {
 }
 
 ///|
-pub impl GameObjectLike for OwnedCreep with as_game_object(self) -> GameObject {
+pub impl GameObjectLike for MyCreep with as_game_object(self) -> GameObject {
   self.as_game_object()
 }
 
 ///|
-pub impl GameObjectLike for OwnedCreep with id(self) -> String {
+pub impl GameObjectLike for MyCreep with id(self) -> String {
   self.id()
 }
 
 ///|
-pub impl GameObjectLike for OwnedCreep with x(self) -> Int {
+pub impl GameObjectLike for MyCreep with x(self) -> Int {
   self.x()
 }
 
 ///|
-pub impl GameObjectLike for OwnedCreep with y(self) -> Int {
+pub impl GameObjectLike for MyCreep with y(self) -> Int {
   self.y()
 }
 
 ///|
-pub impl GameObjectLike for OwnedCreep with exists(self) -> Bool {
+pub impl GameObjectLike for MyCreep with exists(self) -> Bool {
   self.exists()
 }
 
@@ -199,27 +199,27 @@ pub impl GameObjectLike for StructureSpawn with exists(self) -> Bool {
 }
 
 ///|
-pub impl GameObjectLike for OwnedSpawn with as_game_object(self) -> GameObject {
+pub impl GameObjectLike for MySpawn with as_game_object(self) -> GameObject {
   self.as_game_object()
 }
 
 ///|
-pub impl GameObjectLike for OwnedSpawn with id(self) -> String {
+pub impl GameObjectLike for MySpawn with id(self) -> String {
   self.id()
 }
 
 ///|
-pub impl GameObjectLike for OwnedSpawn with x(self) -> Int {
+pub impl GameObjectLike for MySpawn with x(self) -> Int {
   self.x()
 }
 
 ///|
-pub impl GameObjectLike for OwnedSpawn with y(self) -> Int {
+pub impl GameObjectLike for MySpawn with y(self) -> Int {
   self.y()
 }
 
 ///|
-pub impl GameObjectLike for OwnedSpawn with exists(self) -> Bool {
+pub impl GameObjectLike for MySpawn with exists(self) -> Bool {
   self.exists()
 }
 
@@ -274,27 +274,27 @@ pub impl GameObjectLike for StructureTower with exists(self) -> Bool {
 }
 
 ///|
-pub impl GameObjectLike for OwnedTower with as_game_object(self) -> GameObject {
+pub impl GameObjectLike for MyTower with as_game_object(self) -> GameObject {
   self.as_game_object()
 }
 
 ///|
-pub impl GameObjectLike for OwnedTower with id(self) -> String {
+pub impl GameObjectLike for MyTower with id(self) -> String {
   self.id()
 }
 
 ///|
-pub impl GameObjectLike for OwnedTower with x(self) -> Int {
+pub impl GameObjectLike for MyTower with x(self) -> Int {
   self.x()
 }
 
 ///|
-pub impl GameObjectLike for OwnedTower with y(self) -> Int {
+pub impl GameObjectLike for MyTower with y(self) -> Int {
   self.y()
 }
 
 ///|
-pub impl GameObjectLike for OwnedTower with exists(self) -> Bool {
+pub impl GameObjectLike for MyTower with exists(self) -> Bool {
   self.exists()
 }
 
@@ -374,197 +374,197 @@ pub impl GameObjectLike for ConstructionSite with exists(self) -> Bool {
 }
 
 ///|
-pub impl OwnedLike for Creep with relation(self) -> Relation {
+pub impl MyLike for Creep with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for Creep with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for Creep with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for Creep with is_enemy(self) -> Bool {
+pub impl MyLike for Creep with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for OwnedCreep with relation(self) -> Relation {
+pub impl MyLike for MyCreep with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for OwnedCreep with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for MyCreep with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for OwnedCreep with is_enemy(self) -> Bool {
+pub impl MyLike for MyCreep with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for EnemyCreep with relation(self) -> Relation {
+pub impl MyLike for EnemyCreep with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for EnemyCreep with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for EnemyCreep with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for EnemyCreep with is_enemy(self) -> Bool {
+pub impl MyLike for EnemyCreep with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for StructureSpawn with relation(self) -> Relation {
+pub impl MyLike for StructureSpawn with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for StructureSpawn with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for StructureSpawn with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for StructureSpawn with is_enemy(self) -> Bool {
+pub impl MyLike for StructureSpawn with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for OwnedSpawn with relation(self) -> Relation {
+pub impl MyLike for MySpawn with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for OwnedSpawn with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for MySpawn with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for OwnedSpawn with is_enemy(self) -> Bool {
+pub impl MyLike for MySpawn with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for EnemySpawn with relation(self) -> Relation {
+pub impl MyLike for EnemySpawn with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for EnemySpawn with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for EnemySpawn with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for EnemySpawn with is_enemy(self) -> Bool {
+pub impl MyLike for EnemySpawn with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for StructureTower with relation(self) -> Relation {
+pub impl MyLike for StructureTower with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for StructureTower with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for StructureTower with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for StructureTower with is_enemy(self) -> Bool {
+pub impl MyLike for StructureTower with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for OwnedTower with relation(self) -> Relation {
+pub impl MyLike for MyTower with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for OwnedTower with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for MyTower with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for OwnedTower with is_enemy(self) -> Bool {
+pub impl MyLike for MyTower with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for EnemyTower with relation(self) -> Relation {
+pub impl MyLike for EnemyTower with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for EnemyTower with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for EnemyTower with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for EnemyTower with is_enemy(self) -> Bool {
+pub impl MyLike for EnemyTower with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for StructureContainer with relation(self) -> Relation {
+pub impl MyLike for StructureContainer with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for StructureContainer with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for StructureContainer with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for StructureContainer with is_enemy(self) -> Bool {
+pub impl MyLike for StructureContainer with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for ConstructionSite with relation(self) -> Relation {
+pub impl MyLike for ConstructionSite with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for ConstructionSite with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for ConstructionSite with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for ConstructionSite with is_enemy(self) -> Bool {
+pub impl MyLike for ConstructionSite with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for Flag with relation(self) -> Relation {
+pub impl MyLike for Flag with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for Flag with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for Flag with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for Flag with is_enemy(self) -> Bool {
+pub impl MyLike for Flag with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
 ///|
-pub impl OwnedLike for Structure with relation(self) -> Relation {
+pub impl MyLike for Structure with relation(self) -> Relation {
   self.relation()
 }
 
 ///|
-pub impl OwnedLike for Structure with is_owned(self) -> Bool {
-  self.is_owned()
+pub impl MyLike for Structure with is_my(self) -> Bool {
+  self.is_my()
 }
 
 ///|
-pub impl OwnedLike for Structure with is_enemy(self) -> Bool {
+pub impl MyLike for Structure with is_enemy(self) -> Bool {
   self.is_enemy()
 }
 
@@ -574,7 +574,7 @@ pub impl HasStore for Creep with store(self) -> Store {
 }
 
 ///|
-pub impl HasStore for OwnedCreep with store(self) -> Store {
+pub impl HasStore for MyCreep with store(self) -> Store {
   self.store()
 }
 
@@ -589,7 +589,7 @@ pub impl HasStore for StructureSpawn with store(self) -> Store {
 }
 
 ///|
-pub impl HasStore for OwnedSpawn with store(self) -> Store {
+pub impl HasStore for MySpawn with store(self) -> Store {
   self.store()
 }
 
@@ -604,7 +604,7 @@ pub impl HasStore for StructureTower with store(self) -> Store {
 }
 
 ///|
-pub impl HasStore for OwnedTower with store(self) -> Store {
+pub impl HasStore for MyTower with store(self) -> Store {
   self.store()
 }
 
@@ -629,12 +629,12 @@ pub impl HasHits for Creep with hits_max(self) -> Int {
 }
 
 ///|
-pub impl HasHits for OwnedCreep with hits(self) -> Int {
+pub impl HasHits for MyCreep with hits(self) -> Int {
   self.hits()
 }
 
 ///|
-pub impl HasHits for OwnedCreep with hits_max(self) -> Int {
+pub impl HasHits for MyCreep with hits_max(self) -> Int {
   self.hits_max()
 }
 
@@ -659,12 +659,12 @@ pub impl HasHits for StructureSpawn with hits_max(self) -> Int {
 }
 
 ///|
-pub impl HasHits for OwnedSpawn with hits(self) -> Int {
+pub impl HasHits for MySpawn with hits(self) -> Int {
   self.hits()
 }
 
 ///|
-pub impl HasHits for OwnedSpawn with hits_max(self) -> Int {
+pub impl HasHits for MySpawn with hits_max(self) -> Int {
   self.hits_max()
 }
 
@@ -689,12 +689,12 @@ pub impl HasHits for StructureTower with hits_max(self) -> Int {
 }
 
 ///|
-pub impl HasHits for OwnedTower with hits(self) -> Int {
+pub impl HasHits for MyTower with hits(self) -> Int {
   self.hits()
 }
 
 ///|
-pub impl HasHits for OwnedTower with hits_max(self) -> Int {
+pub impl HasHits for MyTower with hits_max(self) -> Int {
   self.hits_max()
 }
 
@@ -739,7 +739,7 @@ pub impl MoveTarget for Creep with as_move_target(self) -> GameObject {
 }
 
 ///|
-pub impl MoveTarget for OwnedCreep with as_move_target(self) -> GameObject {
+pub impl MoveTarget for MyCreep with as_move_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -769,7 +769,7 @@ pub impl MoveTarget for StructureSpawn with as_move_target(self) -> GameObject {
 }
 
 ///|
-pub impl MoveTarget for OwnedSpawn with as_move_target(self) -> GameObject {
+pub impl MoveTarget for MySpawn with as_move_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -784,7 +784,7 @@ pub impl MoveTarget for StructureTower with as_move_target(self) -> GameObject {
 }
 
 ///|
-pub impl MoveTarget for OwnedTower with as_move_target(self) -> GameObject {
+pub impl MoveTarget for MyTower with as_move_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -809,7 +809,7 @@ pub impl AttackTarget for Creep with as_attack_target(self) -> GameObject {
 }
 
 ///|
-pub impl AttackTarget for OwnedCreep with as_attack_target(self) -> GameObject {
+pub impl AttackTarget for MyCreep with as_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -829,7 +829,7 @@ pub impl AttackTarget for StructureSpawn with as_attack_target(self) -> GameObje
 }
 
 ///|
-pub impl AttackTarget for OwnedSpawn with as_attack_target(self) -> GameObject {
+pub impl AttackTarget for MySpawn with as_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -844,7 +844,7 @@ pub impl AttackTarget for StructureTower with as_attack_target(self) -> GameObje
 }
 
 ///|
-pub impl AttackTarget for OwnedTower with as_attack_target(self) -> GameObject {
+pub impl AttackTarget for MyTower with as_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -864,7 +864,7 @@ pub impl RangedAttackTarget for Creep with as_ranged_attack_target(self) -> Game
 }
 
 ///|
-pub impl RangedAttackTarget for OwnedCreep with as_ranged_attack_target(self) -> GameObject {
+pub impl RangedAttackTarget for MyCreep with as_ranged_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -886,7 +886,7 @@ pub impl RangedAttackTarget for StructureSpawn with as_ranged_attack_target(
 }
 
 ///|
-pub impl RangedAttackTarget for OwnedSpawn with as_ranged_attack_target(self) -> GameObject {
+pub impl RangedAttackTarget for MySpawn with as_ranged_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -903,7 +903,7 @@ pub impl RangedAttackTarget for StructureTower with as_ranged_attack_target(
 }
 
 ///|
-pub impl RangedAttackTarget for OwnedTower with as_ranged_attack_target(self) -> GameObject {
+pub impl RangedAttackTarget for MyTower with as_ranged_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -925,7 +925,7 @@ pub impl HealTarget for Creep with as_heal_target(self) -> GameObject {
 }
 
 ///|
-pub impl HealTarget for OwnedCreep with as_heal_target(self) -> GameObject {
+pub impl HealTarget for MyCreep with as_heal_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -940,7 +940,7 @@ pub impl TowerAttackTarget for Creep with as_tower_attack_target(self) -> GameOb
 }
 
 ///|
-pub impl TowerAttackTarget for OwnedCreep with as_tower_attack_target(self) -> GameObject {
+pub impl TowerAttackTarget for MyCreep with as_tower_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -960,7 +960,7 @@ pub impl TowerAttackTarget for StructureSpawn with as_tower_attack_target(self) 
 }
 
 ///|
-pub impl TowerAttackTarget for OwnedSpawn with as_tower_attack_target(self) -> GameObject {
+pub impl TowerAttackTarget for MySpawn with as_tower_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -975,7 +975,7 @@ pub impl TowerAttackTarget for StructureTower with as_tower_attack_target(self) 
 }
 
 ///|
-pub impl TowerAttackTarget for OwnedTower with as_tower_attack_target(self) -> GameObject {
+pub impl TowerAttackTarget for MyTower with as_tower_attack_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -1002,7 +1002,7 @@ pub impl TransferTarget for Creep with as_transfer_target(self) -> GameObject {
 }
 
 ///|
-pub impl TransferTarget for OwnedCreep with as_transfer_target(self) -> GameObject {
+pub impl TransferTarget for MyCreep with as_transfer_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -1017,7 +1017,7 @@ pub impl TransferTarget for StructureSpawn with as_transfer_target(self) -> Game
 }
 
 ///|
-pub impl TransferTarget for OwnedSpawn with as_transfer_target(self) -> GameObject {
+pub impl TransferTarget for MySpawn with as_transfer_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -1032,7 +1032,7 @@ pub impl TransferTarget for StructureTower with as_transfer_target(self) -> Game
 }
 
 ///|
-pub impl TransferTarget for OwnedTower with as_transfer_target(self) -> GameObject {
+pub impl TransferTarget for MyTower with as_transfer_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -1052,7 +1052,7 @@ pub impl WithdrawTarget for StructureSpawn with as_withdraw_target(self) -> Game
 }
 
 ///|
-pub impl WithdrawTarget for OwnedSpawn with as_withdraw_target(self) -> GameObject {
+pub impl WithdrawTarget for MySpawn with as_withdraw_target(self) -> GameObject {
   self.as_game_object()
 }
 
@@ -1067,7 +1067,7 @@ pub impl WithdrawTarget for StructureTower with as_withdraw_target(self) -> Game
 }
 
 ///|
-pub impl WithdrawTarget for OwnedTower with as_withdraw_target(self) -> GameObject {
+pub impl WithdrawTarget for MyTower with as_withdraw_target(self) -> GameObject {
   self.as_game_object()
 }
 

@@ -7,7 +7,7 @@ pub enum Relation {
 } derive(Show, Eq, Compare)
 
 ///|
-pub fn relation_of_owned_flag(my : Bool?) -> Relation {
+pub fn relation_of_my_flag(my : Bool?) -> Relation {
   match my {
     Some(true) => Mine
     Some(false) => Enemy

@@ -21,8 +21,8 @@ pub fn creeps() -> Array[Creep] {
 }
 
 ///|
-pub fn owned_creeps() -> Array[OwnedCreep] {
-  creeps().filter_map(creep => creep.as_owned())
+pub fn my_creeps() -> Array[MyCreep] {
+  creeps().filter_map(creep => creep.as_my())
 }
 
 ///|
@@ -51,8 +51,8 @@ pub fn spawns() -> Array[StructureSpawn] {
 }
 
 ///|
-pub fn owned_spawns() -> Array[OwnedSpawn] {
-  spawns().filter_map(spawn => spawn.as_owned())
+pub fn my_spawns() -> Array[MySpawn] {
+  spawns().filter_map(spawn => spawn.as_my())
 }
 
 ///|
@@ -66,8 +66,8 @@ pub fn towers() -> Array[StructureTower] {
 }
 
 ///|
-pub fn owned_towers() -> Array[OwnedTower] {
-  towers().filter_map(tower => tower.as_owned())
+pub fn my_towers() -> Array[MyTower] {
+  towers().filter_map(tower => tower.as_my())
 }
 
 ///|
@@ -86,6 +86,6 @@ pub fn construction_sites() -> Array[ConstructionSite] {
 }
 
 ///|
-pub fn owned_construction_sites() -> Array[ConstructionSite] {
-  construction_sites().filter(site => site.is_owned())
+pub fn my_construction_sites() -> Array[ConstructionSite] {
+  construction_sites().filter(site => site.is_my())
 }

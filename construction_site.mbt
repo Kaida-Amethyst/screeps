@@ -17,10 +17,7 @@ fn progress_value_or_zero(value : @core.Nullish[Int]) -> Int {
 pub fn ConstructionSite::create(
   raw : @raw.JsConstructionSite,
 ) -> ConstructionSite {
-  ConstructionSite::{
-    raw,
-    relation: relation_of_owned_flag(raw.my().to_option()),
-  }
+  ConstructionSite::{ raw, relation: relation_of_my_flag(raw.my().to_option()) }
 }
 
 ///|
@@ -41,7 +38,7 @@ pub fn ConstructionSite::relation(self : ConstructionSite) -> Relation {
 }
 
 ///|
-pub fn ConstructionSite::is_owned(self : ConstructionSite) -> Bool {
+pub fn ConstructionSite::is_my(self : ConstructionSite) -> Bool {
   self.relation == Mine
 }
 
