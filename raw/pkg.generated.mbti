@@ -44,6 +44,12 @@ pub const OK_CODE : Int = 0
 
 pub const RESOURCE_ENERGY : String = "energy"
 
+pub fn construction_sites() -> Array[JsConstructionSite]
+
+pub fn containers() -> Array[JsStructureContainer]
+
+pub fn create_construction_site_by_name(Int, Int, String) -> @core.Any
+
 pub fn creeps() -> Array[JsCreep]
 
 pub fn get_object_by_id(String) -> JsGameObject?
@@ -56,15 +62,22 @@ pub fn sources() -> Array[JsSource]
 
 pub fn spawns() -> Array[JsStructureSpawn]
 
+pub fn towers() -> Array[JsStructureTower]
+
 // Errors
 
 // Types and methods
 #external
 pub type JsConstructionSite
+pub fn JsConstructionSite::my(Self) -> @core.Nullish[Bool]
+pub fn JsConstructionSite::progress(Self) -> @core.Nullish[Int]
+pub fn JsConstructionSite::progress_total(Self) -> @core.Nullish[Int]
+pub fn JsConstructionSite::remove_raw(Self) -> Unit
 pub fn JsConstructionSite::to_game_object(Self) -> JsGameObject
 
 #external
 pub type JsCreep
+pub fn JsCreep::build_raw(Self, JsConstructionSite) -> Int
 pub fn JsCreep::harvest_raw(Self, JsSource) -> Int
 pub fn JsCreep::hits(Self) -> Int
 pub fn JsCreep::hits_max(Self) -> Int
@@ -74,6 +87,7 @@ pub fn JsCreep::spawning(Self) -> Bool
 pub fn JsCreep::store(Self) -> JsStore
 pub fn JsCreep::to_game_object(Self) -> JsGameObject
 pub fn JsCreep::transfer_raw(Self, JsGameObject, String) -> Int
+pub fn JsCreep::withdraw_raw(Self, JsGameObject, String) -> Int
 
 #external
 pub type JsGameObject
@@ -105,6 +119,10 @@ pub fn JsStore::resource_amount(Self, String) -> Int
 
 #external
 pub type JsStructureContainer
+pub fn JsStructureContainer::hits(Self) -> Int
+pub fn JsStructureContainer::hits_max(Self) -> Int
+pub fn JsStructureContainer::my(Self) -> @core.Nullish[Bool]
+pub fn JsStructureContainer::store(Self) -> JsStore
 pub fn JsStructureContainer::to_game_object(Self) -> JsGameObject
 
 #external
@@ -118,6 +136,13 @@ pub fn JsStructureSpawn::to_game_object(Self) -> JsGameObject
 
 #external
 pub type JsStructureTower
+pub fn JsStructureTower::attack_raw(Self, JsGameObject) -> Int
+pub fn JsStructureTower::cooldown(Self) -> Int
+pub fn JsStructureTower::heal_raw(Self, JsGameObject) -> Int
+pub fn JsStructureTower::hits(Self) -> Int
+pub fn JsStructureTower::hits_max(Self) -> Int
+pub fn JsStructureTower::my(Self) -> @core.Nullish[Bool]
+pub fn JsStructureTower::store(Self) -> JsStore
 pub fn JsStructureTower::to_game_object(Self) -> JsGameObject
 
 // Type aliases

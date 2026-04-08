@@ -49,3 +49,41 @@ pub fn sources() -> Array[JsSource] {
 pub fn spawns() -> Array[JsStructureSpawn] {
   cast_objects(get_objects_by_prototype_name_ffi("StructureSpawn"))
 }
+
+///|
+pub fn towers() -> Array[JsStructureTower] {
+  cast_objects(get_objects_by_prototype_name_ffi("StructureTower"))
+}
+
+///|
+pub fn containers() -> Array[JsStructureContainer] {
+  cast_objects(get_objects_by_prototype_name_ffi("StructureContainer"))
+}
+
+///|
+pub fn construction_sites() -> Array[JsConstructionSite] {
+  cast_objects(get_objects_by_prototype_name_ffi("ConstructionSite"))
+}
+
+///|
+extern "js" fn create_construction_site_by_name_ffi(
+  x : Int,
+  y : Int,
+  name : String,
+) -> @core.Any =
+  #| (x, y, name) => {
+  #|   const host = globalThis.__moonbit_screeps_host;
+  #|   if (!host?.createConstructionSiteByPrototypeName) {
+  #|     throw new Error("Missing __moonbit_screeps_host.createConstructionSiteByPrototypeName");
+  #|   }
+  #|   return host.createConstructionSiteByPrototypeName({ x, y }, name);
+  #| }
+
+///|
+pub fn create_construction_site_by_name(
+  x : Int,
+  y : Int,
+  name : String,
+) -> @core.Any {
+  create_construction_site_by_name_ffi(x, y, name)
+}

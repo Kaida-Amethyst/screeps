@@ -1,7 +1,4 @@
 ///|
-using @model {type GameObject, type Relation, type Store}
-
-///|
 /// 所有可作为游戏对象观察视图的类型都应满足这一层最小能力。
 pub(open) trait GameObjectLike {
   as_game_object(Self) -> GameObject

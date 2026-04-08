@@ -1,13 +1,428 @@
 // Generated using `moon info`, DON'T EDIT IT
 package "username/screeps"
 
+import {
+  "username/screeps/raw",
+}
+
 // Values
+pub fn active_sources() -> Array[Source]
+
+pub fn body_part_kind_of(String) -> BodyPartKind?
+
+pub fn construction_sites() -> Array[ConstructionSite]
+
+pub fn containers() -> Array[StructureContainer]
+
+pub fn creeps() -> Array[Creep]
+
+pub fn enemy_creeps() -> Array[EnemyCreep]
+
+pub fn enemy_spawns() -> Array[EnemySpawn]
+
+pub fn enemy_towers() -> Array[EnemyTower]
+
+pub fn owned_construction_sites() -> Array[ConstructionSite]
+
+pub fn owned_creeps() -> Array[OwnedCreep]
+
+pub fn owned_spawns() -> Array[OwnedSpawn]
+
+pub fn owned_towers() -> Array[OwnedTower]
+
+pub fn relation_of_my_bool(Bool) -> Relation
+
+pub fn relation_of_owned_flag(Bool?) -> Relation
+
+pub fn resource_kind_of(String) -> ResourceKind?
+
+pub fn sources() -> Array[Source]
+
+pub fn spawns() -> Array[StructureSpawn]
+
+pub fn ticks() -> Int
+
+pub fn towers() -> Array[StructureTower]
 
 // Errors
+pub suberror ActionError {
+  NotOwner
+  Busy
+  NotEnoughEnergy
+  NotEnoughResources
+  InvalidTarget
+  Full
+  NotInRange
+  InvalidArgs
+  Tired
+  NoBodyPart
+  UnknownRawError(Int)
+} derive(Show)
 
 // Types and methods
+pub enum BodyPartKind {
+  Move
+  Work
+  Carry
+  Attack
+  RangedAttack
+  Heal
+  Tough
+} derive(Compare, Eq, Show)
+pub fn BodyPartKind::to_raw(Self) -> String
+
+pub struct ConstructionSite {
+  // private fields
+}
+pub fn ConstructionSite::as_game_object(Self) -> GameObject
+pub fn ConstructionSite::create(@raw.JsConstructionSite) -> Self
+pub fn ConstructionSite::exists(Self) -> Bool
+pub fn ConstructionSite::id(Self) -> String
+pub fn ConstructionSite::is_enemy(Self) -> Bool
+pub fn ConstructionSite::is_owned(Self) -> Bool
+pub fn ConstructionSite::progress(Self) -> Int
+pub fn ConstructionSite::progress_total(Self) -> Int
+pub fn ConstructionSite::relation(Self) -> Relation
+pub fn ConstructionSite::remove(Self) -> Unit
+pub fn ConstructionSite::to_raw(Self) -> @raw.JsConstructionSite
+pub fn ConstructionSite::x(Self) -> Int
+pub fn ConstructionSite::y(Self) -> Int
+pub impl GameObjectLike for ConstructionSite
+pub impl OwnedLike for ConstructionSite
+
+pub struct Creep {
+  // private fields
+}
+pub fn Creep::as_enemy(Self) -> EnemyCreep?
+pub fn Creep::as_game_object(Self) -> GameObject
+pub fn Creep::as_owned(Self) -> OwnedCreep?
+pub fn Creep::create(@raw.JsCreep) -> Self
+pub fn Creep::exists(Self) -> Bool
+pub fn Creep::hits(Self) -> Int
+pub fn Creep::hits_max(Self) -> Int
+pub fn Creep::id(Self) -> String
+pub fn Creep::is_enemy(Self) -> Bool
+pub fn Creep::is_owned(Self) -> Bool
+pub fn Creep::relation(Self) -> Relation
+pub fn Creep::spawning(Self) -> Bool
+pub fn Creep::store(Self) -> Store
+pub fn Creep::to_raw(Self) -> @raw.JsCreep
+pub fn Creep::x(Self) -> Int
+pub fn Creep::y(Self) -> Int
+pub impl GameObjectLike for Creep
+pub impl HasHits for Creep
+pub impl HasStore for Creep
+pub impl OwnedLike for Creep
+
+pub struct EnemyCreep {
+  // private fields
+}
+pub fn EnemyCreep::as_creep(Self) -> Creep
+pub fn EnemyCreep::as_game_object(Self) -> GameObject
+pub fn EnemyCreep::create(@raw.JsCreep) -> Self
+pub fn EnemyCreep::exists(Self) -> Bool
+pub fn EnemyCreep::hits(Self) -> Int
+pub fn EnemyCreep::hits_max(Self) -> Int
+pub fn EnemyCreep::id(Self) -> String
+pub fn EnemyCreep::is_enemy(Self) -> Bool
+pub fn EnemyCreep::is_owned(Self) -> Bool
+pub fn EnemyCreep::relation(Self) -> Relation
+pub fn EnemyCreep::spawning(Self) -> Bool
+pub fn EnemyCreep::store(Self) -> Store
+pub fn EnemyCreep::to_raw(Self) -> @raw.JsCreep
+pub fn EnemyCreep::x(Self) -> Int
+pub fn EnemyCreep::y(Self) -> Int
+pub impl GameObjectLike for EnemyCreep
+pub impl HasHits for EnemyCreep
+pub impl HasStore for EnemyCreep
+pub impl OwnedLike for EnemyCreep
+
+pub struct EnemySpawn {
+  // private fields
+}
+pub fn EnemySpawn::as_game_object(Self) -> GameObject
+pub fn EnemySpawn::as_structure_spawn(Self) -> StructureSpawn
+pub fn EnemySpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn EnemySpawn::exists(Self) -> Bool
+pub fn EnemySpawn::hits(Self) -> Int
+pub fn EnemySpawn::hits_max(Self) -> Int
+pub fn EnemySpawn::id(Self) -> String
+pub fn EnemySpawn::is_enemy(Self) -> Bool
+pub fn EnemySpawn::is_owned(Self) -> Bool
+pub fn EnemySpawn::relation(Self) -> Relation
+pub fn EnemySpawn::store(Self) -> Store
+pub fn EnemySpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn EnemySpawn::x(Self) -> Int
+pub fn EnemySpawn::y(Self) -> Int
+pub impl GameObjectLike for EnemySpawn
+pub impl HasHits for EnemySpawn
+pub impl HasStore for EnemySpawn
+pub impl OwnedLike for EnemySpawn
+
+pub struct EnemyTower {
+  // private fields
+}
+pub fn EnemyTower::as_game_object(Self) -> GameObject
+pub fn EnemyTower::as_structure_tower(Self) -> StructureTower
+pub fn EnemyTower::cooldown(Self) -> Int
+pub fn EnemyTower::create(@raw.JsStructureTower) -> Self
+pub fn EnemyTower::exists(Self) -> Bool
+pub fn EnemyTower::hits(Self) -> Int
+pub fn EnemyTower::hits_max(Self) -> Int
+pub fn EnemyTower::id(Self) -> String
+pub fn EnemyTower::is_enemy(Self) -> Bool
+pub fn EnemyTower::is_owned(Self) -> Bool
+pub fn EnemyTower::relation(Self) -> Relation
+pub fn EnemyTower::store(Self) -> Store
+pub fn EnemyTower::to_raw(Self) -> @raw.JsStructureTower
+pub fn EnemyTower::x(Self) -> Int
+pub fn EnemyTower::y(Self) -> Int
+pub impl GameObjectLike for EnemyTower
+pub impl HasHits for EnemyTower
+pub impl HasStore for EnemyTower
+pub impl OwnedLike for EnemyTower
+
+pub struct GameObject {
+  // private fields
+}
+pub fn GameObject::create(@raw.JsGameObject) -> Self
+pub fn GameObject::exists(Self) -> Bool
+pub fn GameObject::id(Self) -> String
+pub fn GameObject::to_raw(Self) -> @raw.JsGameObject
+pub fn GameObject::x(Self) -> Int
+pub fn GameObject::y(Self) -> Int
+pub impl GameObjectLike for GameObject
+
+pub struct OwnedCreep {
+  // private fields
+}
+pub fn OwnedCreep::as_creep(Self) -> Creep
+pub fn OwnedCreep::as_game_object(Self) -> GameObject
+pub fn OwnedCreep::build(Self, ConstructionSite) -> Unit raise ActionError
+pub fn OwnedCreep::create(@raw.JsCreep) -> Self
+pub fn OwnedCreep::exists(Self) -> Bool
+pub fn OwnedCreep::harvest(Self, Source) -> Unit raise ActionError
+pub fn OwnedCreep::hits(Self) -> Int
+pub fn OwnedCreep::hits_max(Self) -> Int
+pub fn OwnedCreep::id(Self) -> String
+pub fn OwnedCreep::is_enemy(Self) -> Bool
+pub fn OwnedCreep::is_owned(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedCreep::move_to(Self, T) -> Unit raise ActionError
+pub fn OwnedCreep::relation(Self) -> Relation
+pub fn OwnedCreep::spawning(Self) -> Bool
+pub fn OwnedCreep::store(Self) -> Store
+pub fn OwnedCreep::to_raw(Self) -> @raw.JsCreep
+pub fn[T : GameObjectLike] OwnedCreep::transfer(Self, T, ResourceKind) -> Unit raise ActionError
+pub fn OwnedCreep::transfer_energy(Self, OwnedSpawn) -> Unit raise ActionError
+pub fn[T : GameObjectLike] OwnedCreep::withdraw(Self, T, ResourceKind) -> Unit raise ActionError
+pub fn OwnedCreep::withdraw_energy(Self, StructureContainer) -> Unit raise ActionError
+pub fn OwnedCreep::x(Self) -> Int
+pub fn OwnedCreep::y(Self) -> Int
+pub impl GameObjectLike for OwnedCreep
+pub impl HasHits for OwnedCreep
+pub impl HasStore for OwnedCreep
+pub impl OwnedLike for OwnedCreep
+
+pub struct OwnedSpawn {
+  // private fields
+}
+pub fn OwnedSpawn::as_game_object(Self) -> GameObject
+pub fn OwnedSpawn::as_structure_spawn(Self) -> StructureSpawn
+pub fn OwnedSpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn OwnedSpawn::exists(Self) -> Bool
+pub fn OwnedSpawn::hits(Self) -> Int
+pub fn OwnedSpawn::hits_max(Self) -> Int
+pub fn OwnedSpawn::id(Self) -> String
+pub fn OwnedSpawn::is_enemy(Self) -> Bool
+pub fn OwnedSpawn::is_owned(Self) -> Bool
+pub fn OwnedSpawn::relation(Self) -> Relation
+pub fn OwnedSpawn::spawn_creep(Self, Array[BodyPartKind]) -> OwnedCreep raise ActionError
+pub fn OwnedSpawn::store(Self) -> Store
+pub fn OwnedSpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn OwnedSpawn::x(Self) -> Int
+pub fn OwnedSpawn::y(Self) -> Int
+pub impl GameObjectLike for OwnedSpawn
+pub impl HasHits for OwnedSpawn
+pub impl HasStore for OwnedSpawn
+pub impl OwnedLike for OwnedSpawn
+
+pub struct OwnedTower {
+  // private fields
+}
+pub fn OwnedTower::as_game_object(Self) -> GameObject
+pub fn OwnedTower::as_structure_tower(Self) -> StructureTower
+pub fn[T : GameObjectLike] OwnedTower::attack(Self, T) -> Unit raise ActionError
+pub fn OwnedTower::cooldown(Self) -> Int
+pub fn OwnedTower::create(@raw.JsStructureTower) -> Self
+pub fn OwnedTower::exists(Self) -> Bool
+pub fn[T : GameObjectLike] OwnedTower::heal(Self, T) -> Unit raise ActionError
+pub fn OwnedTower::hits(Self) -> Int
+pub fn OwnedTower::hits_max(Self) -> Int
+pub fn OwnedTower::id(Self) -> String
+pub fn OwnedTower::is_enemy(Self) -> Bool
+pub fn OwnedTower::is_owned(Self) -> Bool
+pub fn OwnedTower::relation(Self) -> Relation
+pub fn OwnedTower::store(Self) -> Store
+pub fn OwnedTower::to_raw(Self) -> @raw.JsStructureTower
+pub fn OwnedTower::x(Self) -> Int
+pub fn OwnedTower::y(Self) -> Int
+pub impl GameObjectLike for OwnedTower
+pub impl HasHits for OwnedTower
+pub impl HasStore for OwnedTower
+pub impl OwnedLike for OwnedTower
+
+pub enum Relation {
+  Mine
+  Enemy
+  Neutral
+} derive(Compare, Eq, Show)
+
+pub enum ResourceKind {
+  Energy
+} derive(Compare, Eq, Show)
+pub fn ResourceKind::to_raw(Self) -> String
+
+pub struct Source {
+  // private fields
+}
+pub fn Source::as_game_object(Self) -> GameObject
+pub fn Source::create(@raw.JsSource) -> Self
+pub fn Source::energy(Self) -> Int
+pub fn Source::energy_capacity(Self) -> Int
+pub fn Source::exists(Self) -> Bool
+pub fn Source::id(Self) -> String
+pub fn Source::to_raw(Self) -> @raw.JsSource
+pub fn Source::x(Self) -> Int
+pub fn Source::y(Self) -> Int
+pub impl GameObjectLike for Source
+
+pub struct Store {
+  // private fields
+}
+pub fn Store::amount(Self, ResourceKind) -> Int
+pub fn Store::capacity(Self, ResourceKind) -> Int
+pub fn Store::create(@raw.JsStore) -> Self
+pub fn Store::energy(Self) -> Int
+pub fn Store::free(Self, ResourceKind) -> Int
+pub fn Store::free_energy(Self) -> Int
+pub fn Store::to_raw(Self) -> @raw.JsStore
+pub fn Store::used(Self, ResourceKind) -> Int
+
+pub struct StructureContainer {
+  // private fields
+}
+pub fn StructureContainer::as_game_object(Self) -> GameObject
+pub fn StructureContainer::create(@raw.JsStructureContainer) -> Self
+pub fn StructureContainer::exists(Self) -> Bool
+pub fn StructureContainer::hits(Self) -> Int
+pub fn StructureContainer::hits_max(Self) -> Int
+pub fn StructureContainer::id(Self) -> String
+pub fn StructureContainer::is_enemy(Self) -> Bool
+pub fn StructureContainer::is_owned(Self) -> Bool
+pub fn StructureContainer::relation(Self) -> Relation
+pub fn StructureContainer::store(Self) -> Store
+pub fn StructureContainer::to_raw(Self) -> @raw.JsStructureContainer
+pub fn StructureContainer::x(Self) -> Int
+pub fn StructureContainer::y(Self) -> Int
+pub impl GameObjectLike for StructureContainer
+pub impl HasHits for StructureContainer
+pub impl HasStore for StructureContainer
+pub impl OwnedLike for StructureContainer
+
+pub struct StructureSpawn {
+  // private fields
+}
+pub fn StructureSpawn::as_enemy(Self) -> EnemySpawn?
+pub fn StructureSpawn::as_game_object(Self) -> GameObject
+pub fn StructureSpawn::as_owned(Self) -> OwnedSpawn?
+pub fn StructureSpawn::create(@raw.JsStructureSpawn) -> Self
+pub fn StructureSpawn::exists(Self) -> Bool
+pub fn StructureSpawn::hits(Self) -> Int
+pub fn StructureSpawn::hits_max(Self) -> Int
+pub fn StructureSpawn::id(Self) -> String
+pub fn StructureSpawn::is_enemy(Self) -> Bool
+pub fn StructureSpawn::is_owned(Self) -> Bool
+pub fn StructureSpawn::relation(Self) -> Relation
+pub fn StructureSpawn::store(Self) -> Store
+pub fn StructureSpawn::to_raw(Self) -> @raw.JsStructureSpawn
+pub fn StructureSpawn::x(Self) -> Int
+pub fn StructureSpawn::y(Self) -> Int
+pub impl GameObjectLike for StructureSpawn
+pub impl HasHits for StructureSpawn
+pub impl HasStore for StructureSpawn
+pub impl OwnedLike for StructureSpawn
+
+pub struct StructureTower {
+  // private fields
+}
+pub fn StructureTower::as_enemy(Self) -> EnemyTower?
+pub fn StructureTower::as_game_object(Self) -> GameObject
+pub fn StructureTower::as_owned(Self) -> OwnedTower?
+pub fn StructureTower::cooldown(Self) -> Int
+pub fn StructureTower::create(@raw.JsStructureTower) -> Self
+pub fn StructureTower::exists(Self) -> Bool
+pub fn StructureTower::hits(Self) -> Int
+pub fn StructureTower::hits_max(Self) -> Int
+pub fn StructureTower::id(Self) -> String
+pub fn StructureTower::is_enemy(Self) -> Bool
+pub fn StructureTower::is_owned(Self) -> Bool
+pub fn StructureTower::relation(Self) -> Relation
+pub fn StructureTower::store(Self) -> Store
+pub fn StructureTower::to_raw(Self) -> @raw.JsStructureTower
+pub fn StructureTower::x(Self) -> Int
+pub fn StructureTower::y(Self) -> Int
+pub impl GameObjectLike for StructureTower
+pub impl HasHits for StructureTower
+pub impl HasStore for StructureTower
+pub impl OwnedLike for StructureTower
 
 // Type aliases
 
 // Traits
+pub(open) trait AttackTarget : GameObjectLike {
+}
+
+pub(open) trait BuildTarget : GameObjectLike {
+}
+
+pub(open) trait GameObjectLike {
+  as_game_object(Self) -> GameObject
+  id(Self) -> String
+  x(Self) -> Int
+  y(Self) -> Int
+  exists(Self) -> Bool
+}
+
+pub(open) trait HarvestTarget : GameObjectLike {
+}
+
+pub(open) trait HasHits {
+  hits(Self) -> Int
+  hits_max(Self) -> Int
+}
+
+pub(open) trait HasStore {
+  store(Self) -> Store
+}
+
+pub(open) trait HealTarget : GameObjectLike {
+}
+
+pub(open) trait MoveTarget : GameObjectLike {
+}
+
+pub(open) trait OwnedLike {
+  relation(Self) -> Relation
+  is_owned(Self) -> Bool
+  is_enemy(Self) -> Bool
+}
+
+pub(open) trait RangedAttackTarget : GameObjectLike {
+}
+
+pub(open) trait TransferTarget : GameObjectLike {
+}
+
+pub(open) trait WithdrawTarget : GameObjectLike {
+}
 

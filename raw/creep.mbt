@@ -39,3 +39,18 @@ pub extern "js" fn JsCreep::transfer_raw(
   resource : String,
 ) -> Int =
   #| (self, target, resource) => self.transfer(target, resource)
+
+///|
+pub extern "js" fn JsCreep::withdraw_raw(
+  self : JsCreep,
+  target : JsGameObject,
+  resource : String,
+) -> Int =
+  #| (self, target, resource) => self.withdraw(target, resource)
+
+///|
+pub extern "js" fn JsCreep::build_raw(
+  self : JsCreep,
+  target : JsConstructionSite,
+) -> Int =
+  #| (self, target) => self.build(target)

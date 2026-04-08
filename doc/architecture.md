@@ -4,12 +4,18 @@
 
 ## 当前结论
 
-正式版 binding 采用四层结构：
+正式版 binding 在**物理目录结构**上采用三层：
 
 - `raw`
-- `model`
-- `api`
+- `screeps` 高层包
 - `wrapper`
+
+其中：
+
+- `raw` 仍然独立成 package
+- `wrapper` 仍然由根目录 `main.mjs` 承担
+- 原先讨论中的 `model / api`，现在保留为**高层包内部的逻辑分工**
+- 不再把 `model` 和 `api` 拆成两个独立 package
 
 ## 各层职责
 
@@ -31,7 +37,7 @@
 
 - `raw` 的目标是“正确映射”，不是“好用”
 
-### `model`
+### 高层包中的 `model` 关注点
 
 职责：
 
@@ -48,7 +54,7 @@
 
 - `model` 的目标是“对象是什么”
 
-### `api`
+### 高层包中的 `api` 关注点
 
 职责：
 
@@ -82,41 +88,51 @@
 
 - `wrapper` 是正式架构的一部分，不视为临时脏补丁
 
+## 为什么不再把 `model / api` 拆成两个 package
+
+新的结论来自实际编码时遇到的约束：
+
+- MoonBit 不能在一个 package 中为另一个 package 里的类型追加方法
+- 如果 `model` 和 `api` 拆成两个独立 package，高层 API 很容易被迫退化成顶层函数
+- 这会直接损害正式版最关心的体验：
+  - 对象方法的自然写法
+  - API 可读性
+  - 直播演示效果
+
+因此当前项目改为：
+
+- package 层面合并 `model + api`
+- 文件层面继续区分“对象建模”和“高层接口”职责
+
 ## 各层关系
 
-- `raw` 和 `model` 共同构成绑定层
-- `api` 是对外使用层
-- `wrapper` 是宿主适配层
+- `raw` 负责“怎么连上”
+- 高层包内部的 `model` 关注点负责“对象是什么”
+- 高层包内部的 `api` 关注点负责“怎么好用地用”
+- `wrapper` 负责宿主适配
 - `main/`、tutorial 代码、bot 代码属于 binding 的使用方，不属于 binding 本体
 
 ## 目录方向
 
-当前项目还是单文件形态：
-
-- `raw.mbt`
-- `api.mbt`
-
-正式版建议逐步演进到更清晰的目录结构，例如：
+当前建议目录方向：
 
 - `raw/`
-- `model/`
-- `api/`
+- 根目录高层 `.mbt` 文件
 - 根目录 `main.mjs`
-- `main/` 作为示例或入口包
 
-## 为什么需要 `model` 层
+高层文件在逻辑上继续分工，例如：
 
-如果只有 `raw + api`，高层代码会同时承担两件事：
+- `game_object.mbt`
+- `creep.mbt`
+- `spawn.mbt`
+- `store.mbt`
+- `traits.mbt`
+- `queries.mbt`
+- `errors.mbt`
 
-- 包装 JS live object
-- 设计 MoonBit 风格接口
+## 当前原则
 
-这两个职责混在一起，后续很容易失控。
-
-加入 `model` 层之后：
-
-- `raw` 负责“怎么连上”
-- `model` 负责“对象是什么”
-- `api` 负责“怎么好用地用”
-
-这样更适合长期维护，也更适合多人和 AI 协作开发。
+- `raw` 独立
+- `wrapper` 独立
+- 高层 MoonBit API 合并在同一个 package 中
+- 仍然保留 `model / api` 的逻辑边界，但不再为此承受额外 package 边界成本

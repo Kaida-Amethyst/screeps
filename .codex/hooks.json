@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh \"$(git rev-parse --show-toplevel)/.codex/hooks/stop_ring.sh\"",
+            "statusMessage": "运行完成提示",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

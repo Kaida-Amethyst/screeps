@@ -4,13 +4,13 @@ fn body_to_raw(body : Array[BodyPartKind]) -> Array[String] {
 }
 
 ///|
-pub fn spawn_creep(
-  spawn : @model.OwnedSpawn,
+pub fn OwnedSpawn::spawn_creep(
+  self : OwnedSpawn,
   body : Array[BodyPartKind],
-) -> @model.OwnedCreep raise ActionError {
-  let result = spawn.to_raw().spawn_creep_raw(body_to_raw(body))
+) -> OwnedCreep raise ActionError {
+  let result = self.to_raw().spawn_creep_raw(body_to_raw(body))
   match result.object().to_option() {
-    Some(creep) => @model.OwnedCreep::create(creep)
+    Some(creep) => OwnedCreep::create(creep)
     None =>
       match result.error().to_option() {
         Some(code) => raise action_error_of(code)
