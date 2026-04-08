@@ -10,6 +10,59 @@
 - 本目录下的文档、注释、开发说明统一使用中文。
 - 代码中的标识符、模块名、第三方 API 名称保持原始技术命名，不强行翻译。
 
+## 正式版 Binding 开发约定
+
+- 正式版 Screeps Arena binding 开发时，先遵守 `doc/` 中已定设计，再生成代码；如果设计未定，不要擅自发明 API。
+
+- 信息源优先级固定为：
+  1. `~/ScreepsArena/tutorial/typings`
+  2. `refs/arena-docs/*.md`
+  3. `doc/*.md`
+  4. `EXPLORATION.md`
+
+- 如果 `doc/*.md` 与 `EXPLORATION.md` 冲突，以 `doc/*.md` 为准。
+
+- 正式版 binding 采用 `raw / model / api / wrapper` 四层：
+  - `raw`：只做忠实 FFI，不放高层语义。
+  - `model`：只放 wrapper、typed view、live getter、视图转换。
+  - `api`：放 trait、enum、错误映射、查询接口和高层方法。
+  - `wrapper`：只做宿主 glue，不放 bot 逻辑和游戏语义。
+
+- AI 可以大量生成 `raw` 层代码，但不能自由设计 public API。
+
+- `model` 和 `api` 的改动必须遵守 `doc/` 中已定结论，不要自行扩张抽象边界。
+
+- 不要把 tutorial helper、bot helper 放进 binding 核心层。
+
+- 不要为了省事绕过 enum、typed view 或 trait 设计，直接把 `String` 或低层语义暴露到 `api`。
+
+- 查询正式命名优先使用 `owned_* / enemy_*`，不再新增 `my_*` 作为正式主风格。
+
+- 查询类“不存在”使用 `Option`。
+
+- 动作失败使用 `suberror ActionError` + `raise`，不再把原始错误码直接暴露为高层主接口。
+
+- `api` 层优先使用 `BodyPartKind`、`ResourceKind` 等高层类型，不继续以原始字符串常量作为正式接口。
+
+- 距离查询正式接口统一走 MoonBit 风格命名，例如 `find_closest(..., by~=Path)`，不要继续直接扩张 JS 风格平行命名。
+
+- 任何影响 public API、命名、trait、分层的改动，先更新对应 `doc/*.md`，再改代码。
+
+- 如果只是按既有设计补实现，可以直接改代码；如果实现过程中发现设计不够，需要先回写设计文档再继续。
+
+- 不要在未更新设计文档的情况下擅自扩张 `main.mjs` wrapper 的职责。
+
+- 当前测试能力有限，必须接受 naive 验证方式，不要假装拥有完整的 Screeps runtime 自动化测试体系。
+
+- 改动 MoonBit 代码后，至少运行：
+  - `moon check`
+  - `moon info`
+  - `moon fmt`
+  - `moon test`
+  - `moon build`
+
+- 涉及 wrapper 或集成链路的改动，需要额外说明是否需要手工 smoke test。
+
 ## 项目结构
 
 - MoonBit 包按目录组织；每个目录包含一个 `moon.pkg` 文件来声明依赖。
