@@ -150,7 +150,9 @@ pub fn Creep::exists(Self) -> Bool
 pub fn[T : GameObjectLike] Creep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] Creep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn Creep::has_body_part(Self, BodyPartKind) -> Bool
+#alias(hp)
 pub fn Creep::hits(Self) -> Int
+#alias(max_hp)
 pub fn Creep::hits_max(Self) -> Int
 pub fn Creep::id(Self) -> String
 pub fn Creep::is_enemy(Self) -> Bool
@@ -184,7 +186,9 @@ pub fn EnemyCreep::exists(Self) -> Bool
 pub fn[T : GameObjectLike] EnemyCreep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] EnemyCreep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn EnemyCreep::has_body_part(Self, BodyPartKind) -> Bool
+#alias(hp)
 pub fn EnemyCreep::hits(Self) -> Int
+#alias(max_hp)
 pub fn EnemyCreep::hits_max(Self) -> Int
 pub fn EnemyCreep::id(Self) -> String
 pub fn EnemyCreep::is_enemy(Self) -> Bool
@@ -333,7 +337,9 @@ pub fn[T : HarvestTarget] MyCreep::harvest_or_move(Self, T) -> Unit
 pub fn MyCreep::has_body_part(Self, BodyPartKind) -> Bool
 pub fn[T : HealTarget] MyCreep::heal(Self, T) -> ActionResult
 pub fn[T : HealTarget] MyCreep::heal_or_move(Self, T) -> Unit
+#alias(hp)
 pub fn MyCreep::hits(Self) -> Int
+#alias(max_hp)
 pub fn MyCreep::hits_max(Self) -> Int
 pub fn MyCreep::id(Self) -> String
 pub fn MyCreep::is_enemy(Self) -> Bool

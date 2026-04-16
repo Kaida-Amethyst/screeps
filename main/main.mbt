@@ -1,28 +1,18 @@
 ///|
 pub fn main_loop() -> Unit {
-  let my_creeps = @screeps.my_creeps()
-  guard @screeps.enemy_creeps() is [enemy_creep, ..] else { return }
-  let damaged_creeps = my_creeps.filter(creep => creep.hp() < creep.max_hp())
-  let melee_creeps = my_creeps.filter(creep => {
-    creep.has_body_part(@screeps.Attack)
-  })
-  let healers = my_creeps.filter(creep => creep.has_body_part(@screeps.Heal))
-  let ranged_creeps = my_creeps.filter(creep => {
-    creep.has_body_part(@screeps.RangedAttack)
-  })
+  guard @screeps.my_towers() is [tower, ..] else { return }
+  guard @screeps.my_creeps() is [my_creep, ..] else { return }
+  guard @screeps.containers() is [container, ..] else { return }
+  guard @screeps.enemy_creeps() is [target, ..] else { return }
 
-  for creep in melee_creeps {
-    creep.attack_or_move(enemy_creep)
+  if tower.store().energy() >= 10 {
+    tower.attack(target) |> ignore
+    return
   }
 
-  for creep in ranged_creeps {
-    creep.ranged_attack_or_move(enemy_creep)
-  }
-
-  if damaged_creeps is [damaged_creep, ..] {
-    for creep in healers {
-      creep.heal_or_move(damaged_creep)
-    }
+  match my_creep.store().energy() {
+    0 => my_creep.withdraw_energy_or_move(container)
+    _ => my_creep.transfer_energy_or_move(tower)
   }
 }
 

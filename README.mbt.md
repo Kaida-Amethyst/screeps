@@ -411,8 +411,97 @@ fn main {
 
 - body part 在正式 binding 里已经被收成了 `BodyPartKind`，所以这里直接用 `@screeps.Attack / Heal / RangedAttack`
 - 代码结构上按职责拆成了三段循环：
-  - `melees`
-  - `ranged`
+  - `melee_creeps`
+  - `ranged_creeps`
   - `healers`
 
 这样会比“单个大循环里套很多 `if`”更清楚，也更适合后面继续扩展 bot 行为。 
+
+### 5. Store and transfer
+
+第五关的目标是：
+
+- 先检查塔里的能量够不够
+- 如果塔的能量不足，就让己方 creep 去补能量
+- 如果 creep 自己没有能量，就先去 container 取能量
+- 如果塔的能量已经够了，就让塔攻击敌方 creep
+
+Screeps 的 sample code 是：
+
+```javascript
+import { prototypes, utils, constants } from "game";
+
+export function loop() {
+  const tower = utils.getObjectsByPrototype(prototypes.StructureTower)[0];
+  if (tower.store[constants.RESOURCE_ENERGY] < 10) {
+    var myCreep = utils
+      .getObjectsByPrototype(prototypes.Creep)
+      .find((creep) => creep.my);
+    if (myCreep.store[constants.RESOURCE_ENERGY] == 0) {
+      var container = utils.getObjectsByPrototype(prototypes.StructureContainer)[0];
+      myCreep.withdraw(container, constants.RESOURCE_ENERGY);
+    } else {
+      myCreep.transfer(tower, constants.RESOURCE_ENERGY);
+    }
+  } else {
+    var target = utils
+      .getObjectsByPrototype(prototypes.Creep)
+      .find((creep) => !creep.my);
+    tower.attack(target);
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_towers() is [tower, ..] else { return }
+  guard @screeps.my_creeps() is [my_creep, ..] else { return }
+  guard @screeps.containers() is [container, ..] else { return }
+  guard @screeps.enemy_creeps() is [target, ..] else { return }
+
+  if tower.store().energy() >= 10 {
+    tower.attack(target) |> ignore
+    return
+  }
+
+  match my_creep.store().energy() {
+    0 => my_creep.withdraw_energy_or_move(container)
+    _ => my_creep.transfer_energy_or_move(tower)
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码对应的逻辑是：
+
+- `@screeps.my_towers()`：拿到己方 tower
+- `tower.store().energy()`：读取 tower 当前储存的能量
+- `@screeps.my_creeps()`：拿到己方 creep
+- `@screeps.containers()`：拿到 container
+- `@screeps.enemy_creeps()`：拿到敌方 creep，作为 tower 的攻击目标
+
+主循环的判断顺序是：
+
+- 如果 `tower.store().energy() >= 10`
+  说明塔的能量已经够了，这时直接让塔攻击敌人，然后 `return`
+- 否则说明塔还缺能量，需要让 creep 参与补给
+- 如果 `my_creep.store().energy()` 是 `0`
+  就说明 creep 身上没能量，需要先去 container 取能量
+- 如果不为 `0`
+  就说明 creep 身上已经带着能量，可以直接把能量送给 tower
+
+这里有两个地方和原始 JS sample 相比更偏 MoonBit 风格：
+
+- `store[RESOURCE_ENERGY]` 被整理成了 `store().energy()`
+- `withdraw(...)` / `transfer(...)` 再加上“如果不在范围内就移动”的逻辑，被整理成了：
+  - `withdraw_energy_or_move(container)`
+  - `transfer_energy_or_move(tower)`
+
+这样主循环里保留的是“这一 tick 打算做什么”，而不是把每个动作的细节都展开写一遍。 
