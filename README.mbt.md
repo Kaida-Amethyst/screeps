@@ -636,10 +636,11 @@ pub fn main_loop() -> Unit {
 
   for i in 0..<min(num_of_creeps, num_of_flags) {
     creeps[i].move_to(flags[i]) |> ignore
-  } 
+  }
 }
 
-fn min(a: Int, b: Int) -> Int {
+///|
+fn min(a : Int, b : Int) -> Int {
   match a < b {
     true => a
     false => b
@@ -674,3 +675,188 @@ fn main {
 - 以此类推
 
 这种写法比直接写死 `creep1 / creep2` 更适合后面继续扩展，也更接近真正 bot 代码里常见的“按集合和索引分配目标”的写法。 
+
+### 8. Harvest energy
+
+第八关的目标是：
+
+- 找到一只己方 creep
+- 找到一个 source
+- 找到己方 spawn
+- 如果 creep 还有空余容量，就去采集能量
+- 如果 creep 已经装满了，就把能量送回 spawn
+
+Screeps 的 sample code 是：
+
+```javascript
+import { prototypes, utils, constants } from "game";
+
+export function loop() {
+  var creep = utils.getObjectsByPrototype(prototypes.Creep).find((i) => i.my);
+  var source = utils.getObjectsByPrototype(prototypes.Source)[0];
+  var spawn = utils
+    .getObjectsByPrototype(prototypes.StructureSpawn)
+    .find((i) => i.my);
+
+  if (creep.store.getFreeCapacity(constants.RESOURCE_ENERGY)) {
+    if (creep.harvest(source) == constants.ERR_NOT_IN_RANGE) {
+      creep.moveTo(source);
+    }
+  } else {
+    if (creep.transfer(spawn, constants.RESOURCE_ENERGY) == constants.ERR_NOT_IN_RANGE) {
+      creep.moveTo(spawn);
+    }
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_creeps() is [creep, ..] else { return }
+  guard @screeps.sources() is [source, ..] else { return }
+  guard @screeps.my_spawns() is [spawn, ..] else { return }
+
+  match creep.store().free_energy() {
+    0 => creep.transfer_energy_or_move(spawn)
+    _ => creep.harvest_or_move(source)
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码和 sample code 的对应关系是：
+
+- `@screeps.my_creeps()`：拿到己方 creep
+- `@screeps.sources()`：拿到 source
+- `@screeps.my_spawns()`：拿到己方 spawn
+- `creep.store().free_energy()`：读取 creep 还剩多少能量容量
+
+这里的 `match` 逻辑可以直接理解成：
+
+- `0`
+  表示 creep 已经没有空余容量了，这时应该把能量送回 spawn
+- `_`
+  表示 creep 还有空位，这时继续去 source 采集能量
+
+对应的动作分别是：
+
+- `creep.transfer_energy_or_move(spawn)`
+- `creep.harvest_or_move(source)`
+
+这两个 helper 做的事情和前几关是一致的：
+
+- 先尝试执行动作
+- 如果目标不在范围内，就自动移动过去
+
+所以这一关的主循环写出来会非常短，重点只剩下“当前该采集，还是该回送”这个判断。 
+
+### 9. Construction
+
+第九关的目标是：
+
+- 找到一只己方 creep
+- 如果 creep 身上没有能量，就去最近的 container 取能量
+- 如果 creep 身上有能量，就寻找己方 construction site
+- 如果还没有 construction site，就先创建一个 tower 的工地
+- 如果已经有工地，就去建造它
+
+Screeps 的 sample code 是：
+
+```javascript
+import { prototypes, utils } from "game";
+import { RESOURCE_ENERGY, ERR_NOT_IN_RANGE } from "game/constants";
+
+export function loop() {
+  const creep = utils.getObjectsByPrototype(prototypes.Creep).find((i) => i.my);
+  if (!creep.store[RESOURCE_ENERGY]) {
+    const container = utils.findClosestByPath(
+      creep,
+      utils.getObjectsByPrototype(prototypes.StructureContainer),
+    );
+    if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      creep.moveTo(container);
+    }
+  } else {
+    const constructionSite = utils
+      .getObjectsByPrototype(prototypes.ConstructionSite)
+      .find((i) => i.my);
+    if (!constructionSite) {
+      utils.createConstructionSite(50, 55, prototypes.StructureTower);
+    } else {
+      if (creep.build(constructionSite) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(constructionSite);
+      }
+    }
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_creeps() is [creep, ..] else { return }
+  let containers = @screeps.containers()
+  
+  if creep.store().energy() == 0 {
+    if creep.find_closest(containers) is Some(container) {
+      creep.withdraw_energy_or_move(container) |> ignore
+    }
+    return
+  }
+
+  match @screeps.my_construction_sites() {
+    [construction_site, ..] => creep.build_or_move(construction_site)
+    _ => @screeps.create_construction_site(50, 55, Tower) |> ignore
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码和 sample code 的对应关系是：
+
+- `@screeps.my_creeps()`：拿到己方 creep
+- `@screeps.containers()`：拿到所有 container
+- `creep.find_closest(containers)`：找到对当前 creep 来说最近的 container
+- `creep.withdraw_energy_or_move(container)`：先尝试取能量，不在范围内就移动过去
+- `@screeps.my_construction_sites()`：拿到己方 construction site
+- `creep.build_or_move(construction_site)`：先尝试建造，不在范围内就移动过去
+- `@screeps.create_construction_site(50, 55, Tower)`：在指定坐标创建一个 tower 工地
+
+这关的主流程可以拆成两段：
+
+- 第一段先判断 creep 身上有没有能量
+- 第二段再决定是“创建工地”还是“建造已有工地”
+
+具体来说：
+
+- 如果 `creep.store().energy() == 0`
+  就说明现在要先补充能量
+- 这时通过 `creep.find_closest(containers)` 找到最近的 container
+- 找到之后调用 `withdraw_energy_or_move(container)`，把“取能量或移动过去”这层逻辑收起来
+
+如果 creep 身上已经有能量，那么就进入建造阶段：
+
+- 如果 `@screeps.my_construction_sites()` 里已经有工地
+  就直接 `build_or_move`
+- 如果还没有工地
+  就调用 `create_construction_site(50, 55, Tower)` 先放下一个 tower 工地
+
+这一关和前面几关相比，多了两个关键点：
+
+- 最近目标查询不只是能用于找 flag，也可以直接用来找最近的 container
+- `create_construction_site(...)` 这类创建型操作，也已经被正式 binding 收成了高层接口
+
+所以这关本质上是在把“找资源 -> 建工地 -> 施工”这条基础建造链路串起来。 
