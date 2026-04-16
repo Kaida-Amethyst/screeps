@@ -1,6 +1,6 @@
 ///|
 /// 当前游戏已运行的 tick 数。
-pub fn ticks() -> Int {
+pub fn get_ticks() -> Int {
   @raw.get_ticks()
 }
 

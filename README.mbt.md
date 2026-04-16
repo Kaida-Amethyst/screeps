@@ -120,4 +120,84 @@ cp main.mjs /path/to/ScreepsArena/main.mjs
 
 ## Tutorial
 
-tutorial 示例和逐步使用方式后续会继续补充到这里。
+### 1. Loop and import
+
+第一关的目标很简单：调用 `get_ticks()`，然后用 MoonBit 的 `println` 打印当前 tick。
+
+这一关需要注意两件事：
+
+- `main` 包需要通过 `moon.pkg` 把 MoonBit 函数导出成 Screeps 需要的 `loop`
+- `main/main.mbt` 里的 `fn main` 需要保持空实现，真正的逻辑放在导出的函数里
+
+#### `main/moon.pkg`
+
+`main/moon.pkg` 需要像这样配置：
+
+```moonbit
+import {
+  "Kaida-Amethyst/screeps",
+}
+
+options(
+  "is-main": true,
+  link: { "js": { "exports": [ "main_loop:loop" ] } },
+)
+```
+
+这里的意思是：
+
+- 这个包是一个 `is-main` 包
+- MoonBit 里的 `main_loop` 会被导出成 JavaScript 侧的 `loop`
+
+#### `main/main.mbt`
+
+然后在 `main/main.mbt` 里实现：
+
+```moonbit
+pub fn main_loop() -> Unit {
+  println(@screeps.get_ticks())
+}
+
+fn main {
+
+}
+```
+
+这里有一个关键点：
+
+- `fn main` 保持空实现
+- Screeps 实际调用的是 `main_loop`
+
+这样可以避免模块加载时就执行额外副作用，把真正的每 tick 逻辑放到导出的 `loop` 里。
+
+#### 构建与拷贝
+
+写完之后执行：
+
+```bash
+moon build
+```
+
+然后把生成的主逻辑和 `main.mjs` wrapper 一起拷贝到 Screeps Arena 的运行目录：
+
+```bash
+cp _build/js/debug/build/main/main.js /path/to/ScreepsArena/moonbit-main.mjs
+cp main.mjs /path/to/ScreepsArena/main.mjs
+```
+
+把 `/path/to/ScreepsArena/` 替换成你自己的实际目录。
+
+完成后，就可以在 Screeps Arena 中加载并运行，效果等价于：
+
+```javascript
+import { getTicks } from "game/utils";
+
+export function loop() {
+  console.log("Current tick:", getTicks());
+}
+```
+
+只是这里我们用的是 MoonBit 的：
+
+- `@screeps.get_ticks()`
+- `println(...)`
