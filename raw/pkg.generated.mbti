@@ -147,6 +147,12 @@ pub fn JsSpawnCreepResult::error(Self) -> @core.Nullish[Int]
 pub fn JsSpawnCreepResult::object(Self) -> @core.Nullish[JsCreep]
 
 #external
+pub type JsSpawning
+pub fn JsSpawning::creep(Self) -> JsCreep
+pub fn JsSpawning::need_time(Self) -> Int
+pub fn JsSpawning::remaining_time(Self) -> Int
+
+#external
 pub type JsStore
 pub fn JsStore::get_capacity(Self) -> @core.Nullish[Int]
 pub fn JsStore::get_capacity_by(Self, String) -> @core.Nullish[Int]
@@ -170,6 +176,7 @@ pub fn JsStructureSpawn::hits(Self) -> Int
 pub fn JsStructureSpawn::hits_max(Self) -> Int
 pub fn JsStructureSpawn::my(Self) -> @core.Nullish[Bool]
 pub fn JsStructureSpawn::spawn_creep_raw(Self, Array[String]) -> JsSpawnCreepResult
+pub fn JsStructureSpawn::spawning(Self) -> @core.Nullish[JsSpawning]
 pub fn JsStructureSpawn::store(Self) -> JsStore
 pub fn JsStructureSpawn::to_game_object(Self) -> JsGameObject
 

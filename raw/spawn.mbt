@@ -17,11 +17,29 @@ pub extern "js" fn JsStructureSpawn::hits_max(self : JsStructureSpawn) -> Int =
   #| (self) => self.hitsMax ?? 0
 
 ///|
+pub extern "js" fn JsStructureSpawn::spawning(
+  self : JsStructureSpawn,
+) -> @core.Nullish[JsSpawning] =
+  #| (self) => self.spawning
+
+///|
 pub extern "js" fn JsStructureSpawn::spawn_creep_raw(
   self : JsStructureSpawn,
   body : Array[String],
 ) -> JsSpawnCreepResult =
   #| (self, body) => self.spawnCreep(body)
+
+///|
+pub extern "js" fn JsSpawning::need_time(self : JsSpawning) -> Int =
+  #| (self) => self.needTime ?? 0
+
+///|
+pub extern "js" fn JsSpawning::remaining_time(self : JsSpawning) -> Int =
+  #| (self) => self.remainingTime ?? 0
+
+///|
+pub extern "js" fn JsSpawning::creep(self : JsSpawning) -> JsCreep =
+  #| (self) => self.creep
 
 ///|
 pub extern "js" fn JsSpawnCreepResult::object(

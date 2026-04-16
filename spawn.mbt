@@ -1,4 +1,35 @@
 ///|
+/// spawn 当前进行中的孵化任务观察视图。
+pub struct Spawning {
+  priv raw : @raw.JsSpawning
+}
+
+///|
+pub fn Spawning::create(raw : @raw.JsSpawning) -> Spawning {
+  Spawning::{ raw, }
+}
+
+///|
+pub fn Spawning::to_raw(self : Spawning) -> @raw.JsSpawning {
+  self.raw
+}
+
+///|
+pub fn Spawning::need_time(self : Spawning) -> Int {
+  self.raw.need_time()
+}
+
+///|
+pub fn Spawning::remaining_time(self : Spawning) -> Int {
+  self.raw.remaining_time()
+}
+
+///|
+pub fn Spawning::creep(self : Spawning) -> Creep {
+  Creep::create(self.raw.creep())
+}
+
+///|
 /// StructureSpawn 的通用观察视图。
 pub struct StructureSpawn {
   priv raw : @raw.JsStructureSpawn
@@ -208,6 +239,21 @@ pub fn MySpawn::store(self : MySpawn) -> Store {
 ///|
 pub fn EnemySpawn::store(self : EnemySpawn) -> Store {
   Store::create(self.raw.store())
+}
+
+///|
+pub fn StructureSpawn::spawning(self : StructureSpawn) -> Spawning? {
+  self.raw.spawning().to_option().map(Spawning::create)
+}
+
+///|
+pub fn MySpawn::spawning(self : MySpawn) -> Spawning? {
+  self.raw.spawning().to_option().map(Spawning::create)
+}
+
+///|
+pub fn EnemySpawn::spawning(self : EnemySpawn) -> Spawning? {
+  self.raw.spawning().to_option().map(Spawning::create)
 }
 
 ///|

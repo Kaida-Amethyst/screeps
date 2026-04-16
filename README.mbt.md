@@ -969,7 +969,7 @@ fn spawn_action(spawn : MySpawn, my_creeps : Array[MyCreep]) -> Unit {
 ///|
 fn fallback_sources() -> Array[Source] {
   let live_sources = @screeps.active_sources()
-  
+
   match live_sources.is_empty() {
     true => @screeps.sources()
     false => live_sources

@@ -227,6 +227,7 @@ pub fn EnemySpawn::is_enemy(Self) -> Bool
 pub fn EnemySpawn::is_my(Self) -> Bool
 pub fn[T : GameObjectLike] EnemySpawn::range_to(Self, T) -> Int
 pub fn EnemySpawn::relation(Self) -> Relation
+pub fn EnemySpawn::spawning(Self) -> Spawning?
 pub fn EnemySpawn::store(Self) -> Store
 pub fn EnemySpawn::to_raw(Self) -> @raw.JsStructureSpawn
 pub fn EnemySpawn::x(Self) -> Int
@@ -391,6 +392,7 @@ pub fn MySpawn::is_my(Self) -> Bool
 pub fn[T : GameObjectLike] MySpawn::range_to(Self, T) -> Int
 pub fn MySpawn::relation(Self) -> Relation
 pub fn MySpawn::spawn_creep(Self, Array[BodyPartKind]) -> SpawnResult
+pub fn MySpawn::spawning(Self) -> Spawning?
 pub fn MySpawn::store(Self) -> Store
 pub fn MySpawn::to_raw(Self) -> @raw.JsStructureSpawn
 pub fn MySpawn::x(Self) -> Int
@@ -482,6 +484,15 @@ pub(all) enum SpawnResult {
   Spawned(MyCreep)
   SpawnFailed(SpawnFailure)
 }
+
+pub struct Spawning {
+  // private fields
+}
+pub fn Spawning::create(@raw.JsSpawning) -> Self
+pub fn Spawning::creep(Self) -> Creep
+pub fn Spawning::need_time(Self) -> Int
+pub fn Spawning::remaining_time(Self) -> Int
+pub fn Spawning::to_raw(Self) -> @raw.JsSpawning
 
 pub struct Store {
   // private fields
@@ -580,6 +591,7 @@ pub fn StructureSpawn::is_enemy(Self) -> Bool
 pub fn StructureSpawn::is_my(Self) -> Bool
 pub fn[T : GameObjectLike] StructureSpawn::range_to(Self, T) -> Int
 pub fn StructureSpawn::relation(Self) -> Relation
+pub fn StructureSpawn::spawning(Self) -> Spawning?
 pub fn StructureSpawn::store(Self) -> Store
 pub fn StructureSpawn::to_raw(Self) -> @raw.JsStructureSpawn
 pub fn StructureSpawn::x(Self) -> Int
