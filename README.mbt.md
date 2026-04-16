@@ -505,3 +505,78 @@ fn main {
   - `transfer_energy_or_move(tower)`
 
 这样主循环里保留的是“这一 tick 打算做什么”，而不是把每个动作的细节都展开写一遍。 
+
+### 6. Terrain
+
+第六关的目标是：
+
+- 取出所有己方 creep
+- 取出所有 flag
+- 对每一只 creep，都找到一面按路径距离最近的 flag
+- 然后让 creep 朝那面 flag 移动
+
+Screeps 的 sample code 是：
+
+```javascript
+import { getObjectsByPrototype } from "game/utils";
+import { Creep, Flag } from "game/prototypes";
+
+export function loop() {
+  var creeps = getObjectsByPrototype(Creep).filter((i) => i.my);
+  var flags = getObjectsByPrototype(Flag);
+  for (var creep of creeps) {
+    var flag = creep.findClosestByPath(flags);
+    creep.moveTo(flag);
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  let flags = @screeps.flags()
+  for creep in @screeps.my_creeps() {
+    guard creep.find_closest(flags) is Some(flag) else { continue }
+    creep.move_to(flag) |> ignore
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码和 sample code 的对应关系是：
+
+- `@screeps.my_creeps()`：拿到所有己方 creep
+- `@screeps.flags()`：拿到所有 flag
+- `creep.find_closest(flags)`：从这组 flag 里，找出对当前 creep 来说最近的目标
+- `creep.move_to(flag) |> ignore`：让 creep 朝找到的 flag 移动
+
+这一关最关键的点是 `find_closest`：
+
+- 它对应 JS 里的 `findClosestByPath`
+- 默认使用的是 `Path` 这套距离度量
+- 所以这里不用额外写 `by=Path`
+
+如果以后你想按直线距离来找最近目标，也可以显式写成：
+
+```moonbit nocheck
+creep.find_closest(flags, by=Range)
+```
+
+但这一关和原始 sample code 对应的，就是默认的按路径寻找最近目标。
+
+另外，这里用了：
+
+- `guard creep.find_closest(flags) is Some(flag) else { continue }`
+
+意思是：
+
+- 如果这一只 creep 能找到最近的 flag，就继续执行移动
+- 如果当前没有可用的 flag，就跳过这一只 creep，处理下一只
+
+这样可以避免直接对空结果调用 `move_to`。 
