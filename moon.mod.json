@@ -5,9 +5,9 @@
     "mizchi/js": "0.10.14"
   },
   "readme": "README.mbt.md",
-  "repository": "",
+  "repository": "https://github.com/Kaida-Amethyst/screeps",
   "license": "Apache-2.0",
-  "keywords": [],
+  "keywords": ["game", "screeps"],
   "description": "",
   "preferred-target" : "js"
 }
