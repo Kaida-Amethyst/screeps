@@ -1,8 +1,8 @@
 ///|
 pub fn main_loop() -> Unit {
-  guard @screeps.my_creeps() is [creep, ..] else { return }
-  guard @screeps.flags() is [flag, ..] else { return }
-  creep.move_to(flag) |> ignore
+  guard @screeps.my_creeps() is [my_creep, ..] else { return }
+  guard @screeps.enemy_creeps() is [enemy_creep, ..] else { return }
+  my_creep.attack_or_move(enemy_creep)
 }
 
 ///|

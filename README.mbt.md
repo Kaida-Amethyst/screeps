@@ -253,3 +253,63 @@ fn main {
   这用来处理“当前没有 creep”或者“当前没有 flag”的情况，避免直接访问空数组。
 - `|> ignore`
   `move_to` 会返回一个动作结果，但这一关我们只关心“发出移动指令”，所以把返回值忽略掉即可。
+
+### 3. First Attack
+
+第三关的目标是：
+
+- 找到一只己方 creep
+- 找到一只敌方 creep
+- 尝试攻击敌方 creep
+- 如果敌人不在攻击范围内，就朝它移动
+
+Screeps 的 sample code 是：
+
+```javascript
+import { getObjectsByPrototype } from "game/utils";
+import { Creep } from "game/prototypes";
+import { ERR_NOT_IN_RANGE } from "game/constants";
+
+export function loop() {
+  var myCreep = getObjectsByPrototype(Creep).find((creep) => creep.my);
+  var enemyCreep = getObjectsByPrototype(Creep).find((creep) => !creep.my);
+  if (myCreep.attack(enemyCreep) == ERR_NOT_IN_RANGE) {
+    myCreep.moveTo(enemyCreep);
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_creeps() is [my_creep, ..] else { return }
+  guard @screeps.enemy_creeps() is [enemy_creep, ..] else { return }
+  my_creep.attack_or_move(enemy_creep)
+}
+
+///|
+fn main {
+
+}
+```
+
+这里和原始 JS sample 的对应关系是：
+
+- `@screeps.my_creeps()`：拿到己方 creep 列表
+- `@screeps.enemy_creeps()`：拿到敌方 creep 列表
+- `my_creep.attack_or_move(enemy_creep)`：先尝试攻击；如果不在范围内，就自动移动过去
+
+和第二关相比，这一关的重点是：
+
+- 我们不再直接自己匹配 `ERR_NOT_IN_RANGE`
+- 而是使用库里已经提供好的 convenience helper：`attack_or_move`
+
+它把这段常见逻辑收起来了：
+
+- 先调用 `attack`
+- 如果结果是 `NotInRange`
+- 再补一个 `move_to`
+
+所以主循环里看到的代码会更短，也更接近“我要做什么”这层意图。 
