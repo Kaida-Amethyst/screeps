@@ -7,7 +7,6 @@ pub fn main_loop() -> Unit
 // Errors
 
 // Types and methods
-type SpawnRole
 
 // Type aliases
 

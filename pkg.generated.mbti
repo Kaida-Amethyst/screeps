@@ -30,6 +30,8 @@ pub fn[From : GameObjectLike, T : GameObjectLike] find_in_range(From, Array[T], 
 
 pub fn flags() -> Array[Flag]
 
+pub fn get_ticks() -> Int
+
 pub fn my_construction_sites() -> Array[ConstructionSite]
 
 pub fn my_creeps() -> Array[MyCreep]
@@ -53,8 +55,6 @@ pub fn spawns() -> Array[StructureSpawn]
 pub fn structure_kinds() -> Array[StructureKind]
 
 pub fn structures() -> Array[Structure]
-
-pub fn ticks() -> Int
 
 pub fn towers() -> Array[StructureTower]
 

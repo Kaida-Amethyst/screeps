@@ -133,7 +133,7 @@ cp main.mjs /path/to/ScreepsArena/main.mjs
 
 `main/moon.pkg` 需要像这样配置：
 
-```moonbit
+```moonbit nocheck
 import {
   "Kaida-Amethyst/screeps",
 }
@@ -153,11 +153,13 @@ options(
 
 然后在 `main/main.mbt` 里实现：
 
-```moonbit
+```moonbit nocheck
+///|
 pub fn main_loop() -> Unit {
   println(@screeps.get_ticks())
 }
 
+///|
 fn main {
 
 }
@@ -201,3 +203,53 @@ export function loop() {
 
 - `@screeps.get_ticks()`
 - `println(...)`
+
+### 2. Simple Move
+
+第二关的目标是：
+
+- 取出场上的 creep
+- 取出场上的 flag
+- 让第一只 creep 朝第一个 flag 移动
+
+Screeps 的 sample code 是：
+
+```javascript
+import { getObjectsByPrototype } from "game/utils";
+import { Creep, Flag } from "game/prototypes";
+
+export function loop() {
+  var creeps = getObjectsByPrototype(Creep);
+  var flags = getObjectsByPrototype(Flag);
+  creeps[0].moveTo(flags[0]);
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_creeps() is [creep, ..] else { return }
+  guard @screeps.flags() is [flag, ..] else { return }
+  creep.move_to(flag) |> ignore
+}
+
+///|
+fn main {
+
+}
+```
+
+代码的意思是：
+
+- `@screeps.my_creeps()`：拿到己方 creep 列表，注意这里与sample code的区别是，sample code这里实际上得到的全部的creep，而我们这里是得到的所有己方的creep。
+- `@screeps.flags()`：拿到 flag 列表
+- `creep.move_to(flag)`：让 creep 朝 flag 移动
+
+这段 MoonBit 代码里多出来的部分主要是两点：
+
+- `guard ... else { return }`
+  这用来处理“当前没有 creep”或者“当前没有 flag”的情况，避免直接访问空数组。
+- `|> ignore`
+  `move_to` 会返回一个动作结果，但这一关我们只关心“发出移动指令”，所以把返回值忽略掉即可。
