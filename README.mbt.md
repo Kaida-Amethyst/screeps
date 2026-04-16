@@ -580,3 +580,97 @@ creep.find_closest(flags, by=Range)
 - 如果当前没有可用的 flag，就跳过这一只 creep，处理下一只
 
 这样可以避免直接对空结果调用 `move_to`。 
+
+### 7. Spawn creeps
+
+第七关的目标是：
+
+- 先拿到己方的 spawn
+- 拿到场上的 flags
+- 如果当前 creep 数量还不够，就继续 spawn 新 creep
+- 已经出生的 creep 按顺序走向对应的 flag
+
+Screeps 的 sample code 是：
+
+```javascript
+import { getObjectsByPrototype } from "game/utils";
+import { Creep, Flag, StructureSpawn } from "game/prototypes";
+import { MOVE } from "game/constants";
+
+var creep1, creep2;
+
+export function loop() {
+  var mySpawn = getObjectsByPrototype(StructureSpawn)[0];
+  var flags = getObjectsByPrototype(Flag);
+
+  if (!creep1) {
+    creep1 = mySpawn.spawnCreep([MOVE]).object;
+  } else {
+    creep1.moveTo(flags[0]);
+
+    if (!creep2) {
+      creep2 = mySpawn.spawnCreep([MOVE]).object;
+    } else {
+      creep2.moveTo(flags[1]);
+    }
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_spawns() is [my_spawn, ..] else { return }
+
+  let flags = @screeps.flags()
+  let creeps = @screeps.my_creeps()
+
+  let num_of_flags = flags.length()
+  let num_of_creeps = creeps.length()
+
+  if num_of_creeps < num_of_flags {
+    my_spawn.spawn_creep([Move]) |> ignore
+  }
+
+  for i in 0..<min(num_of_creeps, num_of_flags) {
+    creeps[i].move_to(flags[i]) |> ignore
+  } 
+}
+
+fn min(a: Int, b: Int) -> Int {
+  match a < b {
+    true => a
+    false => b
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码和 sample code 的核心逻辑是一致的，只是写法更通用：
+
+- `@screeps.my_spawns()`：拿到己方 spawn
+- `@screeps.flags()`：拿到所有 flag
+- `@screeps.my_creeps()`：拿到已经出生的所有己方 creep
+- `my_spawn.spawn_creep([Move]) |> ignore`：生成一个只带 `MOVE` body part 的 creep
+
+这版代码没有像 sample code 那样显式维护 `creep1` 和 `creep2` 两个变量，而是换成了更通用的写法：
+
+- 如果 `num_of_creeps < num_of_flags`
+  就说明当前 creep 数量还不够，需要继续 spawn
+- 然后用
+  `for i in 0..<min(num_of_creeps, num_of_flags)`
+  把已经存在的 creep 和 flags 按顺序配对
+
+所以这里的含义就是：
+
+- 第 `0` 个 creep 去第 `0` 个 flag
+- 第 `1` 个 creep 去第 `1` 个 flag
+- 以此类推
+
+这种写法比直接写死 `creep1 / creep2` 更适合后面继续扩展，也更接近真正 bot 代码里常见的“按集合和索引分配目标”的写法。 
