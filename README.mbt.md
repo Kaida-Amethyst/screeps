@@ -805,7 +805,7 @@ export function loop() {
 pub fn main_loop() -> Unit {
   guard @screeps.my_creeps() is [creep, ..] else { return }
   let containers = @screeps.containers()
-  
+
   if creep.store().energy() == 0 {
     if creep.find_closest(containers) is Some(container) {
       creep.withdraw_energy_or_move(container) |> ignore
@@ -860,3 +860,225 @@ fn main {
 - `create_construction_site(...)` 这类创建型操作，也已经被正式 binding 收成了高层接口
 
 所以这关本质上是在把“找资源 -> 建工地 -> 施工”这条基础建造链路串起来。 
+
+### 10. Final test
+
+最后一关没有单独的 sample code，更像是把前面几关的能力拼起来，写出一个能真正活下来的小 bot。
+
+这一关当前直接使用 `main/main.mbt` 里的实现：
+
+```moonbit nocheck
+///|
+using @screeps {
+  type BodyPartKind,
+  type MyCreep,
+  type EnemyCreep,
+  type Source,
+  type MySpawn,
+}
+
+///|
+let worker_body : Array[BodyPartKind] = [Work, Carry, Move]
+
+///|
+let light_fighter_body : Array[BodyPartKind] = [Attack, Move]
+
+///|
+let heavy_fighter_body : Array[BodyPartKind] = [Attack, Attack, Move, Move]
+
+///|
+fn is_worker(creep : MyCreep) -> Bool {
+  creep.store().capacity(@screeps.Energy) > 0
+}
+
+///|
+fn workers(creeps : Array[MyCreep]) -> Array[MyCreep] {
+  creeps.filter(is_worker)
+}
+
+///|
+fn fighters(creeps : Array[MyCreep]) -> Array[MyCreep] {
+  creeps.filter(creep => !is_worker(creep))
+}
+
+///|
+fn worker_action(
+  creep : MyCreep,
+  sources : Array[Source],
+  spawn : MySpawn,
+) -> Unit {
+  if creep.store().free_energy() > 0 {
+    guard creep.find_closest(sources, by=Range) is Some(source) else { return }
+    creep.harvest_or_move(source)
+  } else {
+    creep.transfer_energy_or_move(spawn)
+  }
+}
+
+///|
+fn fighter_action(creep : MyCreep, enemies : Array[EnemyCreep]) -> Unit {
+  guard creep.find_closest(enemies, by=Range) is Some(enemy) else { return }
+  creep.attack_or_move(enemy)
+}
+
+///|
+fn spawn_worker_if_possible(spawn : MySpawn) -> Unit {
+  ignore(spawn.spawn_creep(worker_body))
+}
+
+///|
+fn spawn_fighter_if_possible(spawn : MySpawn) -> Unit {
+  let heavy_result = spawn.spawn_creep(heavy_fighter_body)
+  match heavy_result {
+    Spawned(_) => ()
+    SpawnFailed(SpawnNotEnoughEnergy) =>
+      spawn.spawn_creep(light_fighter_body) |> ignore
+    SpawnFailed(_) => ()
+  }
+}
+
+///|
+enum SpawnRole {
+  Worker
+  Fighter
+}
+
+///|
+fn next_spawn_role(my_creeps : Array[MyCreep]) -> SpawnRole {
+  let worker_count = workers(my_creeps).length()
+  let fighter_count = fighters(my_creeps).length()
+  if worker_count == 0 {
+    Worker
+  } else if fighter_count == 0 {
+    Fighter
+  } else if worker_count < 2 {
+    Worker
+  } else {
+    Fighter
+  }
+}
+
+///|
+fn spawn_action(spawn : MySpawn, my_creeps : Array[MyCreep]) -> Unit {
+  match next_spawn_role(my_creeps) {
+    Worker => spawn_worker_if_possible(spawn)
+    Fighter => spawn_fighter_if_possible(spawn)
+  }
+}
+
+///|
+fn fallback_sources() -> Array[Source] {
+  let live_sources = @screeps.active_sources()
+  
+  match live_sources.is_empty() {
+    true => @screeps.sources()
+    false => live_sources
+  }
+}
+
+///|
+pub fn main_loop() -> Unit {
+  guard @screeps.my_spawns() is [spawn, ..] else { return }
+  let my_creeps = @screeps.my_creeps()
+  let enemies = @screeps.enemy_creeps()
+  let sources = fallback_sources()
+  spawn_action(spawn, my_creeps)
+  workers(my_creeps).each(creep => worker_action(creep, sources, spawn))
+  fighters(my_creeps).each(creep => fighter_action(creep, enemies))
+}
+
+///|
+fn main {
+
+}
+```
+
+这一版 final test 的思路很直接：把我方单位分成两类。
+
+- `worker`
+  负责采矿和回送能量
+- `fighter`
+  负责找最近的敌人并追上去攻击
+
+对应的 body 也分成了三种：
+
+- `worker_body = [Work, Carry, Move]`
+- `light_fighter_body = [Attack, Move]`
+- `heavy_fighter_body = [Attack, Attack, Move, Move]`
+
+其中 `worker` 和 `fighter` 的区分方式也很简单：
+
+- 如果一个 creep 的 `store().capacity(Energy) > 0`
+  就把它当成 `worker`
+- 否则就把它当成 `fighter`
+
+也就是说，这里不是额外记录“职业标签”，而是直接根据 body 结构来判断单位职责。
+
+`worker_action` 负责经济循环：
+
+- 如果 creep 身上还有空余容量
+  就找最近的 source，然后 `harvest_or_move`
+- 如果已经装满
+  就把能量送回 spawn，调用 `transfer_energy_or_move`
+
+这里特意用了：
+
+- `creep.find_closest(sources, by=Range)`
+
+也就是按直线距离找最近的 source。  
+这样写的原因很简单：这一关里 source 选择主要只是为了快速找到一个最近资源点，按 `Range` 就够了。
+
+`fighter_action` 则更简单：
+
+- 找最近的敌人
+- `attack_or_move`
+
+同样，这里也用了 `by=Range`，让 fighter 先锁定一个最近敌人，然后一路追过去。
+
+spawn 的逻辑是这关最核心的策略部分。这里先定义了：
+
+- `SpawnRole = Worker | Fighter`
+
+然后通过 `next_spawn_role` 来决定下一个应该补什么单位。
+
+规则是：
+
+- 如果还没有 worker，先补 worker
+- 如果还没有 fighter，先补 fighter
+- 如果 worker 少于 `2`，继续补 worker
+- 其余情况补 fighter
+
+这背后的想法是：
+
+- 先确保经济能运转
+- 再确保有基本战斗力
+- 然后维持一个比较朴素的“2 个 worker + 持续补 fighter”的节奏
+
+`spawn_fighter_if_possible` 里还多了一层小策略：
+
+- 先尝试生成 `heavy_fighter_body`
+- 如果失败原因是 `SpawnNotEnoughEnergy`
+  就退一步生成 `light_fighter_body`
+
+这样做的好处是：
+
+- 能量够的时候，尽量上更强的近战单位
+- 能量暂时不够的时候，也不会什么都不做，而是先出一个轻量 fighter
+
+最后的 `main_loop` 就比较清楚了：
+
+- 先拿到 `spawn`
+- 再拿到当前所有己方 creep、敌方 creep、可用 source
+- 先执行一次 `spawn_action`
+- 然后让所有 worker 跑经济逻辑
+- 所有 fighter 跑战斗逻辑
+
+也就是说，这个 final test 本质上是把前面几关学到的这些能力全部串起来：
+
+- `spawn_creep`
+- `harvest_or_move`
+- `transfer_energy_or_move`
+- `find_closest`
+- `attack_or_move`
+
+最后得到一个能自己出兵、自己采矿、自己打人的最小可用 bot。 
