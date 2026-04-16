@@ -1,4 +1,5 @@
 ///|
+/// 让己方 creep 朝目标移动。
 pub fn[T : MoveTarget] MyCreep::move_to(
   self : MyCreep,
   target : T,
@@ -7,6 +8,7 @@ pub fn[T : MoveTarget] MyCreep::move_to(
 }
 
 ///|
+/// 若给定动作结果为不在范围内，则自动朝目标移动。
 pub fn[T : MoveTarget] MyCreep::move_if_not_in_range(
   self : MyCreep,
   target : T,
@@ -19,6 +21,7 @@ pub fn[T : MoveTarget] MyCreep::move_if_not_in_range(
 }
 
 ///|
+/// 让己方 creep 采集目标 source。
 pub fn[T : HarvestTarget] MyCreep::harvest(
   self : MyCreep,
   target : T,
@@ -29,6 +32,7 @@ pub fn[T : HarvestTarget] MyCreep::harvest(
 }
 
 ///|
+/// 尝试采集目标；若目标不在范围内，则自动朝目标移动。
 pub fn[T : HarvestTarget] MyCreep::harvest_or_move(
   self : MyCreep,
   target : T,
@@ -37,6 +41,7 @@ pub fn[T : HarvestTarget] MyCreep::harvest_or_move(
 }
 
 ///|
+/// 让己方 creep 向目标转移指定资源。
 pub fn[T : TransferTarget] MyCreep::transfer(
   self : MyCreep,
   target : T,
@@ -50,6 +55,7 @@ pub fn[T : TransferTarget] MyCreep::transfer(
 }
 
 ///|
+/// 尝试向目标转移指定资源；若目标不在范围内，则自动朝目标移动。
 pub fn[T : TransferTarget] MyCreep::transfer_or_move(
   self : MyCreep,
   target : T,
@@ -62,6 +68,7 @@ pub fn[T : TransferTarget] MyCreep::transfer_or_move(
 }
 
 ///|
+/// 让己方 creep 向目标转移能量。
 pub fn[T : TransferTarget] MyCreep::transfer_energy(
   self : MyCreep,
   target : T,
@@ -70,6 +77,7 @@ pub fn[T : TransferTarget] MyCreep::transfer_energy(
 }
 
 ///|
+/// 尝试向目标转移能量；若目标不在范围内，则自动朝目标移动。
 pub fn[T : TransferTarget] MyCreep::transfer_energy_or_move(
   self : MyCreep,
   target : T,
@@ -81,6 +89,7 @@ pub fn[T : TransferTarget] MyCreep::transfer_energy_or_move(
 }
 
 ///|
+/// 让己方 creep 从目标提取指定资源。
 pub fn[T : WithdrawTarget] MyCreep::withdraw(
   self : MyCreep,
   target : T,
@@ -94,6 +103,7 @@ pub fn[T : WithdrawTarget] MyCreep::withdraw(
 }
 
 ///|
+/// 尝试从目标提取指定资源；若目标不在范围内，则自动朝目标移动。
 pub fn[T : WithdrawTarget] MyCreep::withdraw_or_move(
   self : MyCreep,
   target : T,
@@ -106,6 +116,7 @@ pub fn[T : WithdrawTarget] MyCreep::withdraw_or_move(
 }
 
 ///|
+/// 让己方 creep 从目标提取能量。
 pub fn[T : WithdrawTarget] MyCreep::withdraw_energy(
   self : MyCreep,
   target : T,
@@ -114,6 +125,7 @@ pub fn[T : WithdrawTarget] MyCreep::withdraw_energy(
 }
 
 ///|
+/// 尝试从目标提取能量；若目标不在范围内，则自动朝目标移动。
 pub fn[T : WithdrawTarget] MyCreep::withdraw_energy_or_move(
   self : MyCreep,
   target : T,
@@ -125,6 +137,7 @@ pub fn[T : WithdrawTarget] MyCreep::withdraw_energy_or_move(
 }
 
 ///|
+/// 让己方 creep 建造目标工地。
 pub fn[T : BuildTarget] MyCreep::build(
   self : MyCreep,
   target : T,
@@ -133,6 +146,7 @@ pub fn[T : BuildTarget] MyCreep::build(
 }
 
 ///|
+/// 尝试建造目标工地；若目标不在范围内，则自动朝目标移动。
 pub fn[T : BuildTarget] MyCreep::build_or_move(
   self : MyCreep,
   target : T,
@@ -141,6 +155,7 @@ pub fn[T : BuildTarget] MyCreep::build_or_move(
 }
 
 ///|
+/// 让己方 creep 对目标执行近战攻击。
 pub fn[T : AttackTarget] MyCreep::attack(
   self : MyCreep,
   target : T,
@@ -149,6 +164,7 @@ pub fn[T : AttackTarget] MyCreep::attack(
 }
 
 ///|
+/// 尝试近战攻击目标；若目标不在范围内，则自动朝目标移动。
 pub fn[T : AttackTarget] MyCreep::attack_or_move(
   self : MyCreep,
   target : T,
@@ -157,6 +173,7 @@ pub fn[T : AttackTarget] MyCreep::attack_or_move(
 }
 
 ///|
+/// 让己方 creep 对目标执行远程攻击。
 pub fn[T : RangedAttackTarget] MyCreep::ranged_attack(
   self : MyCreep,
   target : T,
@@ -167,6 +184,7 @@ pub fn[T : RangedAttackTarget] MyCreep::ranged_attack(
 }
 
 ///|
+/// 尝试远程攻击目标；若目标不在范围内，则自动朝目标移动。
 pub fn[T : RangedAttackTarget] MyCreep::ranged_attack_or_move(
   self : MyCreep,
   target : T,
@@ -178,6 +196,7 @@ pub fn[T : RangedAttackTarget] MyCreep::ranged_attack_or_move(
 }
 
 ///|
+/// 让己方 creep 治疗目标 creep。
 pub fn[T : HealTarget] MyCreep::heal(
   self : MyCreep,
   target : T,
@@ -186,6 +205,7 @@ pub fn[T : HealTarget] MyCreep::heal(
 }
 
 ///|
+/// 尝试治疗目标；若目标不在范围内，则自动朝目标移动。
 pub fn[T : HealTarget] MyCreep::heal_or_move(
   self : MyCreep,
   target : T,

@@ -1,9 +1,11 @@
 ///|
+/// 将 body part 列表转换为 raw 层需要的原始字符串数组。
 fn body_to_raw(body : Array[BodyPartKind]) -> Array[String] {
   body.map(part => part.to_raw())
 }
 
 ///|
+/// 让己方 spawn 开始孵化一个指定 body 的 creep。
 pub fn MySpawn::spawn_creep(
   self : MySpawn,
   body : Array[BodyPartKind],

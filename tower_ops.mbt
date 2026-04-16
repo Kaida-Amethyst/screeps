@@ -1,4 +1,5 @@
 ///|
+/// 让己方 tower 远程攻击目标。
 pub fn[T : TowerAttackTarget] MyTower::attack(
   self : MyTower,
   target : T,
@@ -9,6 +10,7 @@ pub fn[T : TowerAttackTarget] MyTower::attack(
 }
 
 ///|
+/// 让己方 tower 远程治疗目标 creep。
 pub fn[T : HealTarget] MyTower::heal(
   self : MyTower,
   target : T,

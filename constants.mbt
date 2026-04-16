@@ -11,6 +11,7 @@ pub(all) enum BodyPartKind {
 } derive(Show, Eq, Compare)
 
 ///|
+/// 转换为 raw 层使用的原始 body part 字符串。
 pub fn BodyPartKind::to_raw(self : BodyPartKind) -> String {
   match self {
     Move => @raw.BODY_PART_MOVE
@@ -44,6 +45,7 @@ pub(all) enum ResourceKind {
 } derive(Show, Eq, Compare)
 
 ///|
+/// 转换为 raw 层使用的原始资源字符串。
 pub fn ResourceKind::to_raw(self : ResourceKind) -> String {
   match self {
     Energy => @raw.RESOURCE_ENERGY
@@ -63,6 +65,7 @@ pub(all) enum StructureKind {
 } derive(Show, Eq, Compare)
 
 ///|
+/// 转换为 raw 层使用的原始结构 prototype 名称。
 pub fn StructureKind::to_prototype_name(self : StructureKind) -> String {
   match self {
     Spawn => "StructureSpawn"

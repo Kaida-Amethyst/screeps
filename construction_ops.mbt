@@ -1,4 +1,5 @@
 ///|
+/// 在指定坐标创建目标结构类型的 construction site。
 pub fn create_construction_site(
   x : Int,
   y : Int,

@@ -7,6 +7,7 @@ pub enum Relation {
 } derive(Show, Eq, Compare)
 
 ///|
+/// 将可能为 `None` 的 `my` 标记转换为统一的 `Relation`。
 pub fn relation_of_my_flag(my : Bool?) -> Relation {
   match my {
     Some(true) => Mine
@@ -16,6 +17,7 @@ pub fn relation_of_my_flag(my : Bool?) -> Relation {
 }
 
 ///|
+/// 将非空的 `my` 布尔值转换为统一的 `Relation`。
 pub fn relation_of_my_bool(my : Bool) -> Relation {
   if my {
     Mine
