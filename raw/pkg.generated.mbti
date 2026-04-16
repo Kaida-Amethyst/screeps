@@ -87,6 +87,7 @@ pub fn JsCreateConstructionSiteResult::object(Self) -> @core.Nullish[JsConstruct
 #external
 pub type JsCreep
 pub fn JsCreep::attack_raw(Self, JsGameObject) -> Int
+pub fn JsCreep::body(Self) -> Array[JsCreepBodyPart]
 pub fn JsCreep::build_raw(Self, JsConstructionSite) -> Int
 pub fn JsCreep::harvest_raw(Self, JsSource) -> Int
 pub fn JsCreep::heal_raw(Self, JsGameObject) -> Int
@@ -100,6 +101,11 @@ pub fn JsCreep::store(Self) -> JsStore
 pub fn JsCreep::to_game_object(Self) -> JsGameObject
 pub fn JsCreep::transfer_raw(Self, JsGameObject, String) -> Int
 pub fn JsCreep::withdraw_raw(Self, JsGameObject, String) -> Int
+
+#external
+pub type JsCreepBodyPart
+pub fn JsCreepBodyPart::hits(Self) -> Int
+pub fn JsCreepBodyPart::kind(Self) -> String
 
 #external
 pub type JsFlag

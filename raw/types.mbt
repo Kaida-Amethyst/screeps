@@ -24,6 +24,11 @@ pub type JsCreateConstructionSiteResult
 pub type JsCreep
 
 ///|
+/// Screeps Arena raw 层的原始 creep body part 对象类型。
+#external
+pub type JsCreepBodyPart
+
+///|
 /// Screeps Arena raw 层的原始 Source 对象类型。
 #external
 pub type JsSource

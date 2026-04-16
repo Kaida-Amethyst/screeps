@@ -24,6 +24,20 @@ pub fn BodyPartKind::to_raw(self : BodyPartKind) -> String {
 }
 
 ///|
+fn body_part_kind_from_raw(raw_kind : String) -> BodyPartKind {
+  match raw_kind {
+    @raw.BODY_PART_MOVE => Move
+    @raw.BODY_PART_WORK => Work
+    @raw.BODY_PART_CARRY => Carry
+    @raw.BODY_PART_ATTACK => Attack
+    @raw.BODY_PART_RANGED_ATTACK => RangedAttack
+    @raw.BODY_PART_HEAL => Heal
+    @raw.BODY_PART_TOUGH => Tough
+    _ => panic()
+  }
+}
+
+///|
 /// 第一阶段资源类型先只覆盖 Energy，但正式 API 仍采用枚举结构。
 pub(all) enum ResourceKind {
   Energy

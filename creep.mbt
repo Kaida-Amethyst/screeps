@@ -211,31 +211,75 @@ pub fn EnemyCreep::store(self : EnemyCreep) -> Store {
 }
 
 ///|
+pub fn Creep::body(self : Creep) -> Array[BodyPart] {
+  self.raw.body().map(BodyPart::create)
+}
+
+///|
+pub fn MyCreep::body(self : MyCreep) -> Array[BodyPart] {
+  self.raw.body().map(BodyPart::create)
+}
+
+///|
+pub fn EnemyCreep::body(self : EnemyCreep) -> Array[BodyPart] {
+  self.raw.body().map(BodyPart::create)
+}
+
+///|
+fn has_body_part(parts : Array[BodyPart], kind : BodyPartKind) -> Bool {
+  parts.filter(part => part.kind() == kind) is [_, ..]
+}
+
+///|
+pub fn Creep::has_body_part(self : Creep, kind : BodyPartKind) -> Bool {
+  has_body_part(self.body(), kind)
+}
+
+///|
+pub fn MyCreep::has_body_part(self : MyCreep, kind : BodyPartKind) -> Bool {
+  has_body_part(self.body(), kind)
+}
+
+///|
+pub fn EnemyCreep::has_body_part(
+  self : EnemyCreep,
+  kind : BodyPartKind,
+) -> Bool {
+  has_body_part(self.body(), kind)
+}
+
+///|
+#alias(hp)
 pub fn Creep::hits(self : Creep) -> Int {
   self.raw.hits()
 }
 
 ///|
+#alias(hp)
 pub fn MyCreep::hits(self : MyCreep) -> Int {
   self.raw.hits()
 }
 
 ///|
+#alias(hp)
 pub fn EnemyCreep::hits(self : EnemyCreep) -> Int {
   self.raw.hits()
 }
 
 ///|
+#alias(max_hp)
 pub fn Creep::hits_max(self : Creep) -> Int {
   self.raw.hits_max()
 }
 
 ///|
+#alias(max_hp)
 pub fn MyCreep::hits_max(self : MyCreep) -> Int {
   self.raw.hits_max()
 }
 
 ///|
+#alias(max_hp)
 pub fn EnemyCreep::hits_max(self : EnemyCreep) -> Int {
   self.raw.hits_max()
 }

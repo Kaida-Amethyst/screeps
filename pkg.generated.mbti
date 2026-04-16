@@ -79,6 +79,13 @@ pub(all) enum ActionResult {
   Failed(ActionFailure)
 } derive(Eq, Show)
 
+pub struct BodyPart {
+  // private fields
+}
+pub fn BodyPart::create(@raw.JsCreepBodyPart) -> Self
+pub fn BodyPart::hits(Self) -> Int
+pub fn BodyPart::kind(Self) -> BodyPartKind
+
 pub(all) enum BodyPartKind {
   Move
   Work
@@ -137,10 +144,12 @@ pub struct Creep {
 pub fn Creep::as_enemy(Self) -> EnemyCreep?
 pub fn Creep::as_game_object(Self) -> GameObject
 pub fn Creep::as_my(Self) -> MyCreep?
+pub fn Creep::body(Self) -> Array[BodyPart]
 pub fn Creep::create(@raw.JsCreep) -> Self
 pub fn Creep::exists(Self) -> Bool
 pub fn[T : GameObjectLike] Creep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] Creep::find_in_range(Self, Array[T], Int) -> Array[T]
+pub fn Creep::has_body_part(Self, BodyPartKind) -> Bool
 pub fn Creep::hits(Self) -> Int
 pub fn Creep::hits_max(Self) -> Int
 pub fn Creep::id(Self) -> String
@@ -169,10 +178,12 @@ pub struct EnemyCreep {
 }
 pub fn EnemyCreep::as_creep(Self) -> Creep
 pub fn EnemyCreep::as_game_object(Self) -> GameObject
+pub fn EnemyCreep::body(Self) -> Array[BodyPart]
 pub fn EnemyCreep::create(@raw.JsCreep) -> Self
 pub fn EnemyCreep::exists(Self) -> Bool
 pub fn[T : GameObjectLike] EnemyCreep::find_closest(Self, Array[T], by? : ClosestMetric) -> T?
 pub fn[T : GameObjectLike] EnemyCreep::find_in_range(Self, Array[T], Int) -> Array[T]
+pub fn EnemyCreep::has_body_part(Self, BodyPartKind) -> Bool
 pub fn EnemyCreep::hits(Self) -> Int
 pub fn EnemyCreep::hits_max(Self) -> Int
 pub fn EnemyCreep::id(Self) -> String
@@ -310,6 +321,7 @@ pub fn MyCreep::as_creep(Self) -> Creep
 pub fn MyCreep::as_game_object(Self) -> GameObject
 pub fn[T : AttackTarget] MyCreep::attack(Self, T) -> ActionResult
 pub fn[T : AttackTarget] MyCreep::attack_or_move(Self, T) -> Unit
+pub fn MyCreep::body(Self) -> Array[BodyPart]
 pub fn[T : BuildTarget] MyCreep::build(Self, T) -> ActionResult
 pub fn[T : BuildTarget] MyCreep::build_or_move(Self, T) -> Unit
 pub fn MyCreep::create(@raw.JsCreep) -> Self
@@ -318,6 +330,7 @@ pub fn[T : GameObjectLike] MyCreep::find_closest(Self, Array[T], by? : ClosestMe
 pub fn[T : GameObjectLike] MyCreep::find_in_range(Self, Array[T], Int) -> Array[T]
 pub fn[T : HarvestTarget] MyCreep::harvest(Self, T) -> ActionResult
 pub fn[T : HarvestTarget] MyCreep::harvest_or_move(Self, T) -> Unit
+pub fn MyCreep::has_body_part(Self, BodyPartKind) -> Bool
 pub fn[T : HealTarget] MyCreep::heal(Self, T) -> ActionResult
 pub fn[T : HealTarget] MyCreep::heal_or_move(Self, T) -> Unit
 pub fn MyCreep::hits(Self) -> Int

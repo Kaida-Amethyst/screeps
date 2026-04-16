@@ -19,6 +19,18 @@ pub extern "js" fn JsCreep::spawning(self : JsCreep) -> Bool =
   #| (self) => self.spawning
 
 ///|
+pub extern "js" fn JsCreep::body(self : JsCreep) -> Array[JsCreepBodyPart] =
+  #| (self) => self.body
+
+///|
+pub extern "js" fn JsCreepBodyPart::kind(self : JsCreepBodyPart) -> String =
+  #| (self) => self.type
+
+///|
+pub extern "js" fn JsCreepBodyPart::hits(self : JsCreepBodyPart) -> Int =
+  #| (self) => self.hits
+
+///|
 pub extern "js" fn JsCreep::move_to_raw(
   self : JsCreep,
   target : JsGameObject,

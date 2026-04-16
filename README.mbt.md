@@ -313,3 +313,106 @@ fn main {
 - 再补一个 `move_to`
 
 所以主循环里看到的代码会更短，也更接近“我要做什么”这层意图。 
+
+### 4. Creep Bodies
+
+第四关的目标是：
+
+- 找到所有己方 creep
+- 找到一只敌方 creep
+- 根据 creep 身上的 body part，不同职责地执行动作
+  - 有 `ATTACK` 的 creep 负责近战攻击
+  - 有 `RANGED_ATTACK` 的 creep 负责远程攻击
+  - 有 `HEAL` 的 creep 负责治疗己方伤员
+
+Screeps 的 sample code 是：
+
+```javascript
+import { getObjectsByPrototype } from "game/utils";
+import { Creep } from "game/prototypes";
+import { ERR_NOT_IN_RANGE, ATTACK, RANGED_ATTACK, HEAL } from "game/constants";
+
+export function loop() {
+  var myCreeps = getObjectsByPrototype(Creep).filter((creep) => creep.my);
+  var enemyCreep = getObjectsByPrototype(Creep).find((creep) => !creep.my);
+
+  for (var creep of myCreeps) {
+    if (creep.body.some((bodyPart) => bodyPart.type == ATTACK)) {
+      if (creep.attack(enemyCreep) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(enemyCreep);
+      }
+    }
+    if (creep.body.some((bodyPart) => bodyPart.type == RANGED_ATTACK)) {
+      if (creep.rangedAttack(enemyCreep) == ERR_NOT_IN_RANGE) {
+        creep.moveTo(enemyCreep);
+      }
+    }
+    if (creep.body.some((bodyPart) => bodyPart.type == HEAL)) {
+      var myDamagedCreeps = myCreeps.filter((i) => i.hits < i.hitsMax);
+      if (myDamagedCreeps.length > 0) {
+        if (creep.heal(myDamagedCreeps[0]) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(myDamagedCreeps[0]);
+        }
+      }
+    }
+  }
+}
+```
+
+用现在这套 MoonBit binding，可以写成：
+
+```moonbit nocheck
+///|
+pub fn main_loop() -> Unit {
+  let my_creeps = @screeps.my_creeps()
+  guard @screeps.enemy_creeps() is [enemy_creep, ..] else { return }
+  let damaged_creeps = my_creeps.filter(creep => creep.hp() < creep.max_hp())
+  let melee_creeps = my_creeps.filter(creep => {
+    creep.has_body_part(@screeps.Attack)
+  })
+  let healers = my_creeps.filter(creep => creep.has_body_part(@screeps.Heal))
+  let ranged_creeps = my_creeps.filter(creep => {
+    creep.has_body_part(@screeps.RangedAttack)
+  })
+
+  for creep in melee_creeps {
+    creep.attack_or_move(enemy_creep)
+  }
+
+  for creep in ranged_creeps {
+    creep.ranged_attack_or_move(enemy_creep)
+  }
+
+  if damaged_creeps is [damaged_creep, ..] {
+    for creep in healers {
+      creep.heal_or_move(damaged_creep)
+    }
+  }
+}
+
+///|
+fn main {
+
+}
+```
+
+这段 MoonBit 代码的结构和 sample code 是一致的，只是写法更偏 MoonBit 风格：
+
+- `my_creeps.filter(creep => creep.has_body_part(@screeps.Attack))`
+  对应 JS 里的 `creep.body.some(bodyPart => bodyPart.type == ATTACK)`
+- `creep.attack_or_move(enemy_creep)`
+  对应 “先攻击，不在范围内就移动”
+- `creep.ranged_attack_or_move(enemy_creep)`
+  对应 “先远程攻击，不在范围内就移动”
+- `creep.heal_or_move(damaged_creep)`
+  对应 “先治疗，不在范围内就移动”
+
+这一关有两个比较关键的点：
+
+- body part 在正式 binding 里已经被收成了 `BodyPartKind`，所以这里直接用 `@screeps.Attack / Heal / RangedAttack`
+- 代码结构上按职责拆成了三段循环：
+  - `melees`
+  - `ranged`
+  - `healers`
+
+这样会比“单个大循环里套很多 `if`”更清楚，也更适合后面继续扩展 bot 行为。 
