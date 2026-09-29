@@ -108,7 +108,11 @@ pub const RESOURCE_ENERGY : String = "energy"
 
 ///|
 #module("game/utils")
-extern "js" fn get_objects_ffi() -> Array[@core.Any] = "getObjects"
+extern "js" fn get_objects_ffi_fixed() -> FixedArray[@core.Any] = "getObjects"
+
+fn get_objects_ffi() -> Array[@core.Any] {
+  Array::from_fixed_array(get_objects_ffi_fixed())
+}
 
 ///|
 #module("game/utils")
@@ -184,8 +188,12 @@ pub extern "js" fn Creep::store(self : Creep) -> Store =
   #| (self) => self.store
 
 ///|
-pub extern "js" fn Creep::body(self : Creep) -> Array[CreepBodyPart] =
+pub extern "js" fn Creep::body_ffi(self : Creep) -> FixedArray[CreepBodyPart] =
   #| (self) => self.body
+
+pub fn Creep::body(self : Creep) -> Array[CreepBodyPart] {
+  Array::from_fixed_array(Creep::body_ffi(self))
+}
 
 ///|
 pub extern "js" fn Creep::hits(self : Creep) -> Int =
@@ -226,11 +234,18 @@ pub extern "js" fn Creep::move_to_raw(self : Creep, target : GameObject) -> Int 
   #| (self, target) => self.moveTo(target)
 
 ///|
-pub extern "js" fn Creep::find_closest_by_path_raw(
+pub extern "js" fn Creep::find_closest_by_path_raw_ffi(
   self : Creep,
-  positions : Array[GameObject],
+  positions : FixedArray[GameObject],
 ) -> @core.Nullish[GameObject] =
   #| (self, positions) => self.findClosestByPath(positions)
+
+pub fn Creep::find_closest_by_path_raw(
+  self : Creep,
+  positions : Array[GameObject],
+) -> @core.Nullish[GameObject] {
+  Creep::find_closest_by_path_raw_ffi(self, FixedArray::from_array(positions))
+}
 
 ///|
 pub extern "js" fn Creep::transfer_raw(
@@ -261,11 +276,18 @@ pub extern "js" fn StructureSpawn::is_spawning(self : StructureSpawn) -> Bool =
   #| (self) => self.spawning != null
 
 ///|
-pub extern "js" fn StructureSpawn::spawn_creep(
+pub extern "js" fn StructureSpawn::spawn_creep_ffi(
   self : StructureSpawn,
-  body : Array[String],
+  body : FixedArray[String],
 ) -> SpawnCreepResult =
   #| (self, body) => self.spawnCreep(body)
+
+pub fn StructureSpawn::spawn_creep(
+  self : StructureSpawn,
+  body : Array[String],
+) -> SpawnCreepResult {
+  StructureSpawn::spawn_creep_ffi(self, FixedArray::from_array(body))
+}
 
 ///|
 pub extern "js" fn StructureSpawn::store(self : StructureSpawn) -> Store =

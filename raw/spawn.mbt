@@ -23,11 +23,18 @@ pub extern "js" fn JsStructureSpawn::spawning(
   #| (self) => self.spawning
 
 ///|
-pub extern "js" fn JsStructureSpawn::spawn_creep_raw(
+pub extern "js" fn JsStructureSpawn::spawn_creep_raw_ffi(
   self : JsStructureSpawn,
-  body : Array[String],
+  body : FixedArray[String],
 ) -> JsSpawnCreepResult =
   #| (self, body) => self.spawnCreep(body)
+
+pub fn JsStructureSpawn::spawn_creep_raw(
+  self : JsStructureSpawn,
+  body : Array[String],
+) -> JsSpawnCreepResult {
+  JsStructureSpawn::spawn_creep_raw_ffi(self, FixedArray::from_array(body))
+}
 
 ///|
 pub extern "js" fn JsSpawning::need_time(self : JsSpawning) -> Int =

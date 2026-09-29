@@ -6,7 +6,11 @@ pub extern "js" fn get_ticks() -> Int = "getTicks"
 ///|
 /// 获取当前游戏中的全部对象。
 #module("game/utils")
-pub extern "js" fn get_objects() -> Array[JsGameObject] = "getObjects"
+pub extern "js" fn get_objects_ffi() -> FixedArray[JsGameObject] = "getObjects"
+
+pub fn get_objects() -> Array[JsGameObject] {
+  Array::from_fixed_array(get_objects_ffi())
+}
 
 ///|
 /// 通过 id 获取对象。
@@ -19,9 +23,9 @@ pub fn get_object_by_id(id : String) -> JsGameObject? {
 }
 
 ///|
-extern "js" fn get_objects_by_prototype_name_ffi(
+extern "js" fn get_objects_by_prototype_name_ffi_fixed(
   name : String,
-) -> Array[@core.Any] =
+) -> FixedArray[@core.Any] =
   #| (name) => {
   #|   const host = globalThis.__moonbit_screeps_host;
   #|   if (!host?.getObjectsByPrototypeName) {
@@ -29,6 +33,12 @@ extern "js" fn get_objects_by_prototype_name_ffi(
   #|   }
   #|   return host.getObjectsByPrototypeName(name);
   #| }
+
+fn get_objects_by_prototype_name_ffi(
+  name : String,
+) -> Array[@core.Any] {
+  Array::from_fixed_array(get_objects_by_prototype_name_ffi_fixed(name))
+}
 
 ///|
 fn[T] cast_objects(values : Array[@core.Any]) -> Array[T] {
