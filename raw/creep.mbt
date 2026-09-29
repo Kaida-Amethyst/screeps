@@ -19,8 +19,12 @@ pub extern "js" fn JsCreep::spawning(self : JsCreep) -> Bool =
   #| (self) => self.spawning
 
 ///|
-pub extern "js" fn JsCreep::body(self : JsCreep) -> Array[JsCreepBodyPart] =
+pub extern "js" fn JsCreep::body_ffi(self : JsCreep) -> FixedArray[JsCreepBodyPart] =
   #| (self) => self.body
+
+pub fn JsCreep::body(self : JsCreep) -> Array[JsCreepBodyPart] {
+  Array::from_fixed_array(JsCreep::body_ffi(self))
+}
 
 ///|
 pub extern "js" fn JsCreepBodyPart::kind(self : JsCreepBodyPart) -> String =
